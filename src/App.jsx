@@ -64,10 +64,26 @@ export default function App() {
       <div style={{ backgroundColor: "#fdfbf7", color: "#1e293b", padding: "30px", borderRadius: "12px", width: "100%", maxWidth: "450px", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
         
         {/* HEADER */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-          <h3 style={{ margin: 0, color: "#1e1b4b" }}>• College Union Election</h3>
-          <span style={{ backgroundColor: "#e2e8f0", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", fontWeight: "bold" }}>ADMIN</span>
-        </div>
+        {/* HEADER */}
+<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+  <h3 style={{ margin: 0, color: "#1e1b4b" }}>• College Union Election</h3>
+  
+  <button 
+    onClick={() => setScreen("results")} // ya jo bhi screen aap admin click par kholna chahte hain
+    style={{ 
+      backgroundColor: "#e2e8f0", 
+      padding: "4px 8px", 
+      borderRadius: "4px", 
+      fontSize: "12px", 
+      fontWeight: "bold",
+      border: "none",
+      cursor: "pointer",
+      color: "#1e293b"
+    }}
+  >
+    ADMIN
+  </button>
+</div>
 
         {/* 1. VERIFICATION SCREEN */}
         {screen === "verify" && (
