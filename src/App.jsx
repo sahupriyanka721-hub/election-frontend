@@ -9,7 +9,7 @@ import { Lock, Check, X, ShieldCheck, Users, Vote, LogOut, RotateCcw, ArrowRight
    (e.g. to Render). Right now it points at your local backend.
 --------------------------------------------------- */
 
-const API_BASE = "https://election-backend-2-owlq.onrender.com";
+const API_BASE = "https://election-backend-2-owlq.onrender.com/api";
 // After deploying the backend (Section: "Deploy your project"), change this to
 // something like: "https://election-backend-xyz.onrender.com/api"
 
