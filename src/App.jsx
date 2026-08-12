@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 
 export default function App() {
-  const [screen, setScreen] = useState("verify"); // 'verify', 'booth', 'thankyou', 'results'
+  // LocalStorage check for initial state
+  const [hasVotedLocally, setHasVotedLocally] = useState(() => {
+    return localStorage.getItem("hasVoted") === "true";
+  });
+
+  const [screen, setScreen] = useState(() => {
+    return localStorage.getItem("hasVoted") === "true" ? "thankyou" : "verify";
+  });
+
   const [regno, setRegno] = useState("");
   const [name, setName] = useState("");
   const [votingToken, setVotingToken] = useState("");
@@ -9,7 +17,6 @@ export default function App() {
   const [selectedParty, setSelectedParty] = useState(null);
   const [formError, setFormError] = useState("");
   const [castingVote, setCastingVote] = useState(false);
-  const [hasVotedLocally, setHasVotedLocally] = useState(false);
 
   // Mock Parties Data
   const parties = [
@@ -41,8 +48,15 @@ export default function App() {
     setTimeout(() => {
       setCastingVote(false);
       setHasVotedLocally(true);
+      localStorage.setItem("hasVoted", "true"); // Permanently save vote state
       setScreen("thankyou");
     }, 1000);
+  }
+
+  function handleReset() {
+    localStorage.removeItem("hasVoted");
+    setHasVotedLocally(false);
+    setScreen("verify");
   }
 
   return (
@@ -62,32 +76,23 @@ export default function App() {
             <h2 style={{ margin: "10px 0", color: "#0f172a" }}>Apni pehchaan confirm karein</h2>
             <p style={{ fontSize: "14px", color: "#475569" }}>Registration number aur naam daalo jaisa list mein register hai. Ek voter, ek vote.</p>
             
-            {hasVotedLocally ? (
-              <div style={{ backgroundColor: "#fee2e2", color: "#991b1b", padding: "12px", borderRadius: "6px", textAlign: "center", marginTop: "20px" }}>
-                <p style={{ margin: 0, fontWeight: "bold" }}>❌ Aap pehle hi vote de chuke hain!</p>
-                <button onClick={() => setScreen("thankyou")} style={{ marginTop: "10px", width: "100%", padding: "10px", backgroundColor: "#1e293b", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
-                  View Status
-                </button>
+            <form onSubmit={handleVerify} style={{ marginTop: "20px" }}>
+              {formError && <div style={{ color: "#dc2626", marginBottom: "10px", fontSize: "14px" }}>{formError}</div>}
+              
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", marginBottom: "5px" }}>REGISTRATION NUMBER</label>
+                <input type="text" value={regno} onChange={(e) => setRegno(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }} />
               </div>
-            ) : (
-              <form onSubmit={handleVerify} style={{ marginTop: "20px" }}>
-                {formError && <div style={{ color: "#dc2626", marginBottom: "10px", fontSize: "14px" }}>{formError}</div>}
-                
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", marginBottom: "5px" }}>REGISTRATION NUMBER</label>
-                  <input type="text" value={regno} onChange={(e) => setRegno(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }} />
-                </div>
 
-                <div style={{ marginBottom: "20px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", marginBottom: "5px" }}>FULL NAME</label>
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }} />
-                </div>
+              <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", marginBottom: "5px" }}>FULL NAME</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }} />
+              </div>
 
-                <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#1e293b", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>
-                  🗳 Continue to Vote
-                </button>
-              </form>
-            )}
+              <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#1e293b", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>
+                🗳 Continue to Vote
+              </button>
+            </form>
           </div>
         )}
 
@@ -159,14 +164,11 @@ export default function App() {
             </div>
 
             <button 
-  onClick={() => {
-    setHasVotedLocally(false); // Voting status reset ho jayega
-    setScreen("verify");
-  }} 
-  style={{ width: "100%", padding: "10px", backgroundColor: "#16a34a", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
->
-  🔄 Vote Again (Test Reset)
-</button>
+              onClick={handleReset} 
+              style={{ width: "100%", padding: "10px", backgroundColor: "#dc2626", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
+            >
+              🔄 Reset Voting Status (For Test)
+            </button>
           </div>
         )}
 
