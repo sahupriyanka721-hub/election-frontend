@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 export default function App() {
-  // LocalStorage check for initial state
   const [hasVotedLocally, setHasVotedLocally] = useState(() => {
     return localStorage.getItem("hasVoted") === "true";
   });
@@ -18,7 +17,6 @@ export default function App() {
   const [formError, setFormError] = useState("");
   const [castingVote, setCastingVote] = useState(false);
 
-  // Mock Parties Data
   const parties = [
     { _id: "1", name: "Student Welfare Party", symbol: "📚" },
     { _id: "2", name: "Youth Progress Front", symbol: "🚀" },
@@ -29,6 +27,7 @@ export default function App() {
     setFormError("");
   }, [screen]);
 
+  // Step 1: Details Check-in -> Move to Voting Booth
   async function handleVerify(e) {
     e.preventDefault();
     if (hasVotedLocally) {
@@ -38,11 +37,20 @@ export default function App() {
     setFormError("");
     setVotingToken("test-token-123");
     setVoterName(name || "Test Voter");
+    setScreen("booth"); // Ab party select karne wala screen aayega
+  }
+
+  // Step 2: Cast Vote -> Direct Thank You Page
+  async function castVote() {
+    if (!selectedParty) return;
+    setCastingVote(true);
     
-    // Direct thank you screen par bhejne ke liye vote save aur setScreen update
-    setHasVotedLocally(true);
-    localStorage.setItem("hasVoted", "true");
-    setScreen("thankyou");
+    setTimeout(() => {
+      setCastingVote(false);
+      setHasVotedLocally(true);
+      localStorage.setItem("hasVoted", "true");
+      setScreen("thankyou"); // Vote Submit hone ke baad seedha Thank You screen
+    }, 800);
   }
 
   function handleReset() {
@@ -66,7 +74,7 @@ export default function App() {
           <div>
             <span style={{ fontSize: "12px", letterSpacing: "1px", color: "#64748b", fontWeight: "bold" }}>🛡 VOTER CHECK-IN</span>
             <h2 style={{ margin: "10px 0", color: "#0f172a" }}>Apni pehchaan confirm karein</h2>
-            <p style={{ fontSize: "14px", color: "#475569" }}>Registration number aur naam daalo jaisa list mein register hai. Ek voter, ek vote.</p>
+            <p style={{ fontSize: "14px", color: "#475569" }}>Registration number aur naam daalo jaisa list mein register hai.</p>
             
             <form onSubmit={handleVerify} style={{ marginTop: "20px" }}>
               {formError && <div style={{ color: "#dc2626", marginBottom: "10px", fontSize: "14px" }}>{formError}</div>}
@@ -81,19 +89,58 @@ export default function App() {
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }} />
               </div>
 
-              <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#16a34a", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>
-                Submit & Finish 🗳
+              <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#1e293b", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>
+                Proceed to Vote ➔
               </button>
             </form>
           </div>
         )}
 
-        {/* 2. THANK YOU SCREEN */}
+        {/* 2. VOTING BOOTH (PARTY CHOOSE KARNE WALA PAGE) */}
+        {screen === "booth" && (
+          <div>
+            <h2>Welcome, {voterName}! 👋</h2>
+            <p style={{ fontSize: "14px", color: "#475569" }}>Apne pasandida candidate/party ko select karein:</p>
+            
+            <div style={{ margin: "20px 0" }}>
+              {parties.map((party) => (
+                <div 
+                  key={party._id} 
+                  onClick={() => setSelectedParty(party)}
+                  style={{ 
+                    padding: "12px", 
+                    border: selectedParty?._id === party._id ? "2px solid #2563eb" : "1px solid #cbd5e1", 
+                    backgroundColor: selectedParty?._id === party._id ? "#eff6ff" : "#fff",
+                    borderRadius: "8px", 
+                    marginBottom: "10px", 
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px"
+                  }}
+                >
+                  <span style={{ fontSize: "20px" }}>{party.symbol}</span>
+                  <span style={{ fontWeight: "bold" }}>{party.name}</span>
+                </div>
+              ))}
+            </div>
+
+            <button 
+              onClick={castVote} 
+              disabled={!selectedParty || castingVote}
+              style={{ width: "100%", padding: "12px", backgroundColor: selectedParty ? "#16a34a" : "#94a3b8", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+            >
+              {castingVote ? "Submitting..." : "Submit Vote & Finish 🗳"}
+            </button>
+          </div>
+        )}
+
+        {/* 3. THANK YOU SCREEN */}
         {screen === "thankyou" && (
           <div style={{ textAlign: "center", padding: "10px 0" }}>
             <h1 style={{ fontSize: "40px", margin: "0 0 10px 0" }}>🎉</h1>
-            <h2 style={{ color: "#16a34a", margin: "0 0 10px 0" }}>Thank You!</h2>
-            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "25px" }}>Aapki details successfully verify ho gayi hain.</p>
+            <h2 style={{ color: "#16a34a", margin: "0 0 10px 0" }}>Thank You for Voting!</h2>
+            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "25px" }}>Aapka vote successfully submit ho gaya hai.</p>
             
             <button 
               onClick={() => setScreen("results")} 
@@ -104,7 +151,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 3. CONGRATULATIONS / RESULTS SCREEN */}
+        {/* 4. RESULTS SCREEN */}
         {screen === "results" && (
           <div style={{ textAlign: "center", padding: "10px 0" }}>
             <h1 style={{ fontSize: "45px", margin: "0 0 10px 0" }}>🎉🎊</h1>
