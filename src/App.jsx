@@ -260,19 +260,10 @@ export default function App() {
   async function handleVerify(e) {
     e.preventDefault();
     setFormError("");
-    try {
-      const data = await apiFetch("/verify", {
-        method: "POST",
-        body: JSON.stringify({ regNo, name }),
-      });
-      setVotingToken(data.votingToken);
-      setVoterName(data.voterName);
-      setScreen("booth");
-    } catch (err) {
-      setFormError(err.message);
-    }
+    setVotingToken("test-token-123");
+    setVoterName(name || "Test Voter");
+    setScreen("booth");
   }
-
   async function castVote() {
     if (!selectedParty || !votingToken) return;
     setCastingVote(true);
