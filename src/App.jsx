@@ -248,13 +248,7 @@ export default function App() {
 
   // Auto-return from thank-you screen
   useEffect(() => {
-    if (screen === "thanks") {
-      const t = setTimeout(() => {
-        setRegNo(""); setName(""); setVotingToken(null); setVoterName(""); setFormError("");
-        setScreen("voter");
-      }, 3200);
-      return () => clearTimeout(t);
-    }
+    setFormError("");
   }, [screen]);
 
  async function handleVerify(e) {
