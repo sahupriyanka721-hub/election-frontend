@@ -38,19 +38,11 @@ export default function App() {
     setFormError("");
     setVotingToken("test-token-123");
     setVoterName(name || "Test Voter");
-    setScreen("booth");
-  }
-
-  async function castVote() {
-    if (!selectedParty || !votingToken) return;
-    setCastingVote(true);
     
-    setTimeout(() => {
-      setCastingVote(false);
-      setHasVotedLocally(true);
-      localStorage.setItem("hasVoted", "true"); // Permanently save vote state
-      setScreen("thankyou");
-    }, 1000);
+    // Direct thank you screen par bhejne ke liye vote save aur setScreen update
+    setHasVotedLocally(true);
+    localStorage.setItem("hasVoted", "true");
+    setScreen("thankyou");
   }
 
   function handleReset() {
@@ -89,58 +81,19 @@ export default function App() {
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }} />
               </div>
 
-              <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#1e293b", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>
-                🗳 Continue to Vote
+              <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#16a34a", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>
+                Submit & Finish 🗳
               </button>
             </form>
           </div>
         )}
 
-        {/* 2. VOTING BOOTH SCREEN */}
-        {screen === "booth" && (
-          <div>
-            <h2>Welcome, {voterName}! 👋</h2>
-            <p style={{ fontSize: "14px", color: "#475569" }}>Apne pasandida candidate/party ko select karke vote karein.</p>
-            
-            <div style={{ margin: "20px 0" }}>
-              {parties.map((party) => (
-                <div 
-                  key={party._id} 
-                  onClick={() => setSelectedParty(party)}
-                  style={{ 
-                    padding: "12px", 
-                    border: selectedParty?._id === party._id ? "2px solid #2563eb" : "1px solid #cbd5e1", 
-                    backgroundColor: selectedParty?._id === party._id ? "#eff6ff" : "#fff",
-                    borderRadius: "8px", 
-                    marginBottom: "10px", 
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px"
-                  }}
-                >
-                  <span style={{ fontSize: "20px" }}>{party.symbol}</span>
-                  <span style={{ fontWeight: "bold" }}>{party.name}</span>
-                </div>
-              ))}
-            </div>
-
-            <button 
-              onClick={castVote} 
-              disabled={!selectedParty || castingVote}
-              style={{ width: "100%", padding: "12px", backgroundColor: selectedParty ? "#16a34a" : "#94a3b8", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              {castingVote ? "Submitting Vote..." : "Submit Vote 🗳"}
-            </button>
-          </div>
-        )}
-
-        {/* 3. THANK YOU SCREEN */}
+        {/* 2. THANK YOU SCREEN */}
         {screen === "thankyou" && (
           <div style={{ textAlign: "center", padding: "10px 0" }}>
             <h1 style={{ fontSize: "40px", margin: "0 0 10px 0" }}>🎉</h1>
-            <h2 style={{ color: "#16a34a", margin: "0 0 10px 0" }}>Thank You for Voting!</h2>
-            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "25px" }}>Aapka vote successfully submit aur count ho gaya hai.</p>
+            <h2 style={{ color: "#16a34a", margin: "0 0 10px 0" }}>Thank You!</h2>
+            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "25px" }}>Aapki details successfully verify ho gayi hain.</p>
             
             <button 
               onClick={() => setScreen("results")} 
@@ -151,7 +104,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 4. CONGRATULATIONS / RESULTS SCREEN */}
+        {/* 3. CONGRATULATIONS / RESULTS SCREEN */}
         {screen === "results" && (
           <div style={{ textAlign: "center", padding: "10px 0" }}>
             <h1 style={{ fontSize: "45px", margin: "0 0 10px 0" }}>🎉🎊</h1>
