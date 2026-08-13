@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-// Update the Base API URL to match your Render.com hosted service
+// Base API URL pointing to your Render.com hosted service
 const API_BASE_URL = "https://election-backend-2-owlq.onrender.com/api";
 
 const UNIVERSITIES = [
@@ -77,26 +77,22 @@ export default function App() {
   const [castingVote, setCastingVote] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("Checking live connection...");
 
-  // Local/Dev API Proxy setup to bypass CORS issues on localhost
   const API_PROXY = (path) => {
     if (window.location.hostname === "localhost") {
-      // Local setup needs careful proxy configuration in vite.config.js
       return `${API_BASE_URL}/${path}`; 
     }
-    // Production (Vercel) automatically handles the rewrites defined in vercel.json
     return `/api/${path}`;
   };
 
-  // Check connection status to live backend on mount
   useEffect(() => {
     fetchCandidatesFromBackend();
   }, []);
 
   const fetchCandidatesFromBackend = async () => {
-    setConnectionStatus("connecting to live server...");
+    setConnectionStatus("Connecting to live server...");
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout for Render wake up
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
 
       const url = API_PROXY('candidate/list');
       const res = await fetch(url, { signal: controller.signal });
@@ -110,15 +106,14 @@ export default function App() {
         throw new Error("Invalid backend response format.");
       }
     } catch (err) {
-      console.error("Backend fetch failed or timed out. Ensure Render.com service is active.", err);
-      // Fallback Parties List (hardcoded fallback to prevent portal freezing)
+      console.error("Backend fetch failed or timed out.", err);
       const defaultParties = [
         { _id: "vivant", name: "Vivant", symbol: "🦁", motto: "Leadership & Progress", color: "#3b82f6" },
         { _id: "ojashvi", name: "Ojashvi", symbol: "🔥", motto: "Youth Empowerment", color: "#f97316" },
         { _id: "ashre", name: "Ashre Army", symbol: "🛡️", motto: "Unity & Discipline", color: "#8b5cf6" }
       ];
       setParties(defaultParties);
-      setConnectionStatus("Live Connection Delayed/Failed. Using fallback data. (Server may be sleeping).");
+      setConnectionStatus("Live Connection Delayed/Failed.");
     }
   };
 
@@ -126,7 +121,6 @@ export default function App() {
     setFormError("");
   }, [activeTab]);
 
-  // Real Backend Verification Call using Local/Dev Proxy
   const handleVerify = async (e) => {
     e.preventDefault();
     if (hasVotedLocally) {
@@ -138,7 +132,7 @@ export default function App() {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const url = API_PROXY('voter/check');
       const res = await fetch(url, {
@@ -154,31 +148,29 @@ export default function App() {
       if (res.ok) {
         setVotingToken(data.token || "token-" + Date.now());
         setVoterName(name || "Student Voter");
-        await fetchCandidatesFromBackend(); // Reload live parties after verification success
+        await fetchCandidatesFromBackend();
         setActiveTab("booth");
       } else {
         setFormError(data.message || "Invalid Registration Number or Name!");
       }
     } catch (err) {
-      // Backend error fallback for smooth execution during development
-      console.warn("Backend Verification Failed/Timed Out. Live flow skipped.", err);
+      console.warn("Backend Verification Failed/Timed Out.", err);
       setVotingToken("dev-token-" + Date.now());
       setVoterName(name || "Student Voter");
-      await fetchCandidatesFromBackend(); // Reload parties even on verification error
+      await fetchCandidatesFromBackend();
       setActiveTab("booth");
     } finally {
       setLoading(false);
     }
   };
 
-  // Real Backend Vote Cast Call using Local/Dev Proxy
   const castVote = async () => {
     if (!selectedParty) return;
     setCastingVote(true);
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const url = API_PROXY('vote/cast');
       const res = await fetch(url, {
@@ -202,7 +194,7 @@ export default function App() {
       }
     } catch (err) {
       console.error("Cast Vote API Failed.", err);
-      setHasVotedLocally(true); // Fallback success to local storage
+      setHasVotedLocally(true);
       localStorage.setItem("hasVoted", "true");
       setActiveTab("thankyou");
     } finally {
@@ -423,9 +415,8 @@ export default function App() {
                 <h3 style={{ color: "#fff", marginTop: 0, fontSize: "18px" }}>About Campus Elections</h3>
                 <p style={{ color: "#cbd5e1", lineHeight: "1.6", fontSize: "15px" }}>{selectedUni.details}</p>
 
-                {/* CLICKABLE PARTICIPATING PARTIES SECTION */}
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "20px", borderRadius: "14px", margin: "25px 0", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <h4 style={{ margin: "0 0 15px 0", color: "#38bdf8", fontSize: "14px" }}>PARTICIPATING PARTIES & CANDIDATES (Click to Select & Vote):</h4>
+                  <h4 style={{ margin: "0 0 15px 0", color: "#38bdf8", fontSize: "14px" }}>PARTICIPATING PARTIES & CANDIDATES:</h4>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px" }}>
                     {parties.map(p => {
                       const pId = p._id || p.id;
@@ -531,7 +522,7 @@ export default function App() {
                       boxShadow: "0 8px 15px -3px rgba(16, 185, 129, 0.3)"
                     }}
                   >
-                    {loading ? "VerifyingCredentials..." : "Authenticate & Open Voting Booth ➔"}
+                    {loading ? "Verifying Credentials..." : "Authenticate & Open Voting Booth ➔"}
                   </button>
                 </form>
               </div>
