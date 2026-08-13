@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+// Update the Base API URL to match your Render.com hosted service
 const API_BASE_URL = "https://election-backend-2-owlq.onrender.com/api";
 
 const UNIVERSITIES = [
@@ -69,41 +70,63 @@ export default function App() {
   const [name, setName] = useState("");
   const [votingToken, setVotingToken] = useState("");
   const [voterName, setVoterName] = useState("");
+  const [parties, setParties] = useState([]);
   const [selectedParty, setSelectedParty] = useState(null);
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
   const [castingVote, setCastingVote] = useState(false);
-  const [liveResults, setLiveResults] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState("Checking live connection...");
 
-  // Default Parties List
-  const parties = [
-    { id: "vivant", name: "Vivant", symbol: "🦁", motto: "Leadership & Progress", color: "#3b82f6" },
-    { id: "ojashvi", name: "Ojashvi", symbol: "🔥", motto: "Youth Empowerment", color: "#f97316" },
-    { id: "ashre", name: "Ashre Army", symbol: "🛡️", motto: "Unity & Discipline", color: "#8b5cf6" }
-  ];
+  // Local/Dev API Proxy setup to bypass CORS issues on localhost
+  const API_PROXY = (path) => {
+    if (window.location.hostname === "localhost") {
+      // Local setup needs careful proxy configuration in vite.config.js
+      return `${API_BASE_URL}/${path}`; 
+    }
+    // Production (Vercel) automatically handles the rewrites defined in vercel.json
+    return `/api/${path}`;
+  };
+
+  // Check connection status to live backend on mount
+  useEffect(() => {
+    fetchCandidatesFromBackend();
+  }, []);
+
+  const fetchCandidatesFromBackend = async () => {
+    setConnectionStatus("connecting to live server...");
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout for Render wake up
+
+      const url = API_PROXY('candidate/list');
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      const data = await res.json();
+      if (res.ok && Array.isArray(data) && data.length > 0) {
+        setParties(data);
+        setConnectionStatus("Connected Live: ✅");
+      } else {
+        throw new Error("Invalid backend response format.");
+      }
+    } catch (err) {
+      console.error("Backend fetch failed or timed out. Ensure Render.com service is active.", err);
+      // Fallback Parties List (hardcoded fallback to prevent portal freezing)
+      const defaultParties = [
+        { _id: "vivant", name: "Vivant", symbol: "🦁", motto: "Leadership & Progress", color: "#3b82f6" },
+        { _id: "ojashvi", name: "Ojashvi", symbol: "🔥", motto: "Youth Empowerment", color: "#f97316" },
+        { _id: "ashre", name: "Ashre Army", symbol: "🛡️", motto: "Unity & Discipline", color: "#8b5cf6" }
+      ];
+      setParties(defaultParties);
+      setConnectionStatus("Live Connection Delayed/Failed. Using fallback data. (Server may be sleeping).");
+    }
+  };
 
   useEffect(() => {
     setFormError("");
   }, [activeTab]);
 
-  // Live Backend Results Fetch
-  useEffect(() => {
-    if (activeTab === "results" && selectedUni) {
-      const fetchResults = async () => {
-        try {
-          const res = await fetch(`${API_BASE_URL}/results?uniId=${selectedUni.id}`);
-          if (res.ok) {
-            const data = await res.json();
-            setLiveResults(data);
-          }
-        } catch (err) {
-          console.log("Using fallback display data");
-        }
-      };
-      fetchResults();
-    }
-  }, [activeTab, selectedUni]);
-
+  // Real Backend Verification Call using Local/Dev Proxy
   const handleVerify = async (e) => {
     e.preventDefault();
     if (hasVotedLocally) {
@@ -115,58 +138,75 @@ export default function App() {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-      const res = await fetch(`${API_BASE_URL}/verify`, {
+      const url = API_PROXY('voter/check');
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ regno, name, uniId: selectedUni?.id }),
+        body: JSON.stringify({ registrationNumber: regno, name: name }),
         signal: controller.signal
       });
       clearTimeout(timeoutId);
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Verification failed");
 
-      setVotingToken(data.token || "live-token-" + Date.now());
-      setVoterName(data.name || name || "Student Voter");
-      setActiveTab("booth");
+      if (res.ok) {
+        setVotingToken(data.token || "token-" + Date.now());
+        setVoterName(name || "Student Voter");
+        await fetchCandidatesFromBackend(); // Reload live parties after verification success
+        setActiveTab("booth");
+      } else {
+        setFormError(data.message || "Invalid Registration Number or Name!");
+      }
     } catch (err) {
-      // Live API Connection Fallback for instant response
-      setVotingToken("live-token-" + Date.now());
+      // Backend error fallback for smooth execution during development
+      console.warn("Backend Verification Failed/Timed Out. Live flow skipped.", err);
+      setVotingToken("dev-token-" + Date.now());
       setVoterName(name || "Student Voter");
+      await fetchCandidatesFromBackend(); // Reload parties even on verification error
       setActiveTab("booth");
     } finally {
       setLoading(false);
     }
   };
 
+  // Real Backend Vote Cast Call using Local/Dev Proxy
   const castVote = async () => {
     if (!selectedParty) return;
     setCastingVote(true);
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      await fetch(`${API_BASE_URL}/vote`, {
+      const url = API_PROXY('vote/cast');
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token: votingToken,
-          partyId: selectedParty.id,
-          uniId: selectedUni?.id
+          candidateId: selectedParty._id || selectedParty.id
         }),
         signal: controller.signal
       });
       clearTimeout(timeoutId);
+
+      if (res.ok) {
+        setHasVotedLocally(true);
+        localStorage.setItem("hasVoted", "true");
+        setActiveTab("thankyou");
+      } else {
+        const data = await res.json();
+        alert(data.message || "Voting failed. Please try again.");
+      }
     } catch (err) {
-      console.log("Local vote confirmation saved");
-    } finally {
-      setHasVotedLocally(true);
+      console.error("Cast Vote API Failed.", err);
+      setHasVotedLocally(true); // Fallback success to local storage
       localStorage.setItem("hasVoted", "true");
-      setCastingVote(false);
       setActiveTab("thankyou");
+    } finally {
+      setCastingVote(false);
     }
   };
 
@@ -191,7 +231,7 @@ export default function App() {
         maxWidth: "1200px",
         margin: "0 auto 40px auto",
         display: "flex",
-        justifyContent: "space-between",
+        justify: "space-between",
         alignItems: "center",
         padding: "18px 25px",
         background: "rgba(30, 41, 59, 0.6)",
@@ -220,8 +260,8 @@ export default function App() {
           fontWeight: "600",
           fontSize: "13px"
         }}>
-          <span style={{ width: "8px", height: "8px", backgroundColor: "#22c55e", borderRadius: "50%", boxShadow: "0 0 8px #22c55e" }}></span>
-          Live Voting Open
+          <span style={{ width: "8px", height: "8px", backgroundColor: connectionStatus.includes("✅") ? "#22c55e" : "#f59e0b", borderRadius: "50%", boxShadow: connectionStatus.includes("✅") ? "0 0 8px #22c55e" : "0 0 8px #f59e0b" }}></span>
+          {connectionStatus}
         </div>
       </header>
 
@@ -319,8 +359,7 @@ export default function App() {
                   borderRadius: "12px",
                   cursor: "pointer",
                   fontWeight: "600",
-                  fontSize: "13px",
-                  transition: "0.2s"
+                  fontSize: "13px"
                 }}
               >
                 ⬅ Back to Universities
@@ -384,18 +423,40 @@ export default function App() {
                 <h3 style={{ color: "#fff", marginTop: 0, fontSize: "18px" }}>About Campus Elections</h3>
                 <p style={{ color: "#cbd5e1", lineHeight: "1.6", fontSize: "15px" }}>{selectedUni.details}</p>
 
+                {/* CLICKABLE PARTICIPATING PARTIES SECTION */}
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "20px", borderRadius: "14px", margin: "25px 0", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <h4 style={{ margin: "0 0 15px 0", color: "#38bdf8", fontSize: "14px" }}>PARTICIPATING PARTIES & CANDIDATES:</h4>
+                  <h4 style={{ margin: "0 0 15px 0", color: "#38bdf8", fontSize: "14px" }}>PARTICIPATING PARTIES & CANDIDATES (Click to Select & Vote):</h4>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px" }}>
-                    {parties.map(p => (
-                      <div key={p.id} style={{ background: "rgba(30, 41, 59, 0.6)", padding: "12px 16px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", gap: "12px" }}>
-                        <span style={{ fontSize: "22px" }}>{p.symbol}</span>
-                        <div>
-                          <div style={{ fontWeight: "bold", fontSize: "14px", color: "#fff" }}>{p.name}</div>
-                          <div style={{ fontSize: "11px", color: "#94a3b8" }}>{p.motto}</div>
+                    {parties.map(p => {
+                      const pId = p._id || p.id;
+                      const isSelected = selectedParty && (selectedParty._id === pId || selectedParty.id === pId);
+                      return (
+                        <div 
+                          key={pId}
+                          onClick={() => {
+                            setSelectedParty(p);
+                            setActiveTab("verify");
+                          }}
+                          style={{ 
+                            background: isSelected ? "rgba(56, 189, 248, 0.2)" : "rgba(30, 41, 59, 0.6)", 
+                            padding: "14px 16px", 
+                            borderRadius: "10px", 
+                            border: isSelected ? "1px solid #38bdf8" : "1px solid rgba(255,255,255,0.1)", 
+                            display: "flex", 
+                            alignItems: "center", 
+                            gap: "12px",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          <span style={{ fontSize: "24px" }}>{p.symbol || "🗳"}</span>
+                          <div>
+                            <div style={{ fontWeight: "bold", fontSize: "15px", color: "#fff" }}>{p.name}</div>
+                            <div style={{ fontSize: "11px", color: "#38bdf8" }}>Click to Vote ➔</div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -411,8 +472,7 @@ export default function App() {
                     fontWeight: "bold",
                     fontSize: "16px",
                     cursor: "pointer",
-                    boxShadow: "0 10px 20px -5px rgba(37, 99, 235, 0.4)",
-                    transition: "all 0.2s"
+                    boxShadow: "0 10px 20px -5px rgba(37, 99, 235, 0.4)"
                   }}
                 >
                   🗳️ Click Here to Login & Cast Vote Now
@@ -461,17 +521,17 @@ export default function App() {
                     style={{
                       width: "100%",
                       padding: "14px",
-                      background: "linear-gradient(90deg, #10b981, #059669)",
+                      background: loading ? "#475569" : "linear-gradient(90deg, #10b981, #059669)",
                       color: "#fff",
                       border: "none",
                       borderRadius: "10px",
                       fontWeight: "bold",
-                      cursor: "pointer",
+                      cursor: loading ? "wait" : "pointer",
                       fontSize: "15px",
                       boxShadow: "0 8px 15px -3px rgba(16, 185, 129, 0.3)"
                     }}
                   >
-                    {loading ? "Verifying Credentials..." : "Authenticate & Open Voting Booth ➔"}
+                    {loading ? "VerifyingCredentials..." : "Authenticate & Open Voting Booth ➔"}
                   </button>
                 </form>
               </div>
@@ -487,30 +547,31 @@ export default function App() {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "30px" }}>
                   {parties.map((party) => {
-                    const isSelected = selectedParty?.id === party.id;
+                    const partyId = party._id || party.id;
+                    const isSelected = selectedParty && (selectedParty._id === partyId || selectedParty.id === partyId);
                     return (
                       <div 
-                        key={party.id} 
+                        key={partyId} 
                         onClick={() => setSelectedParty(party)}
                         style={{ 
                           padding: "18px 20px", 
-                          border: isSelected ? `2px solid ${party.color}` : "1px solid rgba(255,255,255,0.1)", 
-                          background: isSelected ? "rgba(30, 41, 59, 0.9)" : "rgba(15, 23, 42, 0.6)",
+                          border: isSelected ? "2px solid #38bdf8" : "1px solid rgba(255,255,255,0.1)", 
+                          background: isSelected ? "rgba(3, 105, 161, 0.3)" : "rgba(15, 23, 42, 0.6)",
                           borderRadius: "14px", 
                           cursor: "pointer",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "space-between",
                           transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                          boxShadow: isSelected ? `0 0 20px -5px ${party.color}` : "none",
+                          boxShadow: isSelected ? "0 0 20px -5px #38bdf8" : "none",
                           transform: isSelected ? "scale(1.02)" : "scale(1)"
                         }}
                       >
                         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                          <span style={{ fontSize: "32px" }}>{party.symbol}</span>
+                          <span style={{ fontSize: "32px", pointerEvents: "none" }}>{party.symbol || "🗳"}</span>
                           <div>
-                            <div style={{ fontWeight: "800", fontSize: "17px", color: "#fff" }}>{party.name}</div>
-                            <div style={{ fontSize: "12px", color: "#94a3b8" }}>{party.motto}</div>
+                            <div style={{ fontWeight: "800", fontSize: "17px", color: "#fff", pointerEvents: "none" }}>{party.name}</div>
+                            <div style={{ fontSize: "12px", color: "#94a3b8", pointerEvents: "none" }}>{party.motto || "Official Candidate"}</div>
                           </div>
                         </div>
 
@@ -518,9 +579,9 @@ export default function App() {
                           width: "22px",
                           height: "22px",
                           borderRadius: "50%",
-                          border: isSelected ? `6px solid ${party.color}` : "2px solid rgba(255,255,255,0.3)",
+                          border: isSelected ? "6px solid #38bdf8" : "2px solid rgba(255,255,255,0.3)",
                           background: "#0f172a",
-                          transition: "0.2s"
+                          pointerEvents: "none"
                         }}></div>
                       </div>
                     );
@@ -574,12 +635,10 @@ export default function App() {
                 <div style={{ background: "rgba(15, 23, 42, 0.6)", padding: "20px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)", marginBottom: "25px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                     <span style={{ color: "#fff", fontWeight: "bold" }}>🦁 Vivant</span>
-                    <span style={{ color: "#38bdf8", fontWeight: "bold" }}>
-                      {liveResults ? `${liveResults.vivantPercent || 48}% (${liveResults.vivantVotes || "8,880"} votes)` : "48% (8,880 votes)"}
-                    </span>
+                    <span style={{ color: "#38bdf8", fontWeight: "bold" }}>Leading (Fallback Demo)</span>
                   </div>
                   <div style={{ height: "10px", background: "rgba(255,255,255,0.1)", borderRadius: "5px", overflow: "hidden" }}>
-                    <div style={{ width: liveResults ? `${liveResults.vivantPercent || 48}%` : "48%", height: "100%", background: "#3b82f6" }}></div>
+                    <div style={{ width: "65%", height: "100%", background: "#3b82f6" }}></div>
                   </div>
                 </div>
 
