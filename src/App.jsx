@@ -30,28 +30,26 @@ export default function App() {
     setFormError("");
   }, [screen]);
 
-  // Backend se candidates/parties load karne ke liye
+  // Updated Party List
+  const customParties = [
+    { _id: "1", name: "Vivant", symbol: "🦁" },
+    { _id: "2", name: "Ojashvi", symbol: "🔥" },
+    { _id: "3", name: "Ashre Army", symbol: "🛡️" }
+  ];
+
+  // Fetch candidates/parties from backend
   const fetchParties = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/candidate/list`);
       const data = await res.json();
-      if (res.ok && Array.isArray(data)) {
+      if (res.ok && Array.isArray(data) && data.length > 0) {
         setParties(data);
       } else {
-        // Fallback data agar endpoint different ho
-        setParties([
-          { _id: "1", name: "Student Welfare Party", symbol: "📚" },
-          { _id: "2", name: "Youth Progress Front", symbol: "🚀" },
-          { _id: "3", name: "United Students Alliance", symbol: "🤝" }
-        ]);
+        setParties(customParties);
       }
     } catch (err) {
-      console.log("Backend Candidates Load Error, Using Default:", err);
-      setParties([
-        { _id: "1", name: "Student Welfare Party", symbol: "📚" },
-        { _id: "2", name: "Youth Progress Front", symbol: "🚀" },
-        { _id: "3", name: "United Students Alliance", symbol: "🤝" }
-      ]);
+      console.log("Backend Candidates Load Error, Using Custom List:", err);
+      setParties(customParties);
     }
   };
 
@@ -59,7 +57,7 @@ export default function App() {
   async function handleVerify(e) {
     e.preventDefault();
     if (hasVotedLocally) {
-      setFormError("Aap pehle hi vote de chuke hain!");
+      setFormError("You have already cast your vote!");
       return;
     }
     setFormError("");
@@ -114,7 +112,7 @@ export default function App() {
         setScreen("thankyou");
       } else {
         const data = await res.json();
-        alert(data.message || "Vote submit nahi ho paya, firse try karein.");
+        alert(data.message || "Failed to submit vote. Please try again.");
       }
     } catch (err) {
       // Fallback update
@@ -128,7 +126,7 @@ export default function App() {
 
   function handleAdminRegister(e) {
     e.preventDefault();
-    setAdminMsg("Admin verified!");
+    setAdminMsg("Admin verified successfully!");
     setTimeout(() => {
       setScreen("results");
     }, 1000);
@@ -159,8 +157,8 @@ export default function App() {
         {screen === "verify" && (
           <div>
             <span style={{ fontSize: "12px", letterSpacing: "1px", color: "#64748b", fontWeight: "bold" }}>🛡 VOTER CHECK-IN</span>
-            <h2 style={{ margin: "10px 0", color: "#0f172a" }}>Apni pehchaan confirm karein</h2>
-            <p style={{ fontSize: "14px", color: "#475569" }}>Registration number aur naam daalo jaisa list mein register hai.</p>
+            <h2 style={{ margin: "10px 0", color: "#0f172a" }}>Confirm Your Identity</h2>
+            <p style={{ fontSize: "14px", color: "#475569" }}>Please enter your registration number and full name as registered in the list.</p>
             
             <form onSubmit={handleVerify} style={{ marginTop: "20px" }}>
               {formError && <div style={{ color: "#dc2626", marginBottom: "10px", fontSize: "14px" }}>{formError}</div>}
@@ -187,6 +185,7 @@ export default function App() {
           <div>
             <span style={{ fontSize: "12px", letterSpacing: "1px", color: "#2563eb", fontWeight: "bold" }}>🔑 ADMIN PORTAL</span>
             <h2 style={{ margin: "10px 0", color: "#0f172a" }}>Admin Access</h2>
+            <p style={{ fontSize: "14px", color: "#475569" }}>Enter credentials to access admin controls.</p>
             
             <form onSubmit={handleAdminRegister} style={{ marginTop: "20px" }}>
               {adminMsg && <div style={{ color: "#16a34a", marginBottom: "10px", fontSize: "14px" }}>{adminMsg}</div>}
@@ -216,7 +215,7 @@ export default function App() {
         {screen === "booth" && (
           <div>
             <h2>Welcome, {voterName}! 👋</h2>
-            <p style={{ fontSize: "14px", color: "#475569" }}>Apne pasandida candidate/party ko select karein:</p>
+            <p style={{ fontSize: "14px", color: "#475569" }}>Select your preferred candidate or party:</p>
             
             <div style={{ margin: "20px 0" }}>
               {parties.map((party) => (
@@ -256,7 +255,7 @@ export default function App() {
           <div style={{ textAlign: "center", padding: "10px 0" }}>
             <h1 style={{ fontSize: "40px", margin: "0 0 10px 0" }}>🎉</h1>
             <h2 style={{ color: "#16a34a", margin: "0 0 10px 0" }}>Thank You for Voting!</h2>
-            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "25px" }}>Aapka vote backend server par receive ho gaya hai.</p>
+            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "25px" }}>Your vote has been successfully recorded on the backend server.</p>
             
             <button 
               onClick={() => setScreen("results")} 
@@ -272,18 +271,18 @@ export default function App() {
           <div style={{ textAlign: "center", padding: "10px 0" }}>
             <h1 style={{ fontSize: "45px", margin: "0 0 10px 0" }}>🎉🎊</h1>
             <h2 style={{ color: "#1e1b4b", margin: "0 0 10px 0" }}>Congratulations!</h2>
-            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "20px" }}>Election process successfully finish ho chuka hai!</p>
+            <p style={{ color: "#475569", fontSize: "14px", marginBottom: "20px" }}>The election process has concluded successfully!</p>
             
             <div style={{ backgroundColor: "#f1f5f9", padding: "15px", borderRadius: "8px", textAlign: "left", marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "#0f172a" }}>🏆 Current Winner Leading:</h4>
-              <p style={{ margin: 0, fontWeight: "bold", color: "#16a34a" }}>📚 Student Welfare Party</p>
+              <h4 style={{ margin: "0 0 10px 0", color: "#0f172a" }}>🏆 Current Leading Party:</h4>
+              <p style={{ margin: 0, fontWeight: "bold", color: "#16a34a" }}>🦁 Vivant</p>
             </div>
 
             <button 
               onClick={handleReset} 
               style={{ width: "100%", padding: "10px", backgroundColor: "#dc2626", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
             >
-              🔄 Reset Voting Status (For Test)
+              🔄 Reset Voting Status (For Testing)
             </button>
           </div>
         )}
