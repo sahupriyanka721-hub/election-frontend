@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// Fallback dynamic parties for each university
 const UNIVERSITY_DATA = {
   "Graphic Era University": [
     { id: "geu_1", partyName: "GEU United Front", motto: "Tech & Innovation Excellence" },
@@ -91,7 +90,7 @@ function App() {
               <div
                 key={uni.id}
                 onClick={() => handleSelectUniversity(uni)}
-                style={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px", cursor: "pointer", transition: "0.3s" }}
+                style={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px", cursor: "pointer" }}
               >
                 <div style={{ fontSize: "40px" }}>{uni.icon}</div>
                 <h3>{uni.name}</h3>
