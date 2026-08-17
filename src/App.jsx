@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider, db } from './firebase';
-import { signInWithRedirect, signOut, onAuthStateChanged, getRedirectResult } from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 function App() {
@@ -46,17 +46,24 @@ function App() {
   ];
 
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-
-    getRedirectResult(auth).catch((error) => {
-      console.error("Redirect Login Error:", error);
-    });
+    return () => unsubscribe();
   }, []);
 
-  const handleGoogleLogin = () => {
-    signInWithRedirect(auth, googleProvider);
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("Logged in successfully:", result.user);
+    } catch (error) {
+      console.error("Login Error details:", error.code, error.message);
+      if (error.code === 'auth/popup-blocked') {
+        alert("Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.");
+      } else {
+        alert(`Login failed: ${error.message}`);
+      }
+    }
   };
 
   const handleVote = async (id) => {
