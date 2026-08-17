@@ -5,8 +5,12 @@ import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 export default function App() {
   const [user, setUser] = useState(null);
   const [selectedUni, setSelectedUni] = useState(null);
+  const [activeTab, setActiveTab] = useState('voting');
 
-  const universities = [
+  const [candidateName, setCandidateName] = useState('');
+  const [candidateParty, setCandidateParty] = useState('');
+  
+  const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
       name: 'Graphic Era University', 
@@ -51,7 +55,7 @@ export default function App() {
         { id: 2, name: 'Neha Sharma', party: 'Students Association', votes: 145 }
       ]
     }
-  ];
+  ]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -76,6 +80,71 @@ export default function App() {
     }
   };
 
+  const handleVote = (uniId, candidateId) => {
+    if (!user) {
+      alert("Please sign in with Google first to cast your vote!");
+      return;
+    }
+
+    setUniversities(universities.map(uni => {
+      if (uni.id === uniId) {
+        const updatedCandidates = uni.candidates.map(cand => {
+          if (cand.id === candidateId) {
+            return { ...cand, votes: cand.votes + 1 };
+          }
+          return cand;
+        });
+        return { ...uni, candidates: updatedCandidates };
+      }
+      return uni;
+    }));
+
+    setSelectedUni(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        candidates: prev.candidates.map(c => c.id === candidateId ? { ...c, votes: c.votes + 1 } : c)
+      };
+    });
+
+    alert("Vote recorded successfully!");
+  };
+
+  const handleAddCandidate = (e) => {
+    e.preventDefault();
+    if (!user) {
+      alert("Please sign in with Google to register candidates!");
+      return;
+    }
+    if (!candidateName.trim() || !candidateParty.trim()) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const newCandidate = {
+      id: Date.now(),
+      name: candidateName,
+      party: candidateParty,
+      votes: 0
+    };
+
+    setUniversities(universities.map(uni => {
+      if (uni.id === selectedUni.id) {
+        return { ...uni, candidates: [...uni.candidates, newCandidate] };
+      }
+      return uni;
+    }));
+
+    setSelectedUni(prev => ({
+      ...prev,
+      candidates: [...prev.candidates, newCandidate]
+    }));
+
+    setCandidateName('');
+    setCandidateParty('');
+    alert("Candidate registered successfully for " + selectedUni.name);
+  };
+
   return (
     <div className="min-h-screen bg-[#0b0f17] text-gray-100 font-sans">
       <nav className="p-4 border-b border-gray-800 flex justify-between items-center max-w-7xl mx-auto">
@@ -84,7 +153,7 @@ export default function App() {
           <p className="text-[10px] text-gray-400">National Campus Election & Event Management Portal</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs text-green-400 flex items-center gap-1">
+          <span className="text-xs text-green-400 hidden md:flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span> Live Connection Active
           </span>
           {user ? (
@@ -120,7 +189,7 @@ export default function App() {
                   <div>
                     <div className="flex justify-between items-start mb-3">
                       <span className="text-xl">🏛️</span>
-                      <span className="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800">Elections & Events Active</span>
+                      <span className="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800">Elections Active</span>
                     </div>
                     <h3 className="font-bold text-lg text-white mb-1">{uni.name}</h3>
                     <p className="text-xs text-blue-400 mb-2">📍 {uni.location}</p>
@@ -131,7 +200,7 @@ export default function App() {
                       <span>Eligible: <strong className="text-white">{uni.eligible}</strong></span>
                     </div>
                     <button 
-                      onClick={() => setSelectedUni(uni)}
+                      onClick={() => { setSelectedUni(uni); setActiveTab('voting'); }}
                       className="w-full bg-gray-800 hover:bg-blue-600 text-sm py-2 rounded transition font-medium text-center text-white"
                     >
                       Open Portal →
@@ -151,36 +220,91 @@ export default function App() {
             </button>
             
             <h2 className="text-3xl font-bold text-white mb-1">{selectedUni.name}</h2>
-            <p className="text-gray-400 mb-6">Student Union Election 2026 - Cast Your Vote</p>
+            <p className="text-gray-400 mb-6">Student Union Election 2026 Portal</p>
 
             <div className="flex gap-4 mb-8 border-b border-gray-800 pb-4">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium">Student Voting Booth</button>
-              <button className="text-gray-400 hover:text-white px-4 py-2 rounded text-sm font-medium">Event Manager Portal (Org Registration)</button>
+              <button 
+                onClick={() => setActiveTab('voting')}
+                className={`px-4 py-2 rounded text-sm font-medium transition ${activeTab === 'voting' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white bg-gray-900'}`}
+              >
+                Student Voting Booth
+              </button>
+              <button 
+                onClick={() => setActiveTab('manager')}
+                className={`px-4 py-2 rounded text-sm font-medium transition ${activeTab === 'manager' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white bg-gray-900'}`}
+              >
+                Event Manager Portal (Org Registration)
+              </button>
             </div>
 
-            <div className="space-y-4">
-              {selectedUni.candidates.map((cand) => (
-                <div key={cand.id} className="bg-gray-900 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
-                  <div>
-                    <span className="text-[10px] text-blue-400 font-semibold uppercase">Party: {cand.party}</span>
-                    <h4 className="font-bold text-sm text-white mt-1">Candidate: {cand.name}</h4>
-                    <p className="text-xs text-gray-400 mt-1">Total Votes: {cand.votes}</p>
+            {activeTab === 'voting' ? (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white mb-2">Active Candidates</h3>
+                {selectedUni.candidates.map((cand) => (
+                  <div key={cand.id} className="bg-gray-900 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] text-blue-400 font-semibold uppercase">Party: {cand.party}</span>
+                      <h4 className="font-bold text-sm text-white mt-1">Candidate: {cand.name}</h4>
+                      <p className="text-xs text-gray-400 mt-1">Total Votes: {cand.votes}</p>
+                    </div>
+                    <button 
+                      onClick={() => handleVote(selectedUni.id, cand.id)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded text-sm font-medium transition"
+                    >
+                      Vote
+                    </button>
                   </div>
-                  <button 
-                    onClick={() => {
-                      if(!user) {
-                        alert("Please sign in with Google first to vote!");
-                        return;
-                      }
-                      alert("Vote recorded successfully for " + cand.name);
-                    }}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded text-sm font-medium transition"
-                  >
-                    Vote
-                  </button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl">
+                <h3 className="text-xl font-bold text-white mb-2">Register New Candidate / Organization</h3>
+                <p className="text-xs text-gray-400 mb-6">Organizers can sign in with Google and register new candidates for {selectedUni.name}.</p>
+
+                {user ? (
+                  <form onSubmit={handleAddCandidate} className="space-y-4">
+                    <div>
+                      <label className="block text-xs text-gray-300 mb-1">Candidate Name</label>
+                      <input 
+                        type="text" 
+                        value={candidateName}
+                        onChange={(e) => setCandidateName(e.target.value)}
+                        placeholder="e.g. Amit Sharma"
+                        className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-300 mb-1">Party / Organization Name</label>
+                      <input 
+                        type="text" 
+                        value={candidateParty}
+                        onChange={(e) => setCandidateParty(e.target.value)}
+                        placeholder="e.g. Student Alliance"
+                        className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded text-sm font-medium transition"
+                    >
+                      Add Candidate to Election
+                    </button>
+                  </form>
+                ) : (
+                  <div className="text-center py-8 bg-gray-950 rounded border border-gray-800">
+                    <p className="text-sm text-gray-300 mb-4">You must be signed in with Google to register candidates.</p>
+                    <button 
+                      onClick={handleGoogleLogin}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded text-sm font-medium transition"
+                    >
+                      Sign in with Google Now
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </main>
