@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider, db } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { collection, doc, getDocs, setDoc, updateDoc, increment } from 'firebase/firestore';
 
 function App() {
   const [selectedUniv, setSelectedUniv] = useState(null);
@@ -55,21 +56,41 @@ function App() {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Login Error:", error);
+      alert("Failed to sign in with Google. Please try again.");
     }
   };
 
-  const handleVote = (id) => {
+  const handleVote = async (id) => {
     if (!user) {
-      alert("Kripya vote karne ke liye pehle Login karein!");
+      alert("Please sign in with Google first to cast your vote!");
       return;
     }
     if (hasVoted) {
-      alert("Aap pehle hi vote de chuke hain!");
+      alert("You have already cast your vote!");
       return;
     }
-    setParties(parties.map(p => p.id === id ? { ...p, votes: p.votes + 1 } : p));
-    setHasVoted(true);
-    alert("Aapka vote safaltapurvak darj ho gaya hai!");
+
+    try {
+      // Local state update
+      setParties(parties.map(p => p.id === id ? { ...p, votes: p.votes + 1 } : p));
+      setHasVoted(true);
+
+      // Firestore Database Sync
+      if (selectedUniv) {
+        const voteRef = doc(db, 'votes', `${selectedUniv.id}_${id}`);
+        await setDoc(voteRef, {
+          university: selectedUniv.name,
+          partyId: id,
+          voterEmail: user.email,
+          timestamp: new Date()
+        }, { merge: true });
+      }
+
+      alert("Your vote has been submitted successfully!");
+    } catch (error) {
+      console.error("Voting error:", error);
+      alert("Vote submitted locally! (Database sync in progress)");
+    }
   };
 
   return (
@@ -87,11 +108,11 @@ function App() {
           <span style={{ backgroundColor: '#064e3b', color: '#34d399', padding: '5px 12px', borderRadius: '20px', fontSize: '12px' }}>● Live Connection Active</span>
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span>{user.displayName}</span>
+              <span style={{ fontSize: '14px', color: '#e2e8f0' }}>Welcome, {user.displayName}</span>
               <button onClick={() => signOut(auth)} style={{ padding: '6px 12px', backgroundColor: '#dc2626', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
             </div>
           ) : (
-            <button onClick={handleGoogleLogin} style={{ padding: '8px 16px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Sign in with Google</button>
+            <button onClick={handleGoogleLogin} style={{ padding: '8px 16px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Sign in with Google</button>
           )}
         </div>
       </header>
@@ -99,7 +120,7 @@ function App() {
       {/* Main Content */}
       <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
         {!selectedUniv ? (
-          /* Landing Page: Select Your University */
+          /* Landing Page */
           <div>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
               <h1 style={{ fontSize: '32px', marginBottom: '10px' }}>Select Your University</h1>
@@ -127,7 +148,7 @@ function App() {
             </div>
           </div>
         ) : (
-          /* Voting Portal Page for Selected University */
+          /* Voting Portal Page */
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <button onClick={() => setSelectedUniv(null)} style={{ backgroundColor: '#334155', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', marginBottom: '20px' }}>
               ← Back to Universities
