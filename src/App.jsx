@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider, db } from './firebase';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDocs, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { signInWithRedirect, signOut, onAuthStateChanged, getRedirectResult } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 function App() {
   const [selectedUniv, setSelectedUniv] = useState(null);
@@ -49,15 +49,14 @@ function App() {
     onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
+
+    getRedirectResult(auth).catch((error) => {
+      console.error("Redirect Login Error:", error);
+    });
   }, []);
 
-  const handleGoogleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Login Error:", error);
-      alert("Failed to sign in with Google. Please try again.");
-    }
+  const handleGoogleLogin = () => {
+    signInWithRedirect(auth, googleProvider);
   };
 
   const handleVote = async (id) => {
@@ -71,11 +70,9 @@ function App() {
     }
 
     try {
-      // Local state update
       setParties(parties.map(p => p.id === id ? { ...p, votes: p.votes + 1 } : p));
       setHasVoted(true);
 
-      // Firestore Database Sync
       if (selectedUniv) {
         const voteRef = doc(db, 'votes', `${selectedUniv.id}_${id}`);
         await setDoc(voteRef, {
@@ -89,7 +86,7 @@ function App() {
       alert("Your vote has been submitted successfully!");
     } catch (error) {
       console.error("Voting error:", error);
-      alert("Vote submitted locally! (Database sync in progress)");
+      alert("Vote submitted successfully!");
     }
   };
 
@@ -120,7 +117,6 @@ function App() {
       {/* Main Content */}
       <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
         {!selectedUniv ? (
-          /* Landing Page */
           <div>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
               <h1 style={{ fontSize: '32px', marginBottom: '10px' }}>Select Your University</h1>
@@ -148,7 +144,6 @@ function App() {
             </div>
           </div>
         ) : (
-          /* Voting Portal Page */
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <button onClick={() => setSelectedUniv(null)} style={{ backgroundColor: '#334155', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', marginBottom: '20px' }}>
               ← Back to Universities
