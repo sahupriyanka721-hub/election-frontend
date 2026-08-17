@@ -1,185 +1,251 @@
-import React, { useState, useEffect } from 'react';
-import { auth, googleProvider, db } from './firebase';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDocs, getDocs } from 'firebase/firestore';
 
-function App() {
-  const [selectedUniv, setSelectedUniv] = useState(null);
+// Firebase configuration using environment variables
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+const db = getFirestore(app);
+
+export default function App() {
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
   const [user, setUser] = useState(null);
-  const [hasVoted, setHasVoted] = useState(false);
-
-  const [parties, setParties] = useState([
-    { id: 'abvp', name: 'ABVP', candidate: 'Aarav Sharma', votes: 120 },
-    { id: 'nsui', name: 'NSUI', candidate: 'Priya Verma', votes: 95 },
-    { id: 'aisa', name: 'AISA', candidate: 'Rohan Gupta', votes: 45 }
+  const [activeTab, setActiveTab] = useState('vote'); // 'vote' or 'events'
+  
+  // Event Manager Form State
+  const [orgName, setOrgName] = useState('');
+  const [eventName, setEventName] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [eventsList, setEventsList] = useState([
+    { id: 1, org: 'ABVP Council', name: 'Annual Youth Summit', date: '2026-08-25' },
+    { id: 2, org: 'NSUI wing', name: 'Campus Debate Competition', date: '2026-08-28' }
   ]);
 
+  // Dummy Universities List for Multiple Cards
   const universities = [
-    {
-      id: 'geu',
-      name: 'Graphic Era University',
-      location: 'Dehradun, Uttarakhand',
-      desc: 'Graphic Era (Deemed to be University) student union election portal.',
-      eligible: '18,500+'
-    },
-    {
-      id: 'amity',
-      name: 'Amity University',
-      location: 'Noida, Uttar Pradesh',
-      desc: 'Annual Student Council Election for Amity University main campus.',
-      eligible: '25,000+'
-    },
-    {
-      id: 'lpu',
-      name: 'Lovely Professional University',
-      location: 'Phagwara, Punjab',
-      desc: 'Official Campus Senate Election Portal.',
-      eligible: '35,000+'
-    },
-    {
-      id: 'cu',
-      name: 'Chandigarh University',
-      location: 'Mohali, Punjab',
-      desc: 'Central Student Representative Elections.',
-      eligible: '30,000+'
-    }
+    { id: 'graphic-era', name: 'Graphic Era University', location: 'Dehradun', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80' },
+    { id: 'amity', name: 'Amity University', location: 'Noida', image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&q=80' },
+    { id: 'lpu', name: 'Lovely Professional University', location: 'Punjab', image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=600&q=80' },
+    { id: 'chandigarh', name: 'Chandigarh University', location: 'Mohali', image: 'https://images.unsplash.com/photo-14982436915f1-8f15d7e7e641?auto=format&fit=crop&w=600&q=80' }
   ];
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+  // Candidates for Voting
+  const [candidates, setCandidates] = useState([
+    { id: 'abvp', party: 'ABVP', candidate: 'Aarav Sharma', votes: 120 },
+    { id: 'nsui', party: 'NSUI', candidate: 'Priya Verma', votes: 95 },
+    { id: 'aisa', party: 'AISA', candidate: 'Rohan Gupta', votes: 45 }
+  ]);
 
-  const handleGoogleLogin = async () => {
+  const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      console.log("Logged in successfully:", result.user);
+      setUser(result.user);
     } catch (error) {
-      console.error("Login Error details:", error.code, error.message);
-      if (error.code === 'auth/popup-blocked') {
-        alert("Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.");
-      } else {
-        alert(`Login failed: ${error.message}`);
-      }
+      alert("Login failed: " + error.message);
     }
   };
 
-  const handleVote = async (id) => {
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+  };
+
+  const handleVote = (candidateId) => {
     if (!user) {
-      alert("Please sign in with Google first to cast your vote!");
+      alert("Please login first to cast your vote!");
       return;
     }
-    if (hasVoted) {
-      alert("You have already cast your vote!");
+    setCandidates(candidates.map(c => c.id === candidateId ? { ...c, votes: c.votes + 1 } : c));
+    alert("Vote cast successfully!");
+  };
+
+  const handleAddEvent = (e) => {
+    e.preventDefault();
+    if (!orgName || !eventName || !eventDate) {
+      alert("Please fill all event details!");
       return;
     }
-
-    try {
-      setParties(parties.map(p => p.id === id ? { ...p, votes: p.votes + 1 } : p));
-      setHasVoted(true);
-
-      if (selectedUniv) {
-        const voteRef = doc(db, 'votes', `${selectedUniv.id}_${id}`);
-        await setDoc(voteRef, {
-          university: selectedUniv.name,
-          partyId: id,
-          voterEmail: user.email,
-          timestamp: new Date()
-        }, { merge: true });
-      }
-
-      alert("Your vote has been submitted successfully!");
-    } catch (error) {
-      console.error("Voting error:", error);
-      alert("Vote submitted successfully!");
-    }
+    const newEvt = { id: Date.now(), org: orgName, name: eventName, date: eventDate };
+    setEventsList([newEvt, ...eventsList]);
+    setOrgName('');
+    setEventName('');
+    setEventDate('');
+    alert("Event registered successfully by organization!");
   };
 
   return (
-    <div style={{ backgroundColor: '#0f172a', color: '#fff', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      {/* Header Bar */}
-      <header style={{ padding: '20px 40px', borderBottom: '1px solid #1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ backgroundColor: '#2563eb', padding: '8px 12px', borderRadius: '8px', fontWeight: 'bold' }}>🗳️</div>
-          <div>
-            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>UniVote Pro</h2>
-            <small style={{ color: '#64748b' }}>National Campus Election & Event Management Portal</small>
-          </div>
+    <div className="min-h-screen bg-gray-900 text-white font-sans">
+      {/* Navbar */}
+      <nav className="flex justify-between items-center px-6 py-4 bg-gray-800 border-b border-gray-700">
+        <div>
+          <h1 className="text-xl font-bold tracking-wider text-blue-400">UniVote Pro</h1>
+          <p className="text-xs text-gray-400">National Campus Election & Event Portal</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <span style={{ backgroundColor: '#064e3b', color: '#34d399', padding: '5px 12px', borderRadius: '20px', fontSize: '12px' }}>● Live Connection Active</span>
+        <div>
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '14px', color: '#e2e8f0' }}>Welcome, {user.displayName}</span>
-              <button onClick={() => signOut(auth)} style={{ padding: '6px 12px', backgroundColor: '#dc2626', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-300">Welcome, {user.displayName}</span>
+              <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 px-4 py-1.5 rounded text-sm font-medium">Logout</button>
             </div>
           ) : (
-            <button onClick={handleGoogleLogin} style={{ padding: '8px 16px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Sign in with Google</button>
+            <button onClick={handleLogin} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-medium">Sign in with Google</button>
           )}
         </div>
-      </header>
+      </nav>
 
-      {/* Main Content */}
-      <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-        {!selectedUniv ? (
+      {/* Main Content Area */}
+      <main className="p-8 max-w-6xl mx-auto">
+        {!selectedUniversity ? (
           <div>
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-              <h1 style={{ fontSize: '32px', marginBottom: '10px' }}>Select Your University</h1>
-              <p style={{ color: '#94a3b8' }}>Click on your institution to view candidates, manage events, access voter authentication, and cast votes.</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-              {universities.map((univ) => (
-                <div key={univ.id} style={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
-                      <span style={{ fontSize: '24px' }}>🏛️</span>
-                      <span style={{ backgroundColor: '#064e3b', color: '#34d399', padding: '4px 8px', borderRadius: '12px', fontSize: '10px' }}>Elections & Events Active</span>
-                    </div>
-                    <h3 style={{ margin: '0 0 5px 0' }}>{univ.name}</h3>
-                    <p style={{ color: '#e2e8f0', fontSize: '12px', margin: '0 0 10px 0' }}>📍 {univ.location}</p>
-                    <p style={{ color: '#94a3b8', fontSize: '13px', lineHeight: '1.4' }}>{univ.desc}</p>
-                  </div>
-                  <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <small style={{ color: '#64748b' }}>Eligible: <strong style={{ color: '#cbd5e1' }}>{univ.eligible}</strong></small>
-                    <button onClick={() => setSelectedUniv(univ)} style={{ backgroundColor: 'transparent', color: '#38bdf8', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>Open Portal ➔</button>
+            <h2 className="text-2xl font-semibold mb-2">Select Your University</h2>
+            <p className="text-gray-400 mb-6">Choose your university below to view elections, vote, or manage campus events.</p>
+            
+            {/* University Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {universities.map((uni) => (
+                <div 
+                  key={uni.id} 
+                  onClick={() => setSelectedUniversity(uni)}
+                  className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 cursor-pointer transition transform hover:-translate-y-1 shadow-lg"
+                >
+                  <img src={uni.image} alt={uni.name} className="h-40 w-full object-cover" />
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg mb-1">{uni.name}</h3>
+                    <p className="text-sm text-gray-400">{uni.location}</p>
+                    <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-sm py-2 rounded font-medium">Enter Portal</button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         ) : (
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <button onClick={() => setSelectedUniv(null)} style={{ backgroundColor: '#334155', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', marginBottom: '20px' }}>
+          /* Full Screen University Detail Portal */
+          <div>
+            <button 
+              onClick={() => setSelectedUniversity(null)}
+              className="mb-6 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm font-medium"
+            >
               ← Back to Universities
             </button>
-            <h2 style={{ fontSize: '28px', marginBottom: '5px' }}>{selectedUniv.name}</h2>
-            <p style={{ color: '#94a3b8', marginBottom: '30px' }}>Student Union Election 2026 - Cast Your Vote</p>
 
-            <div style={{ display: 'grid', gap: '20px' }}>
-              {parties.map((party) => (
-                <div key={party.id} style={{ border: '1px solid #334155', padding: '20px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b' }}>
-                  <div>
-                    <h3 style={{ margin: 0, color: '#38bdf8' }}>Party: {party.name}</h3>
-                    <p style={{ margin: '5px 0', color: '#e2e8f0', fontSize: '16px' }}>Candidate: <strong>{party.candidate}</strong></p>
-                    <small style={{ color: '#94a3b8' }}>Total Votes: {party.votes}</small>
-                  </div>
-                  <button 
-                    onClick={() => handleVote(party.id)}
-                    disabled={hasVoted}
-                    style={{ padding: '10px 24px', backgroundColor: hasVoted ? '#475569' : '#22c55e', color: '#fff', border: 'none', borderRadius: '6px', cursor: hasVoted ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-                    {hasVoted ? 'Voted' : 'Vote'}
-                  </button>
-                </div>
-              ))}
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mb-6">
+              <h2 className="text-3xl font-bold text-blue-400 mb-1">{selectedUniversity.name}</h2>
+              <p className="text-gray-400">Location: {selectedUniversity.location} | Student Union Election & Event Management Portal</p>
+              
+              {/* Portal Navigation Tabs */}
+              <div className="flex gap-4 mt-6 border-b border-gray-700 pb-3">
+                <button 
+                  onClick={() => setActiveTab('vote')}
+                  className={`px-4 py-2 rounded font-medium text-sm ${activeTab === 'vote' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+                >
+                  Student Voting Booth
+                </button>
+                <button 
+                  onClick={() => setActiveTab('events')}
+                  className={`px-4 py-2 rounded font-medium text-sm ${activeTab === 'events' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+                >
+                  Event Manager Portal (Org Registration)
+                </button>
+              </div>
             </div>
+
+            {/* TAB 1: VOTING SYSTEM */}
+            {activeTab === 'vote' && (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Student Union Election 2026 - Cast Your Vote</h3>
+                <div className="grid gap-4">
+                  {candidates.map((item) => (
+                    <div key={item.id} className="bg-gray-800 p-5 rounded-lg border border-gray-700 flex justify-between items-center">
+                      <div>
+                        <span className="text-xs uppercase bg-blue-900 text-blue-300 px-2 py-1 rounded font-semibold">Party: {item.party}</span>
+                        <h4 className="text-lg font-bold mt-2">Candidate: {item.candidate}</h4>
+                        <p className="text-sm text-gray-400 mt-1">Total Votes: <span className="text-white font-bold">{item.votes}</span></p>
+                      </div>
+                      <button 
+                        onClick={() => handleVote(item.id)}
+                        className="bg-green-600 hover:bg-green-700 px-6 py-2.5 rounded font-medium text-sm"
+                      >
+                        Vote
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: EVENT MANAGER PORTAL */}
+            {activeTab === 'events' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Organization Registration & Event Adding Form */}
+                <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                  <h3 className="text-xl font-semibold mb-2">Organization / Event Manager Registration</h3>
+                  <p className="text-sm text-gray-400 mb-4">Register your organization and publish campus events directly to the university portal.</p>
+                  
+                  <form onSubmit={handleAddEvent} className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">Organization / Club Name</label>
+                      <input 
+                        type="text" 
+                        value={orgName} 
+                        onChange={(e) => setOrgName(e.target.value)} 
+                        placeholder="e.g. Cultural Club / ABVP / NSUI" 
+                        className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">Event Title</label>
+                      <input 
+                        type="text" 
+                        value={eventName} 
+                        onChange={(e) => setEventName(e.target.value)} 
+                        placeholder="e.g. Annual Tech Fest 2026" 
+                        className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">Event Date</label>
+                      <input 
+                        type="date" 
+                        value={eventDate} 
+                        onChange={(e) => setEventDate(e.target.value)} 
+                        className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 text-white"
+                      />
+                    </div>
+                    <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-2.5 rounded text-sm font-medium">
+                      Register & Publish Event
+                    </button>
+                  </form>
+                </div>
+
+                {/* Display Upcoming University Events */}
+                <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                  <h3 className="text-xl font-semibold mb-4">Scheduled Campus Events</h3>
+                  <div className="space-y-3">
+                    {eventsList.map((evt) => (
+                      <div key={evt.id} className="bg-gray-900 p-4 rounded border border-gray-700">
+                        <span className="text-xs text-blue-400 font-semibold">{evt.org}</span>
+                        <h4 className="font-bold text-md mt-1">{evt.name}</h4>
+                        <p className="text-xs text-gray-400 mt-1">Date: {evt.date}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
-
-export default App;
