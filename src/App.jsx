@@ -30,9 +30,9 @@ export default function App() {
       desc: 'Annual Student Council Election for Amity University main campus.', 
       eligible: '25,000+',
       candidates: [
-        { id: 1, name: 'Priya Singh', party: 'Vivant', votes: 150 },
-        { id: 2, name: 'Amit Kumar', party: 'Ashre Army', votes: 130 },
-        { id: 3, name: 'Rohit Singh', party: 'Ojashvi', votes: 90 }
+        { id: 1, name: 'Aditya Roy', party: 'Youth Front', votes: 150 },
+        { id: 2, name: 'Sneha Kapoor', party: 'Alliance Club', votes: 130 },
+        { id: 3, name: 'Mohit Tyagi', party: 'Phoenix Party', votes: 90 }
       ]
     },
     { 
@@ -42,9 +42,9 @@ export default function App() {
       desc: 'Official Campus Senate Election Portal.', 
       eligible: '35,000+',
       candidates: [
-        { id: 1, name: 'Simran Kaur', party: 'Ojashvi', votes: 210 },
-        { id: 2, name: 'Rohit Gupta', party: 'Vivant', votes: 180 },
-        { id: 3, name: 'Ankit Sharma', party: 'Ashre Army', votes: 110 }
+        { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
+        { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 },
+        { id: 3, name: 'Ankit Sharma', party: 'Apex Union', votes: 110 }
       ]
     },
     { 
@@ -54,9 +54,9 @@ export default function App() {
       desc: 'Central Student Representative Elections.', 
       eligible: '30,000+',
       candidates: [
-        { id: 1, name: 'Vikas Patel', party: 'Ashre Army', votes: 160 },
-        { id: 2, name: 'Neha Sharma', party: 'Vivant', votes: 145 },
-        { id: 3, name: 'Karan Mehra', party: 'Ojashvi', votes: 115 }
+        { id: 1, name: 'Vikas Patel', party: 'Royal Squad', votes: 160 },
+        { id: 2, name: 'Neha Sharma', party: 'Campus Force', votes: 145 },
+        { id: 3, name: 'Karan Mehra', party: 'Inquilab Party', votes: 115 }
       ]
     }
   ]);
@@ -149,7 +149,6 @@ export default function App() {
     alert("Candidate registered successfully for " + selectedUni.name);
   };
 
-  // Helper to calculate total votes for percentage progress bar
   const getTotalVotes = (candidates) => {
     const total = candidates.reduce((acc, curr) => acc + curr.votes, 0);
     return total === 0 ? 1 : total;
@@ -157,11 +156,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#05070b] text-gray-100 font-sans relative overflow-hidden selection:bg-blue-500 selection:text-white">
-      {/* Background ambient glowing orbs for high-end aesthetic */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      {/* Navbar */}
       <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#05070b]/80 sticky top-0 z-50 shadow-2xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div>
@@ -200,23 +197,21 @@ export default function App() {
         </div>
       </nav>
 
-      <main className="p-8 max-w-7xl mx-auto relative z-10">
+      <main className="p-4 md:p-8 max-w-7xl mx-auto relative z-10">
         {!selectedUni ? (
           <div>
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest mb-3 inline-block">Official 2026 Portal</span>
-              <h2 className="text-4xl font-black tracking-tight text-white mb-3 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Select Your University</h2>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white mb-3 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Select Your University</h2>
               <p className="text-gray-400 text-sm leading-relaxed">Choose your institution to inspect candidates, analyze live vote distributions, register organizations, and cast your secure ballot.</p>
             </div>
             
-            {/* University Cards Grid with 3D Glowing Hover Effect */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {universities.map((uni) => (
                 <div 
                   key={uni.id} 
                   className="group relative bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl flex flex-col justify-between transition-all duration-500 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-blue-500/60 hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] backdrop-blur-xl overflow-hidden"
                 >
-                  {/* Subtle top border neon accent */}
                   <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                   <div>
@@ -259,19 +254,19 @@ export default function App() {
             <div className="mb-8 bg-gradient-to-r from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-xl shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
                 <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest mb-2 inline-block">Institution Portal</span>
-                <h2 className="text-3xl font-black text-white">{selectedUni.name}</h2>
-                <p className="text-gray-400 text-sm mt-1">Student Union Election 2026 • Secure Balloting System</p>
+                <h2 className="text-2xl md:text-3xl font-black text-white">{selectedUni.name}</h2>
+                <p className="text-gray-400 text-xs md:text-sm mt-1">Student Union Election 2026 • Secure Balloting System</p>
               </div>
               <div className="flex gap-2 bg-gray-950 p-1.5 rounded-2xl border border-gray-800">
                 <button 
                   onClick={() => setActiveTab('voting')}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === 'voting' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 ${activeTab === 'voting' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:text-white'}`}
                 >
                   Voting Booth
                 </button>
                 <button 
                   onClick={() => setActiveTab('manager')}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === 'manager' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 ${activeTab === 'manager' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:text-white'}`}
                 >
                   Event Manager
                 </button>
@@ -303,7 +298,6 @@ export default function App() {
                         </button>
                       </div>
 
-                      {/* Animated Progress Bar */}
                       <div>
                         <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
                           <span>Votes: <strong className="text-white">{cand.votes}</strong></span>
@@ -344,7 +338,7 @@ export default function App() {
                         type="text" 
                         value={candidateParty}
                         onChange={(e) => setCandidateParty(e.target.value)}
-                        placeholder="e.g. Vivant"
+                        placeholder="e.g. Youth Front"
                         className="w-full bg-gray-950/90 border border-gray-800 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                         required
                       />
