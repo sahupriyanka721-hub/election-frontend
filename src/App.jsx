@@ -149,31 +149,41 @@ export default function App() {
     alert("Candidate registered successfully for " + selectedUni.name);
   };
 
+  // Helper to calculate total votes for percentage progress bar
+  const getTotalVotes = (candidates) => {
+    const total = candidates.reduce((acc, curr) => acc + curr.votes, 0);
+    return total === 0 ? 1 : total;
+  };
+
   return (
-    <div className="min-h-screen bg-[#0b0f17] text-gray-100 font-sans selection:bg-blue-500 selection:text-white">
-      {/* Navbar with smooth shadow transition */}
-      <nav className="p-4 border-b border-gray-800/80 backdrop-blur-md bg-[#0b0f17]/80 sticky top-0 z-50 transition-all duration-300">
+    <div className="min-h-screen bg-[#05070b] text-gray-100 font-sans relative overflow-hidden selection:bg-blue-500 selection:text-white">
+      {/* Background ambient glowing orbs for high-end aesthetic */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      {/* Navbar */}
+      <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#05070b]/80 sticky top-0 z-50 shadow-2xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-bold tracking-wider text-white bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">UniVote Pro</h1>
-            <p className="text-[10px] text-gray-400">National Campus Election & Event Management Portal</p>
+            <h1 className="text-xl font-extrabold tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent">UniVote Pro</h1>
+            <p className="text-[10px] text-gray-400 tracking-wide font-medium">National Campus Election & Event Management Portal</p>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-green-400 hidden md:flex items-center gap-1.5 bg-green-950/50 px-3 py-1 rounded-full border border-green-800/50">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span> Live Connection Active
+            <span className="text-xs text-emerald-400 hidden md:flex items-center gap-2 bg-emerald-950/60 px-3 py-1.5 rounded-full border border-emerald-800/50 shadow-inner">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping inline-block"></span> Live Connection Active
             </span>
             {user ? (
-              <div className="flex items-center gap-3 animate-fadeIn">
-                <div className="flex items-center gap-2 bg-gray-900/90 border border-gray-800 px-3 py-1.5 rounded-xl shadow-lg">
-                  <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border border-blue-500/50 shadow-sm" />
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md">
+                  <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border-2 border-blue-500 shadow-md object-cover" />
                   <div className="text-left">
                     <p className="text-xs font-bold text-white leading-tight">{user.displayName}</p>
-                    <p className="text-[10px] text-gray-400 leading-tight">{user.email}</p>
+                    <p className="text-[10px] text-blue-400 font-medium leading-tight">{user.email}</p>
                   </div>
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="bg-red-600/90 hover:bg-red-600 hover:scale-105 active:scale-95 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-red-900/20"
+                  className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-red-600/20 active:scale-95"
                 >
                   Logout
                 </button>
@@ -181,7 +191,7 @@ export default function App() {
             ) : (
               <button 
                 onClick={handleGoogleLogin}
-                className="bg-blue-600 hover:bg-blue-500 hover:scale-105 active:scale-95 px-5 py-2 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-blue-600/30"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-xl shadow-blue-600/30 hover:scale-105 active:scale-95"
               >
                 Sign in with Google
               </button>
@@ -190,40 +200,45 @@ export default function App() {
         </div>
       </nav>
 
-      <main className="p-8 max-w-7xl mx-auto">
+      <main className="p-8 max-w-7xl mx-auto relative z-10">
         {!selectedUni ? (
           <div>
-            <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight">Select Your University</h2>
-            <p className="text-gray-400 text-center mb-10 max-w-xl mx-auto text-sm">Click on your institution to view candidates, manage events, access voter authentication, and cast votes with secure 3D-enhanced interactions.</p>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest mb-3 inline-block">Official 2026 Portal</span>
+              <h2 className="text-4xl font-black tracking-tight text-white mb-3 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Select Your University</h2>
+              <p className="text-gray-400 text-sm leading-relaxed">Choose your institution to inspect candidates, analyze live vote distributions, register organizations, and cast your secure ballot.</p>
+            </div>
             
-            {/* University Cards Grid with 3D Hover & Smooth Transitions */}
+            {/* University Cards Grid with 3D Glowing Hover Effect */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {universities.map((uni) => (
                 <div 
                   key={uni.id} 
-                  className="group bg-gray-900/80 border border-gray-800/80 p-6 rounded-2xl flex flex-col justify-between transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 relative overflow-hidden backdrop-blur-sm"
+                  className="group relative bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl flex flex-col justify-between transition-all duration-500 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-blue-500/60 hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] backdrop-blur-xl overflow-hidden"
                 >
-                  {/* Subtle glowing background effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  {/* Subtle top border neon accent */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                   <div>
                     <div className="flex justify-between items-start mb-4">
-                      <span className="text-2xl p-2 bg-gray-800/50 rounded-xl border border-gray-700/50 group-hover:scale-110 transition-transform duration-300">🏛️</span>
-                      <span className="text-[10px] bg-green-950/80 text-green-400 px-2.5 py-1 rounded-full border border-green-800/50 font-medium tracking-wide">Elections Active</span>
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                        🏛️
+                      </div>
+                      <span className="text-[10px] bg-emerald-950/80 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/60 font-semibold tracking-wider shadow-sm">Active</span>
                     </div>
-                    <h3 className="font-bold text-lg text-white mb-1 group-hover:text-blue-400 transition-colors duration-200">{uni.name}</h3>
-                    <p className="text-xs text-blue-400/90 mb-3 font-medium">📍 {uni.location}</p>
+                    <h3 className="font-bold text-lg text-white mb-1 group-hover:text-blue-400 transition-colors duration-300">{uni.name}</h3>
+                    <p className="text-xs text-blue-400/90 mb-3 font-medium flex items-center gap-1">📍 {uni.location}</p>
                     <p className="text-xs text-gray-400 mb-6 leading-relaxed">{uni.desc}</p>
                   </div>
                   
                   <div>
                     <div className="flex justify-between items-center text-xs text-gray-400 mb-4 border-t border-gray-800/80 pt-3">
                       <span>Eligible Voters:</span>
-                      <strong className="text-white bg-gray-800/60 px-2 py-0.5 rounded border border-gray-700/50">{uni.eligible}</strong>
+                      <strong className="text-white bg-gray-800/60 px-2.5 py-1 rounded-lg border border-gray-700/50">{uni.eligible}</strong>
                     </div>
                     <button 
                       onClick={() => { setSelectedUni(uni); setActiveTab('voting'); }}
-                      className="w-full bg-gray-800/90 hover:bg-blue-600 text-sm py-2.5 rounded-xl transition-all duration-200 font-medium text-center text-white shadow-md active:scale-95 group-hover:shadow-blue-600/30"
+                      className="w-full bg-gray-800/80 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 text-sm py-3 rounded-xl transition-all duration-300 font-semibold text-center text-white shadow-lg active:scale-95 group-hover:shadow-blue-600/30 border border-gray-700/50 group-hover:border-transparent"
                     >
                       Open Portal →
                     </button>
@@ -236,93 +251,117 @@ export default function App() {
           <div className="animate-fadeIn">
             <button 
               onClick={() => setSelectedUni(null)}
-              className="text-sm text-blue-400 hover:text-blue-300 hover:-translate-x-1 transition-all duration-200 mb-6 inline-flex items-center gap-1 font-medium"
+              className="text-sm text-blue-400 hover:text-blue-300 hover:-translate-x-1 transition-all duration-200 mb-6 inline-flex items-center gap-1 font-semibold"
             >
               ← Back to Universities
             </button>
             
-            <h2 className="text-3xl font-bold text-white mb-1">{selectedUni.name}</h2>
-            <p className="text-gray-400 mb-6 text-sm">Student Union Election 2026 Portal</p>
-
-            <div className="flex gap-3 mb-8 border-b border-gray-800/80 pb-4">
-              <button 
-                onClick={() => setActiveTab('voting')}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm ${activeTab === 'voting' ? 'bg-blue-600 text-white shadow-blue-600/30 scale-105' : 'text-gray-400 hover:text-white bg-gray-900/80 border border-gray-800'}`}
-              >
-                Student Voting Booth
-              </button>
-              <button 
-                onClick={() => setActiveTab('manager')}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm ${activeTab === 'manager' ? 'bg-blue-600 text-white shadow-blue-600/30 scale-105' : 'text-gray-400 hover:text-white bg-gray-900/80 border border-gray-800'}`}
-              >
-                Event Manager Portal (Org Registration)
-              </button>
+            <div className="mb-8 bg-gradient-to-r from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-xl shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest mb-2 inline-block">Institution Portal</span>
+                <h2 className="text-3xl font-black text-white">{selectedUni.name}</h2>
+                <p className="text-gray-400 text-sm mt-1">Student Union Election 2026 • Secure Balloting System</p>
+              </div>
+              <div className="flex gap-2 bg-gray-950 p-1.5 rounded-2xl border border-gray-800">
+                <button 
+                  onClick={() => setActiveTab('voting')}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === 'voting' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:text-white'}`}
+                >
+                  Voting Booth
+                </button>
+                <button 
+                  onClick={() => setActiveTab('manager')}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === 'manager' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:text-white'}`}
+                >
+                  Event Manager
+                </button>
+              </div>
             </div>
 
             {activeTab === 'voting' ? (
               <div className="space-y-4 max-w-3xl">
-                <h3 className="text-lg font-semibold text-white mb-2">Active Candidates</h3>
-                {selectedUni.candidates.map((cand) => (
-                  <div 
-                    key={cand.id} 
-                    className="group bg-gray-900/80 border border-gray-800/80 p-5 rounded-2xl flex justify-between items-center transition-all duration-200 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl backdrop-blur-sm"
-                  >
-                    <div>
-                      <span className="text-[10px] bg-blue-950/60 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-900/50 font-semibold uppercase tracking-wider">Party: {cand.party}</span>
-                      <h4 className="font-bold text-base text-white mt-2">Candidate: {cand.name}</h4>
-                      <p className="text-xs text-gray-400 mt-1">Total Votes: <strong className="text-white">{cand.votes}</strong></p>
-                    </div>
-                    <button 
-                      onClick={() => handleVote(selectedUni.id, cand.id)}
-                      className="bg-green-600 hover:bg-green-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-green-600/20 hover:scale-105 active:scale-95"
+                <h3 className="text-lg font-bold text-white mb-2">Live Candidates & Standings</h3>
+                {selectedUni.candidates.map((cand) => {
+                  const total = getTotalVotes(selectedUni.candidates);
+                  const percentage = Math.round((cand.votes / total) * 100);
+
+                  return (
+                    <div 
+                      key={cand.id} 
+                      className="group bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl transition-all duration-300 hover:border-blue-500/50 hover:shadow-2xl backdrop-blur-xl space-y-4"
                     >
-                      Vote
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-[10px] bg-blue-950/80 text-blue-400 px-3 py-1 rounded-full border border-blue-900/60 font-bold uppercase tracking-widest">Party: {cand.party}</span>
+                          <h4 className="font-bold text-lg text-white mt-2">{cand.name}</h4>
+                        </div>
+                        <button 
+                          onClick={() => handleVote(selectedUni.id, cand.id)}
+                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-emerald-600/20 hover:scale-105 active:scale-95"
+                        >
+                          Cast Vote
+                        </button>
+                      </div>
+
+                      {/* Animated Progress Bar */}
+                      <div>
+                        <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
+                          <span>Votes: <strong className="text-white">{cand.votes}</strong></span>
+                          <span className="text-blue-400 font-bold">{percentage}% Share</span>
+                        </div>
+                        <div className="w-full bg-gray-950 h-2.5 rounded-full overflow-hidden border border-gray-800/80">
+                          <div 
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]"
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
-              <div className="bg-gray-900/80 border border-gray-800/80 p-8 rounded-2xl max-w-xl backdrop-blur-sm shadow-xl">
+              <div className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-8 rounded-3xl max-w-xl backdrop-blur-xl shadow-2xl">
                 <h3 className="text-xl font-bold text-white mb-2">Register New Candidate / Organization</h3>
-                <p className="text-xs text-gray-400 mb-6 leading-relaxed">Organizers can sign in with Google and register new candidates for {selectedUni.name}.</p>
+                <p className="text-xs text-gray-400 mb-6 leading-relaxed">Authorized organizers can sign in with Google and register new candidates directly for {selectedUni.name}.</p>
 
                 {user ? (
                   <form onSubmit={handleAddCandidate} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1.5">Candidate Name</label>
+                      <label className="block text-xs font-semibold text-gray-300 mb-2">Candidate Name</label>
                       <input 
                         type="text" 
                         value={candidateName}
                         onChange={(e) => setCandidateName(e.target.value)}
                         placeholder="e.g. Amit Sharma"
-                        className="w-full bg-gray-950/80 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        className="w-full bg-gray-950/90 border border-gray-800 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1.5">Party / Organization Name</label>
+                      <label className="block text-xs font-semibold text-gray-300 mb-2">Party / Organization Name</label>
                       <input 
                         type="text" 
                         value={candidateParty}
                         onChange={(e) => setCandidateParty(e.target.value)}
                         placeholder="e.g. Vivant"
-                        className="w-full bg-gray-950/80 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        className="w-full bg-gray-950/90 border border-gray-800 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                         required
                       />
                     </div>
                     <button 
                       type="submit"
-                      className="bg-blue-600 hover:bg-blue-500 text-white w-full py-3 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-blue-600/30 hover:scale-[1.01] active:scale-95 mt-2"
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white w-full py-3.5 rounded-xl text-sm font-bold transition-all duration-300 shadow-xl shadow-blue-600/30 hover:scale-[1.01] active:scale-95 mt-2"
                     >
                       Add Candidate to Election
                     </button>
                   </form>
                 ) : (
-                  <div className="text-center py-8 bg-gray-950/60 rounded-xl border border-gray-800/80 px-4">
+                  <div className="text-center py-10 bg-gray-950/80 rounded-2xl border border-gray-800/80 px-4">
                     <p className="text-sm text-gray-300 mb-4">You must be signed in with Google to register candidates.</p>
                     <button 
                       onClick={handleGoogleLogin}
-                      className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-blue-600/30 hover:scale-105 active:scale-95"
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 shadow-xl shadow-blue-600/30 hover:scale-105 active:scale-95"
                     >
                       Sign in with Google Now
                     </button>
