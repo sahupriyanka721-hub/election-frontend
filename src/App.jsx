@@ -158,7 +158,6 @@ export default function App() {
     alert("Candidate registered successfully for " + selectedUni.name);
   };
 
-  // University registration bina login ke ab work karegi
   const handleUniversityRegistration = (e) => {
     e.preventDefault();
     if (!regUniName || !regLocation || !regDesc || !regEligible || !regDoc) {
@@ -483,10 +482,10 @@ export default function App() {
 
       </main>
 
-      {/* UNIVERSITY REGISTRATION MODAL (Bina Login ke open aur submit hoga) */}
+      {/* UNIVERSITY REGISTRATION MODAL WITH COMPREHENSIVE REQUIREMENTS */}
       {showRegModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-3xl max-w-lg w-full shadow-2xl relative animate-fadeIn max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-3xl max-w-2xl w-full shadow-2xl relative animate-fadeIn max-h-[90vh] overflow-y-auto">
             <button 
               onClick={() => setShowRegModal(false)}
               className="absolute top-5 right-5 text-gray-400 hover:text-white text-lg font-bold"
@@ -494,32 +493,37 @@ export default function App() {
               ✕
             </button>
 
-            <h3 className="text-2xl font-black text-white mb-2">Register Your University</h3>
-            <p className="text-xs text-gray-400 mb-6">Fill out the official details and upload verification documents to deploy your campus election portal.</p>
+            <h3 className="text-2xl font-black text-white mb-1">Register Your University</h3>
+            <p className="text-xs text-gray-400 mb-6">Complete state & UGC route documentation setup for establishing a private university.</p>
 
-            <form onSubmit={handleUniversityRegistration} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">University Name</label>
-                <input 
-                  type="text" 
-                  value={regUniName}
-                  onChange={(e) => setRegUniName(e.target.value)}
-                  placeholder="e.g. Delhi University"
-                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                  required
-                />
+            <form onSubmit={handleUniversityRegistration} className="space-y-5">
+              
+              {/* Basic Inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">University Name</label>
+                  <input 
+                    type="text" 
+                    value={regUniName}
+                    onChange={(e) => setRegUniName(e.target.value)}
+                    placeholder="e.g. Jharkhand State University"
+                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location (City, State)</label>
+                  <input 
+                    type="text" 
+                    value={regLocation}
+                    onChange={(e) => setRegLocation(e.target.value)}
+                    placeholder="e.g. Ranchi, Jharkhand"
+                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location (City, State)</label>
-                <input 
-                  type="text" 
-                  value={regLocation}
-                  onChange={(e) => setRegLocation(e.target.value)}
-                  placeholder="e.g. New Delhi, Delhi"
-                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">Short Description</label>
                 <textarea 
@@ -531,6 +535,7 @@ export default function App() {
                   required
                 ></textarea>
               </div>
+
               <div>
                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Voters Count</label>
                 <input 
@@ -542,8 +547,21 @@ export default function App() {
                   required
                 />
               </div>
+
+              {/* Comprehensive Document Checklist Guide box */}
+              <div className="bg-gray-950/80 border border-gray-800 rounded-2xl p-4 space-y-3">
+                <h4 className="text-xs font-bold text-blue-400 uppercase tracking-wider">Required Compliance & Document Categories (Sponsoring Body → State → UGC)</h4>
+                <div className="text-[11px] text-gray-400 space-y-2 max-h-40 overflow-y-auto pr-2">
+                  <p><strong>A. Sponsoring Body:</strong> Trust Deed / MoA, Certificate of Registration (Societies/Sec-8), PAN Card, Last 3 years Audited Financials, Net Worth & CA Certificate (₹100 Cr+), Bank Statements, Board Resolution.</p>
+                  <p><strong>B. Land & Infrastructure:</strong> Sale/Lease Deed (Min 50 acres), Land Map & Mutation, CLU Certificate for Educational Purpose, District Admin NOC, Building Plan & Master Plan, Fire & Environment Clearance.</p>
+                  <p><strong>C. Financial Documents:</strong> Corpus Fund Proof (₹25 Cr FD), Endowment Fund Proof (₹5-10 Cr with State Govt), Project Cost & Source of Funding.</p>
+                  <p><strong>D. Academic & Legal Proposal:</strong> Detailed Project Report (DPR), Draft University Act/Statutes, Governing Bodies list with CVs, Faculty recruitment & IT/Lab infrastructure plan.</p>
+                  <p><strong>E. Govt & Regulatory Forms:</strong> State Higher Education Dept Application form, Affidavit (No criminal/land dispute), State Govt NOC.</p>
+                </div>
+              </div>
+
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Upload Verification Document (ID Proof / Authority Letter)</label>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Upload Consolidated Verification Bundle (PDF / ZIP)</label>
                 <input 
                   type="file" 
                   onChange={(e) => setRegDoc(e.target.files[0])}
@@ -554,7 +572,7 @@ export default function App() {
 
               <button 
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg transition mt-4"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg transition mt-2"
               >
                 Submit University Registration
               </button>
