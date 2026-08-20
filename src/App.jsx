@@ -158,12 +158,9 @@ export default function App() {
     alert("Candidate registered successfully for " + selectedUni.name);
   };
 
+  // University registration bina login ke ab work karegi
   const handleUniversityRegistration = (e) => {
     e.preventDefault();
-    if (!user) {
-      alert("Please sign in with Google to register a university.");
-      return;
-    }
     if (!regUniName || !regLocation || !regDesc || !regEligible || !regDoc) {
       alert("Please fill all fields and upload verification documents.");
       return;
@@ -280,7 +277,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Quick Feature Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-16 text-left">
               <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-md">
                 <div className="text-2xl mb-2">🔒</div>
@@ -487,7 +483,7 @@ export default function App() {
 
       </main>
 
-      {/* UNIVERSITY REGISTRATION MODAL */}
+      {/* UNIVERSITY REGISTRATION MODAL (Bina Login ke open aur submit hoga) */}
       {showRegModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-3xl max-w-lg w-full shadow-2xl relative animate-fadeIn max-h-[90vh] overflow-y-auto">
@@ -501,80 +497,68 @@ export default function App() {
             <h3 className="text-2xl font-black text-white mb-2">Register Your University</h3>
             <p className="text-xs text-gray-400 mb-6">Fill out the official details and upload verification documents to deploy your campus election portal.</p>
 
-            {user ? (
-              <form onSubmit={handleUniversityRegistration} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">University Name</label>
-                  <input 
-                    type="text" 
-                    value={regUniName}
-                    onChange={(e) => setRegUniName(e.target.value)}
-                    placeholder="e.g. Delhi University"
-                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location (City, State)</label>
-                  <input 
-                    type="text" 
-                    value={regLocation}
-                    onChange={(e) => setRegLocation(e.target.value)}
-                    placeholder="e.g. New Delhi, Delhi"
-                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Short Description</label>
-                  <textarea 
-                    value={regDesc}
-                    onChange={(e) => setRegDesc(e.target.value)}
-                    placeholder="Brief description of the university council..."
-                    rows="2"
-                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 resize-none"
-                    required
-                  ></textarea>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Voters Count</label>
-                  <input 
-                    type="text" 
-                    value={regEligible}
-                    onChange={(e) => setRegEligible(e.target.value)}
-                    placeholder="e.g. 40,000+"
-                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Upload Verification Document (ID Proof / Authority Letter)</label>
-                  <input 
-                    type="file" 
-                    onChange={(e) => setRegDoc(e.target.files[0])}
-                    className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500"
-                    required
-                  />
-                </div>
-
-                <button 
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg transition mt-4"
-                >
-                  Submit University Registration
-                </button>
-              </form>
-            ) : (
-              <div className="text-center py-8 bg-gray-950 rounded-2xl border border-gray-800 px-4">
-                <p className="text-sm text-gray-300 mb-4">Please sign in with Google to register a university on the portal.</p>
-                <button 
-                  onClick={handleGoogleLogin}
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition"
-                >
-                  Sign in with Google
-                </button>
+            <form onSubmit={handleUniversityRegistration} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">University Name</label>
+                <input 
+                  type="text" 
+                  value={regUniName}
+                  onChange={(e) => setRegUniName(e.target.value)}
+                  placeholder="e.g. Delhi University"
+                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                  required
+                />
               </div>
-            )}
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location (City, State)</label>
+                <input 
+                  type="text" 
+                  value={regLocation}
+                  onChange={(e) => setRegLocation(e.target.value)}
+                  placeholder="e.g. New Delhi, Delhi"
+                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Short Description</label>
+                <textarea 
+                  value={regDesc}
+                  onChange={(e) => setRegDesc(e.target.value)}
+                  placeholder="Brief description of the university council..."
+                  rows="2"
+                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 resize-none"
+                  required
+                ></textarea>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Voters Count</label>
+                <input 
+                  type="text" 
+                  value={regEligible}
+                  onChange={(e) => setRegEligible(e.target.value)}
+                  placeholder="e.g. 40,000+"
+                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Upload Verification Document (ID Proof / Authority Letter)</label>
+                <input 
+                  type="file" 
+                  onChange={(e) => setRegDoc(e.target.files[0])}
+                  className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500"
+                  required
+                />
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg transition mt-4"
+              >
+                Submit University Registration
+              </button>
+            </form>
           </div>
         </div>
       )}
