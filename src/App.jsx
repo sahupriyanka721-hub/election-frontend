@@ -8,6 +8,11 @@ export default function App() {
   const [selectedUni, setSelectedUni] = useState(null);
   const [activeTab, setActiveTab] = useState('voting');
 
+  // Admin Credentials States
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
@@ -19,7 +24,7 @@ export default function App() {
   const [regEligible, setRegEligible] = useState('');
   const [regDoc, setRegDoc] = useState(null);
   
-  // Initial state containing exactly 3 approved universities
+  // Unique & Clean Universities List (No Duplicates)
   const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
@@ -81,6 +86,16 @@ export default function App() {
       await signOut(auth);
     } catch (error) {
       alert("Logout failed: " + error.message);
+    }
+  };
+
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    if (adminUsername === 'admin' && adminPassword === 'admin123') {
+      setIsAdminLoggedIn(true);
+      alert("Admin Logged In Successfully!");
+    } else {
+      alert("Invalid Admin ID or Password! (Use admin / admin123)");
     }
   };
 
@@ -193,50 +208,48 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#05070b] text-gray-100 font-sans relative overflow-hidden selection:bg-blue-500 selection:text-white">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-[#030508] text-gray-100 font-sans relative overflow-hidden selection:bg-blue-500 selection:text-white">
+      {/* Background Glow Elements */}
+      <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       {/* Navbar */}
-      <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#05070b]/80 sticky top-0 z-50 shadow-2xl">
+      <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#030508]/80 sticky top-0 z-50 shadow-2xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="cursor-pointer" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
-            <h1 className="text-xl font-extrabold tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent">UniVote Pro</h1>
-            <p className="text-[10px] text-gray-400 tracking-wide font-medium">National Campus Election & University Compliance Portal</p>
+          <div className="cursor-pointer flex items-center gap-2.5" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-600/30">V</div>
+            <div>
+              <h1 className="text-lg font-black tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">UniVote Pro</h1>
+              <p className="text-[9px] text-gray-400 tracking-wide font-medium">National Campus Election & Compliance Portal</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-4">
             <button 
               onClick={() => { setCurrentView('home'); setSelectedUni(null); }}
-              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-lg transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Home
             </button>
             <button 
               onClick={() => { setCurrentView('universities'); setSelectedUni(null); }}
-              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-lg transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Universities
             </button>
             <button 
               onClick={() => { setCurrentView('admin'); setSelectedUni(null); }}
-              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-lg transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
-              Admin Review 🛡️
+              Admin Panel 🛡️
             </button>
 
             {user ? (
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md">
-                  <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border-2 border-blue-500 shadow-md object-cover" />
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white leading-tight">{user.displayName}</p>
-                    <p className="text-[10px] text-blue-400 font-medium leading-tight">{user.email}</p>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md">
+                <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-blue-500 shadow-md object-cover" />
                 <button 
                   onClick={handleLogout}
-                  className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-lg active:scale-95"
+                  className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-semibold transition"
                 >
                   Logout
                 </button>
@@ -244,7 +257,7 @@ export default function App() {
             ) : (
               <button 
                 onClick={handleGoogleLogin}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-xl hover:scale-105 active:scale-95"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-lg shadow-blue-600/20 active:scale-95"
               >
                 Sign in with Google
               </button>
@@ -253,40 +266,62 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Main Content Area */}
+      {/* Main Container */}
       <main className="p-4 md:p-8 max-w-7xl mx-auto relative z-10">
         
-        {/* VIEW 1: HOME */}
+        {/* VIEW 1: ENHANCED LANDING PAGE */}
         {currentView === 'home' && !selectedUni && (
-          <div className="py-12 md:py-20 text-center max-w-3xl mx-auto space-y-6">
-            <span className="text-xs bg-blue-500/10 text-blue-400 px-4 py-1.5 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest inline-block shadow-inner">
-              Secure Digital Ballot 2026
-            </span>
-            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-              Transparent Campus Elections & Compliance Management
+          <div className="py-12 md:py-20 text-center max-w-4xl mx-auto space-y-8">
+            <div className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 px-4 py-1.5 rounded-full border border-blue-500/20 text-xs font-semibold uppercase tracking-widest shadow-inner">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+              Secure Digital Ballot System 2026
+            </div>
+            
+            <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight leading-[1.1] bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+              Next-Gen Student Union Elections & Compliance Hub
             </h1>
-            <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-              Empowering student democracies nationwide with complete state/UGC verification routing and secure digital polling.
+            
+            <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
+              Transforming campus democracies with transparent verification routing, secure Google-authenticated balloting, and real-time standing tracking.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <div className="flex flex-wrap justify-center gap-4 pt-2">
               <button 
                 onClick={() => setCurrentView('universities')}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-8 py-3.5 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95"
               >
-                Browse Universities →
+                Explore Universities →
               </button>
               <button 
                 onClick={() => setShowRegModal(true)}
-                className="bg-gray-900/90 hover:bg-gray-800 text-white border border-gray-700/80 px-8 py-3.5 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95"
+                className="bg-gray-900/90 hover:bg-gray-800 text-white border border-gray-700/80 px-8 py-4 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95"
               >
-                Register as a University 🏛️
+                Register University 🏛️
               </button>
+            </div>
+
+            {/* Feature Highlights Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 text-left">
+              <div className="bg-gradient-to-b from-gray-900/60 to-gray-950/80 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
+                <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 text-lg mb-4 font-bold">🔒</div>
+                <h3 className="font-bold text-white text-base mb-1">Google Secure Auth</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Ensure one authentic vote per student via verified campus login channels.</p>
+              </div>
+              <div className="bg-gradient-to-b from-gray-900/60 to-gray-950/80 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
+                <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-lg mb-4 font-bold">🛡️</div>
+                <h3 className="font-bold text-white text-base mb-1">Strict Admin Review</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Inspect submitted trust bundles and approve university credentials securely.</p>
+              </div>
+              <div className="bg-gradient-to-b from-gray-900/60 to-gray-950/80 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg mb-4 font-bold">📊</div>
+                <h3 className="font-bold text-white text-base mb-1">Real-Time Ballots</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Live percentage bars and instant standing updates with dynamic vote sharing.</p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* VIEW 2: UNIVERSITIES LIST GRID */}
+        {/* VIEW 2: UNIVERSITIES LIST */}
         {currentView === 'universities' && !selectedUni && (
           <div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -339,60 +374,109 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 3: ADMIN DASHBOARD */}
+        {/* VIEW 3: ADMIN ID & PASSWORD LOGIN + DASHBOARD */}
         {currentView === 'admin' && (
-          <div className="space-y-6">
-            <div>
-              <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Restricted Access</span>
-              <h2 className="text-3xl font-black text-white">Admin Document Review Dashboard</h2>
-              <p className="text-gray-400 text-xs md:text-sm mt-1">Review applicant university submissions, inspect verification bundles, and approve or reject registrations.</p>
-            </div>
-
-            <div className="space-y-4">
-              {universities.map((uni) => (
-                <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl backdrop-blur-md">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-bold text-white">{uni.name}</h3>
-                      <span className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
-                        uni.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                        uni.status === 'Rejected' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
-                        'bg-amber-950 text-amber-400 border border-amber-800'
-                      }`}>
-                        {uni.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Voters: {uni.eligible}</p>
-                    <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
-                    <div className="flex items-center gap-2 pt-1">
-                      <span className="text-xs text-gray-400 font-semibold">Attached Document Bundle:</span>
-                      <a 
-                        href="#download" 
-                        onClick={(e) => { e.preventDefault(); alert("Downloading verification bundle: " + (uni.docName || 'Document.pdf')); }} 
-                        className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1"
-                      >
-                        📄 {uni.docName || 'Verification_Package.pdf'}
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 w-full md:w-auto">
-                    <button 
-                      onClick={() => handleAdminAction(uni.id, 'Approved')}
-                      className="flex-1 md:flex-none bg-emerald-600/90 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg"
-                    >
-                      Approve ✓
-                    </button>
-                    <button 
-                      onClick={() => handleAdminAction(uni.id, 'Rejected')}
-                      className="flex-1 md:flex-none bg-rose-600/90 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg"
-                    >
-                      Reject ✕
-                    </button>
-                  </div>
+          <div>
+            {!isAdminLoggedIn ? (
+              <div className="max-w-md mx-auto mt-12 bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+                <div className="text-center mb-6">
+                  <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Restricted Access</span>
+                  <h2 className="text-2xl font-black text-white">Admin Portal Login</h2>
+                  <p className="text-xs text-gray-400 mt-1">Enter ID and password to access document review settings.</p>
                 </div>
-              ))}
-            </div>
+
+                <form onSubmit={handleAdminLogin} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Admin ID / Username</label>
+                    <input 
+                      type="text" 
+                      value={adminUsername}
+                      onChange={(e) => setAdminUsername(e.target.value)}
+                      placeholder="e.g. admin"
+                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                      required 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
+                    <input 
+                      type="password" 
+                      value={adminPassword}
+                      onChange={(e) => setAdminPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                      required 
+                    />
+                  </div>
+                  <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
+                    Login as Admin
+                  </button>
+                  <p className="text-[10px] text-center text-gray-500 mt-2">Hint: Use ID: <strong className="text-gray-400">admin</strong> & Password: <strong className="text-gray-400">admin123</strong></p>
+                </form>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center bg-gray-900 p-6 rounded-3xl border border-gray-800">
+                  <div>
+                    <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Authenticated Session</span>
+                    <h2 className="text-2xl font-black text-white">Admin Document Review Dashboard</h2>
+                    <p className="text-gray-400 text-xs mt-1">Review applicant university submissions, inspect verification bundles, and approve or reject registrations.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAdminLoggedIn(false)}
+                    className="bg-red-600/80 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
+                  >
+                    Admin Logout
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {universities.map((uni) => (
+                    <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl backdrop-blur-md">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-lg font-bold text-white">{uni.name}</h3>
+                          <span className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
+                            uni.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
+                            uni.status === 'Rejected' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
+                            'bg-amber-950 text-amber-400 border border-amber-800'
+                          }`}>
+                            {uni.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Voters: {uni.eligible}</p>
+                        <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
+                        <div className="flex items-center gap-2 pt-1">
+                          <span className="text-xs text-gray-400 font-semibold">Attached Document Bundle:</span>
+                          <a 
+                            href="#download" 
+                            onClick={(e) => { e.preventDefault(); alert("Downloading verification bundle: " + (uni.docName || 'Document.pdf')); }} 
+                            className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1"
+                          >
+                            📄 {uni.docName || 'Verification_Package.pdf'}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 w-full md:w-auto">
+                        <button 
+                          onClick={() => handleAdminAction(uni.id, 'Approved')}
+                          className="flex-1 md:flex-none bg-emerald-600/90 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg"
+                        >
+                          Approve ✓
+                        </button>
+                        <button 
+                          onClick={() => handleAdminAction(uni.id, 'Rejected')}
+                          className="flex-1 md:flex-none bg-rose-600/90 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg"
+                        >
+                          Reject ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
