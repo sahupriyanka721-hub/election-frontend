@@ -13,6 +13,9 @@ export default function App() {
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
+  // Admin Document/University Detail Modal State
+  const [adminSelectedUni, setAdminSelectedUni] = useState(null);
+
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
@@ -298,24 +301,6 @@ export default function App() {
                 Register University 🏛️
               </button>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 text-left">
-              <div className="bg-gradient-to-b from-gray-900/60 to-gray-950/80 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
-                <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 text-lg mb-4 font-bold">🔒</div>
-                <h3 className="font-bold text-white text-base mb-1">Google Secure Auth</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Ensure one authentic vote per student via verified campus login channels.</p>
-              </div>
-              <div className="bg-gradient-to-b from-gray-900/60 to-gray-950/80 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
-                <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-lg mb-4 font-bold">🛡️</div>
-                <h3 className="font-bold text-white text-base mb-1">Strict Admin Review</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Inspect submitted trust bundles and approve university credentials securely.</p>
-              </div>
-              <div className="bg-gradient-to-b from-gray-900/60 to-gray-950/80 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
-                <div className="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg mb-4 font-bold">📊</div>
-                <h3 className="font-bold text-white text-base mb-1">Real-Time Ballots</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Live percentage bars and instant standing updates with dynamic vote sharing.</p>
-              </div>
-            </div>
           </div>
         )}
 
@@ -417,7 +402,7 @@ export default function App() {
                   <div>
                     <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Authenticated Session</span>
                     <h2 className="text-2xl font-black text-white">Admin Document Review Dashboard</h2>
-                    <p className="text-gray-400 text-xs mt-1">Review applicant university submissions, inspect verification bundles, and approve or reject registrations.</p>
+                    <p className="text-gray-400 text-xs mt-1">Click on any university name or attached document to view full verification details.</p>
                   </div>
                   <button 
                     onClick={() => setIsAdminLoggedIn(false)}
@@ -432,7 +417,13 @@ export default function App() {
                     <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl backdrop-blur-md">
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                          <h3 className="text-lg font-bold text-white">{uni.name}</h3>
+                          {/* CLICKABLE UNIVERSITY NAME TO OPEN DETAIL MODAL */}
+                          <h3 
+                            onClick={() => setAdminSelectedUni(uni)}
+                            className="text-lg font-bold text-white cursor-pointer hover:text-blue-400 transition"
+                          >
+                            {uni.name} 🔍
+                          </h3>
                           <span className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
                             uni.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
                             uni.status === 'Rejected' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
@@ -443,15 +434,16 @@ export default function App() {
                         </div>
                         <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Voters: {uni.eligible}</p>
                         <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
+                        
+                        {/* CLICKABLE DOCUMENT TO OPEN DETAIL MODAL */}
                         <div className="flex items-center gap-2 pt-1">
                           <span className="text-xs text-gray-400 font-semibold">Attached Document Bundle:</span>
-                          <a 
-                            href="#download" 
-                            onClick={(e) => { e.preventDefault(); alert("Downloading verification bundle: " + (uni.docName || 'Document.pdf')); }} 
-                            className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1"
+                          <button 
+                            onClick={() => setAdminSelectedUni(uni)}
+                            className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1 bg-transparent border-0 cursor-pointer"
                           >
                             📄 {uni.docName || 'Verification_Package.pdf'}
-                          </a>
+                          </button>
                         </div>
                       </div>
 
@@ -583,6 +575,56 @@ export default function App() {
         )}
 
       </main>
+
+      {/* ADMIN UNIVERSITY & DOCUMENT DETAIL MODAL */}
+      {adminSelectedUni && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-3xl max-w-xl w-full shadow-2xl relative space-y-4">
+            <button onClick={() => setAdminSelectedUni(null)} className="absolute top-5 right-5 text-gray-400 hover:text-white text-lg font-bold">✕</button>
+
+            <div>
+              <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest inline-block mb-2">University Full Details</span>
+              <h3 className="text-2xl font-black text-white">{adminSelectedUni.name}</h3>
+              <p className="text-xs text-blue-400 mt-1 font-medium">📍 {adminSelectedUni.location}</p>
+            </div>
+
+            <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 space-y-3">
+              <div>
+                <p className="text-[11px] text-gray-400 font-semibold">Description:</p>
+                <p className="text-xs text-gray-200 mt-0.5">{adminSelectedUni.desc}</p>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-gray-800/80">
+                <span className="text-[11px] text-gray-400 font-semibold">Eligible Voters:</span>
+                <span className="text-xs text-white font-bold">{adminSelectedUni.eligible}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-gray-800/80">
+                <span className="text-[11px] text-gray-400 font-semibold">Current Status:</span>
+                <span className="text-xs text-emerald-400 font-bold uppercase">{adminSelectedUni.status}</span>
+              </div>
+            </div>
+
+            <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 space-y-2">
+              <p className="text-[11px] text-gray-400 font-semibold">Attached Verification Bundle:</p>
+              <div className="flex items-center justify-between bg-gray-900 p-3 rounded-xl border border-gray-800">
+                <span className="text-xs text-blue-400 font-medium">📄 {adminSelectedUni.docName || 'Verification_Document.pdf'}</span>
+                <button 
+                  onClick={() => alert("Downloading / Viewing document: " + (adminSelectedUni.docName || 'Document.pdf'))}
+                  className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+                >
+                  View / Download
+                </button>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setAdminSelectedUni(null)} 
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl text-xs font-bold transition mt-2"
+            >
+              Close Details
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* REGISTRATION MODAL */}
       {showRegModal && (
