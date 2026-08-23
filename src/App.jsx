@@ -249,9 +249,13 @@ export default function App() {
             {user ? (
               <div className="flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md">
                 <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-blue-500 shadow-md object-cover" />
+                <div className="hidden sm:block text-left">
+                  <p className="text-[11px] font-bold text-white leading-tight">{user.displayName || 'User'}</p>
+                  <p className="text-[9px] text-blue-400 font-medium truncate max-w-[120px]">{user.email}</p>
+                </div>
                 <button 
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-semibold transition"
+                  className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-semibold transition ml-1"
                 >
                   Logout
                 </button>
@@ -417,7 +421,6 @@ export default function App() {
                     <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl backdrop-blur-md">
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                          {/* CLICKABLE UNIVERSITY NAME TO OPEN DETAIL MODAL */}
                           <h3 
                             onClick={() => setAdminSelectedUni(uni)}
                             className="text-lg font-bold text-white cursor-pointer hover:text-blue-400 transition"
@@ -435,7 +438,6 @@ export default function App() {
                         <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Voters: {uni.eligible}</p>
                         <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
                         
-                        {/* CLICKABLE DOCUMENT TO OPEN DETAIL MODAL */}
                         <div className="flex items-center gap-2 pt-1">
                           <span className="text-xs text-gray-400 font-semibold">Attached Document Bundle:</span>
                           <button 
