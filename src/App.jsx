@@ -8,7 +8,21 @@ export default function App() {
   const [selectedUni, setSelectedUni] = useState(null);
   const [activeTab, setActiveTab] = useState('voting');
 
-  // Admin Credentials States
+  // University Internal Admin & Organization States
+  const [uniSubView, setUniSubView] = useState('portal'); // 'portal', 'uni-admin-login', 'uni-admin-dashboard', 'org-login', 'org-dashboard'
+  
+  // University Admin Auth
+  const [uniAdminEmail, setUniAdminEmail] = useState('');
+  const [uniAdminPassword, setUniAdminPassword] = useState('');
+  const [isUniAdminLoggedIn, setIsUniAdminLoggedIn] = useState(false);
+
+  // Organization Auth
+  const [orgEmail, setOrgEmail] = useState('');
+  const [orgPassword, setOrgPassword] = useState('');
+  const [isOrgLoggedIn, setIsOrgLoggedIn] = useState(false);
+  const [orgName, setOrgName] = useState('');
+
+  // Global Admin Credentials States
   const [adminUsername, setAdminUsername] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -102,6 +116,31 @@ export default function App() {
     }
   };
 
+  // University Internal Admin Login Handler
+  const handleUniAdminLoginSubmit = (e) => {
+    e.preventDefault();
+    if (uniAdminEmail && uniAdminPassword) {
+      setIsUniAdminLoggedIn(true);
+      setUniSubView('uni-admin-dashboard');
+      alert("University Admin Logged In Successfully!");
+    } else {
+      alert("Please enter valid credentials!");
+    }
+  };
+
+  // Organization Login Handler
+  const handleOrgLoginSubmit = (e) => {
+    e.preventDefault();
+    if (orgEmail && orgPassword) {
+      setIsOrgLoggedIn(true);
+      setOrgName(orgEmail.split('@')[0].toUpperCase());
+      setUniSubView('org-dashboard');
+      alert("Organization Logged In Successfully!");
+    } else {
+      alert("Please enter valid organization credentials!");
+    }
+  };
+
   const handleVote = (uniId, candidateId) => {
     if (!user) {
       alert("Please sign in with Google first to cast your vote!");
@@ -134,8 +173,8 @@ export default function App() {
 
   const handleAddCandidate = (e) => {
     e.preventDefault();
-    if (!user) {
-      alert("Please sign in with Google to register candidates!");
+    if (!user && !isOrgLoggedIn) {
+      alert("Please sign in with Google or log in as an Organization to register candidates!");
       return;
     }
     if (!candidateName.trim() || !candidateParty.trim()) {
@@ -218,7 +257,7 @@ export default function App() {
       {/* Navbar */}
       <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#030508]/80 sticky top-0 z-50 shadow-2xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="cursor-pointer flex items-center gap-2.5" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
+          <div className="cursor-pointer flex items-center gap-2.5" onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); }}>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-600/30">V</div>
             <div>
               <h1 className="text-lg font-black tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">UniVote Pro</h1>
@@ -228,19 +267,19 @@ export default function App() {
 
           <div className="flex items-center gap-2 md:gap-4">
             <button 
-              onClick={() => { setCurrentView('home'); setSelectedUni(null); }}
+              onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); }}
               className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Home
             </button>
             <button 
-              onClick={() => { setCurrentView('universities'); setSelectedUni(null); }}
+              onClick={() => { setCurrentView('universities'); setSelectedUni(null); setUniSubView('portal'); }}
               className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Universities
             </button>
             <button 
-              onClick={() => { setCurrentView('admin'); setSelectedUni(null); }}
+              onClick={() => { setCurrentView('admin'); setSelectedUni(null); setUniSubView('portal'); }}
               className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Admin Panel 🛡️
@@ -349,7 +388,7 @@ export default function App() {
                       <strong className="text-white bg-gray-800/60 px-2.5 py-1 rounded-lg border border-gray-700/50">{uni.eligible}</strong>
                     </div>
                     <button 
-                      onClick={() => { setSelectedUni(uni); setActiveTab('voting'); }}
+                      onClick={() => { setSelectedUni(uni); setActiveTab('voting'); setUniSubView('portal'); }}
                       className="w-full bg-gray-800/80 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 text-sm py-3 rounded-xl transition-all font-semibold text-center text-white shadow-lg border border-gray-700/50"
                     >
                       Open Portal →
@@ -471,11 +510,11 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 4: SELECTED UNIVERSITY PORTAL */}
+        {/* VIEW 4: SELECTED UNIVERSITY PORTAL WITH ADMIN & ORGANIZATIONS PANELS */}
         {selectedUni && (
           <div className="animate-fadeIn">
             <button 
-              onClick={() => setSelectedUni(null)}
+              onClick={() => { setSelectedUni(null); setUniSubView('portal'); }}
               className="text-sm text-blue-400 hover:text-blue-300 hover:-translate-x-1 transition mb-6 inline-flex items-center gap-1 font-semibold"
             >
               ← Back to Universities
@@ -487,23 +526,38 @@ export default function App() {
                 <h2 className="text-2xl md:text-3xl font-black text-white">{selectedUni.name}</h2>
                 <p className="text-gray-400 text-xs md:text-sm mt-1">Student Union Election 2026 • Secure Balloting System</p>
               </div>
-              <div className="flex gap-2 bg-gray-950 p-1.5 rounded-2xl border border-gray-800">
+              
+              {/* Navigation Tabs including University Admin & Organizations */}
+              <div className="flex flex-wrap gap-2 bg-gray-950 p-1.5 rounded-2xl border border-gray-800">
                 <button 
-                  onClick={() => setActiveTab('voting')}
-                  className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition ${activeTab === 'voting' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView === 'portal' && activeTab === 'voting' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
                 >
                   Voting Booth
                 </button>
                 <button 
-                  onClick={() => setActiveTab('manager')}
-                  className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition ${activeTab === 'manager' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  onClick={() => { setActiveTab('manager'); setUniSubView('portal'); }}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView === 'portal' && activeTab === 'manager' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
                 >
-                  Event Manager
+                  Candidates
+                </button>
+                <button 
+                  onClick={() => setUniSubView(isUniAdminLoggedIn ? 'uni-admin-dashboard' : 'uni-admin-login')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView.includes('uni-admin') ? 'bg-purple-600 text-white shadow-lg' : 'text-purple-400 hover:text-white'}`}
+                >
+                  Uni Admin 🛡️
+                </button>
+                <button 
+                  onClick={() => setUniSubView(isOrgLoggedIn ? 'org-dashboard' : 'org-login')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView.includes('org') ? 'bg-emerald-600 text-white shadow-lg' : 'text-emerald-400 hover:text-white'}`}
+                >
+                  Organizations 🏛️
                 </button>
               </div>
             </div>
 
-            {activeTab === 'voting' ? (
+            {/* SUB-VIEW 1: VOTING BOOTH */}
+            {uniSubView === 'portal' && activeTab === 'voting' && (
               <div className="space-y-4 max-w-3xl">
                 <h3 className="text-lg font-bold text-white mb-2">Live Candidates & Standings</h3>
                 {selectedUni.candidates.length === 0 ? (
@@ -541,7 +595,10 @@ export default function App() {
                   })
                 )}
               </div>
-            ) : (
+            )}
+
+            {/* SUB-VIEW 2: CANDIDATE MANAGER */}
+            {uniSubView === 'portal' && activeTab === 'manager' && (
               <div className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-8 rounded-3xl max-w-xl shadow-2xl">
                 <h3 className="text-xl font-bold text-white mb-2">Register New Candidate</h3>
                 <form onSubmit={handleAddCandidate} className="space-y-4">
@@ -573,6 +630,164 @@ export default function App() {
                 </form>
               </div>
             )}
+
+            {/* SUB-VIEW 3: UNIVERSITY ADMIN LOGIN */}
+            {uniSubView === 'uni-admin-login' && (
+              <div className="max-w-md mx-auto bg-gradient-to-b from-gray-900 to-gray-950 border border-purple-500/30 p-8 rounded-3xl shadow-2xl">
+                <div className="text-center mb-6">
+                  <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Institution Control</span>
+                  <h3 className="text-2xl font-black text-white">{selectedUni.name} Admin</h3>
+                  <p className="text-xs text-gray-400 mt-1">Sign in with university administrative email and password.</p>
+                </div>
+                <form onSubmit={handleUniAdminLoginSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Admin Email</label>
+                    <input 
+                      type="email" 
+                      value={uniAdminEmail}
+                      onChange={(e) => setUniAdminEmail(e.target.value)}
+                      placeholder="admin@university.edu"
+                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-purple-500"
+                      required 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
+                    <input 
+                      type="password" 
+                      value={uniAdminPassword}
+                      onChange={(e) => setUniAdminPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-purple-500"
+                      required 
+                    />
+                  </div>
+                  <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
+                    Login to Uni Admin Panel
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* SUB-VIEW 4: UNIVERSITY ADMIN DASHBOARD */}
+            {uniSubView === 'uni-admin-dashboard' && (
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-purple-500/30 p-8 rounded-3xl shadow-2xl space-y-6">
+                <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+                  <div>
+                    <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Authenticated Admin</span>
+                    <h3 className="text-2xl font-black text-white">{selectedUni.name} Management Panel</h3>
+                  </div>
+                  <button 
+                    onClick={() => { setIsUniAdminLoggedIn(false); setUniSubView('uni-admin-login'); }}
+                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
+                  >
+                    Logout Admin
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
+                    <p className="text-xs text-gray-400 font-semibold">Total Voters Registered</p>
+                    <p className="text-2xl font-black text-white mt-1">{selectedUni.eligible}</p>
+                  </div>
+                  <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
+                    <p className="text-xs text-gray-400 font-semibold">Active Candidates</p>
+                    <p className="text-2xl font-black text-blue-400 mt-1">{selectedUni.candidates.length}</p>
+                  </div>
+                  <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
+                    <p className="text-xs text-gray-400 font-semibold">Election Status</p>
+                    <p className="text-2xl font-black text-emerald-400 mt-1">Live & Secure</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUB-VIEW 5: ORGANIZATION LOGIN */}
+            {uniSubView === 'org-login' && (
+              <div className="max-w-md mx-auto bg-gradient-to-b from-gray-900 to-gray-950 border border-emerald-500/30 p-8 rounded-3xl shadow-2xl">
+                <div className="text-center mb-6">
+                  <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Student Body / Party Portal</span>
+                  <h3 className="text-2xl font-black text-white">Organization Login</h3>
+                  <p className="text-xs text-gray-400 mt-1">Sign in with organization email and password to manage campaign entries.</p>
+                </div>
+                <form onSubmit={handleOrgLoginSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Organization Email</label>
+                    <input 
+                      type="email" 
+                      value={orgEmail}
+                      onChange={(e) => setOrgEmail(e.target.value)}
+                      placeholder="youthfront@org.com"
+                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+                      required 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
+                    <input 
+                      type="password" 
+                      value={orgPassword}
+                      onChange={(e) => setOrgPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+                      required 
+                    />
+                  </div>
+                  <button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
+                    Login to Organization Portal
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* SUB-VIEW 6: ORGANIZATION DASHBOARD */}
+            {uniSubView === 'org-dashboard' && (
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-emerald-500/30 p-8 rounded-3xl shadow-2xl space-y-6">
+                <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+                  <div>
+                    <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Organization Dashboard</span>
+                    <h3 className="text-2xl font-black text-white">{orgName} Party Hub</h3>
+                  </div>
+                  <button 
+                    onClick={() => { setIsOrgLoggedIn(false); setUniSubView('org-login'); }}
+                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
+                  >
+                    Logout Org
+                  </button>
+                </div>
+
+                <div className="max-xl space-y-4">
+                  <h4 className="text-sm font-bold text-white">Register Candidate under {orgName}</h4>
+                  <form onSubmit={handleAddCandidate} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 mb-2">Candidate Name</label>
+                      <input 
+                        type="text" 
+                        value={candidateName}
+                        onChange={(e) => setCandidateName(e.target.value)}
+                        placeholder="e.g. Rahul Sharma"
+                        className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 mb-2">Party Affiliation</label>
+                      <input 
+                        type="text" 
+                        value={candidateParty}
+                        onChange={(e) => setCandidateParty(e.target.value)}
+                        placeholder={orgName}
+                        className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+                        required
+                      />
+                    </div>
+                    <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg">
+                      Submit Candidate Nomination
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
 
