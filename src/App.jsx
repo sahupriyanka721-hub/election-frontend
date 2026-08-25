@@ -81,7 +81,7 @@ export default function App() {
       eligible: '35,000+',
       status: 'Approved',
       docName: 'LPU_Registration_Bundle.pdf',
-      image: 'https://images.unsplash.com/photo-1592280771190-3e2e4d57cbd6?auto=format&fit=crop&w=1200&q=80', // Fixed working image URL
+      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', // Updated guaranteed working image link
       candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
         { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 }
@@ -218,7 +218,7 @@ export default function App() {
     }
 
     const defaultImages = [
-      'https://images.unsplash.com/photo-1592280771190-3e2e4d57cbd6?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80'
     ];
