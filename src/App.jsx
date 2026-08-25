@@ -44,7 +44,7 @@ export default function App() {
   const [regEligible, setRegEligible] = useState('');
   const [regDoc, setRegDoc] = useState(null);
   
-  // Unique & Clean Universities List with Campus Images
+  // Unique & Clean Universities List with Working Campus Images
   const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
@@ -81,7 +81,7 @@ export default function App() {
       eligible: '35,000+',
       status: 'Approved',
       docName: 'LPU_Registration_Bundle.pdf',
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.unsplash.com/photo-1592280771190-3e2e4d57cbd6?auto=format&fit=crop&w=1200&q=80', // Fixed working image URL
       candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
         { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 }
@@ -218,7 +218,7 @@ export default function App() {
     }
 
     const defaultImages = [
-      'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1592280771190-3e2e4d57cbd6?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80'
     ];
@@ -447,7 +447,7 @@ export default function App() {
                   key={uni.id} 
                   className="group relative bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 hover:border-blue-500/60 hover:shadow-xl backdrop-blur-xl"
                 >
-                  <div className="relative h-48 w-full overflow-hidden">
+                  <div className="relative h-48 w-full overflow-hidden bg-gray-950">
                     <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/40 to-transparent"></div>
                     <span className="absolute top-4 right-4 text-[10px] bg-emerald-950/90 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/60 font-semibold tracking-wider backdrop-blur-md">Active</span>
@@ -596,7 +596,7 @@ export default function App() {
             </button>
             
             {/* University Banner Image Section */}
-            <div className="relative h-64 md:h-80 w-full rounded-3xl overflow-hidden border border-gray-800 shadow-2xl">
+            <div className="relative h-64 md:h-80 w-full rounded-3xl overflow-hidden border border-gray-800 shadow-2xl bg-gray-950">
               <img src={selectedUni.image} alt={selectedUni.name} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#030508] via-[#030508]/60 to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
