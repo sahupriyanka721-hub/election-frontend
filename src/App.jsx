@@ -8,6 +8,9 @@ export default function App() {
   const [selectedUni, setSelectedUni] = useState(null);
   const [activeTab, setActiveTab] = useState('voting');
 
+  // Mobile Menu State
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   // University Internal Admin & Organization States
   const [uniSubView, setUniSubView] = useState('portal'); // 'portal', 'uni-admin-login', 'uni-admin-dashboard', 'org-login', 'org-dashboard'
   
@@ -255,46 +258,47 @@ export default function App() {
       <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       {/* Navbar */}
-      <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#030508]/80 sticky top-0 z-50 shadow-2xl">
+      <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#030508]/90 sticky top-0 z-50 shadow-2xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="cursor-pointer flex items-center gap-2.5" onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); }}>
+          <div className="cursor-pointer flex items-center gap-2.5" onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-600/30">V</div>
             <div>
-              <h1 className="text-lg font-black tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">UniVote Pro</h1>
-              <p className="text-[9px] text-gray-400 tracking-wide font-medium">National Campus Election & Compliance Portal</p>
+              <h1 className="text-sm md:text-lg font-black tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">UniVote Pro</h1>
+              <p className="text-[8px] md:text-[9px] text-gray-400 tracking-wide font-medium">National Campus Election Portal</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-3">
             <button 
               onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); }}
-              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Home
             </button>
             <button 
               onClick={() => { setCurrentView('universities'); setSelectedUni(null); setUniSubView('portal'); }}
-              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Universities
             </button>
             <button 
               onClick={() => { setCurrentView('admin'); setSelectedUni(null); setUniSubView('portal'); }}
-              className={`text-xs md:text-sm font-semibold px-3 py-1.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
             >
               Admin Panel 🛡️
             </button>
 
             {user ? (
-              <div className="flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md">
+              <div className="flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md ml-2">
                 <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-blue-500 shadow-md object-cover" />
-                <div className="hidden sm:block text-left">
+                <div className="text-left">
                   <p className="text-[11px] font-bold text-white leading-tight">{user.displayName || 'User'}</p>
-                  <p className="text-[9px] text-blue-400 font-medium truncate max-w-[120px]">{user.email}</p>
+                  <p className="text-[9px] text-blue-400 font-medium truncate max-w-[100px]">{user.email}</p>
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-semibold transition ml-1"
+                  className="bg-red-600 hover:bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition ml-1"
                 >
                   Logout
                 </button>
@@ -302,13 +306,77 @@ export default function App() {
             ) : (
               <button 
                 onClick={handleGoogleLogin}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-600/20 active:scale-95 ml-2"
               >
                 Sign in with Google
               </button>
             )}
           </div>
+
+          {/* Mobile Hamburger Button */}
+          <div className="flex md:hidden items-center gap-2">
+            {user && (
+              <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border-2 border-blue-500 object-cover" />
+            )}
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="bg-gray-900 border border-gray-800 text-gray-200 p-2 rounded-xl focus:outline-none"
+            >
+              {mobileMenuOpen ? '✕' : '☰'}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pt-4 border-t border-gray-800/80 flex flex-col gap-2.5 animate-fadeIn">
+            <button 
+              onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}
+              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:bg-gray-900'}`}
+            >
+              🏠 Home
+            </button>
+            <button 
+              onClick={() => { setCurrentView('universities'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}
+              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:bg-gray-900'}`}
+            >
+              🏛️ Universities
+            </button>
+            <button 
+              onClick={() => { setCurrentView('admin'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}
+              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:bg-gray-900'}`}
+            >
+              🛡️ Admin Panel
+            </button>
+
+            <div className="pt-2 border-t border-gray-800/60 mt-1">
+              {user ? (
+                <div className="flex flex-col gap-3 bg-gray-950 p-3 rounded-2xl border border-gray-800">
+                  <div className="flex items-center gap-2.5">
+                    <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-blue-500 object-cover" />
+                    <div>
+                      <p className="text-xs font-bold text-white">{user.displayName || 'User'}</p>
+                      <p className="text-[10px] text-blue-400 truncate max-w-[200px]">{user.email}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                    className="w-full bg-red-600 hover:bg-red-500 text-white py-2 rounded-xl text-xs font-semibold transition"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => { handleGoogleLogin(); setMobileMenuOpen(false); }}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg"
+                >
+                  Sign in with Google
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Main Container */}
@@ -408,7 +476,7 @@ export default function App() {
                 <div className="text-center mb-6">
                   <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Restricted Access</span>
                   <h2 className="text-2xl font-black text-white">Admin Portal Login</h2>
-                  <p className="text-xs text-gray-400 mt-1">Please authenticate to access the document review settings.</p>
+                  <p className="text-xs text-gray-400 mt-1">Please authenticate to access document review settings.</p>
                 </div>
 
                 <form onSubmit={handleAdminLogin} className="space-y-4">
@@ -441,7 +509,7 @@ export default function App() {
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="flex justify-between items-center bg-gray-900 p-6 rounded-3xl border border-gray-800">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-900 p-6 rounded-3xl border border-gray-800 gap-4">
                   <div>
                     <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Authenticated Session</span>
                     <h2 className="text-2xl font-black text-white">Admin Document Review Dashboard</h2>
@@ -459,7 +527,7 @@ export default function App() {
                   {universities.map((uni) => (
                     <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl backdrop-blur-md">
                       <div className="space-y-2">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                           <h3 
                             onClick={() => setAdminSelectedUni(uni)}
                             className="text-lg font-bold text-white cursor-pointer hover:text-blue-400 transition"
@@ -528,28 +596,28 @@ export default function App() {
               </div>
               
               {/* Navigation Tabs including University Admin & Organizations */}
-              <div className="flex flex-wrap gap-2 bg-gray-950 p-1.5 rounded-2xl border border-gray-800">
+              <div className="flex flex-wrap gap-2 bg-gray-950 p-1.5 rounded-2xl border border-gray-800 w-full md:w-auto">
                 <button 
                   onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView === 'portal' && activeTab === 'voting' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  className={`flex-1 md:flex-none px-3.5 py-2 rounded-xl text-xs font-semibold transition ${uniSubView === 'portal' && activeTab === 'voting' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
                 >
                   Voting Booth
                 </button>
                 <button 
                   onClick={() => { setActiveTab('manager'); setUniSubView('portal'); }}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView === 'portal' && activeTab === 'manager' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  className={`flex-1 md:flex-none px-3.5 py-2 rounded-xl text-xs font-semibold transition ${uniSubView === 'portal' && activeTab === 'manager' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
                 >
                   Candidates
                 </button>
                 <button 
                   onClick={() => setUniSubView(isUniAdminLoggedIn ? 'uni-admin-dashboard' : 'uni-admin-login')}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView.includes('uni-admin') ? 'bg-purple-600 text-white shadow-lg' : 'text-purple-400 hover:text-white'}`}
+                  className={`flex-1 md:flex-none px-3.5 py-2 rounded-xl text-xs font-semibold transition ${uniSubView.includes('uni-admin') ? 'bg-purple-600 text-white shadow-lg' : 'text-purple-400 hover:text-white'}`}
                 >
                   Uni Admin 🛡️
                 </button>
                 <button 
                   onClick={() => setUniSubView(isOrgLoggedIn ? 'org-dashboard' : 'org-login')}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${uniSubView.includes('org') ? 'bg-emerald-600 text-white shadow-lg' : 'text-emerald-400 hover:text-white'}`}
+                  className={`flex-1 md:flex-none px-3.5 py-2 rounded-xl text-xs font-semibold transition ${uniSubView.includes('org') ? 'bg-emerald-600 text-white shadow-lg' : 'text-emerald-400 hover:text-white'}`}
                 >
                   Organizations 🏛️
                 </button>
@@ -672,7 +740,7 @@ export default function App() {
             {/* SUB-VIEW 4: UNIVERSITY ADMIN DASHBOARD */}
             {uniSubView === 'uni-admin-dashboard' && (
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-purple-500/30 p-8 rounded-3xl shadow-2xl space-y-6">
-                <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
                   <div>
                     <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Authenticated Admin</span>
                     <h3 className="text-2xl font-black text-white">{selectedUni.name} Management Panel</h3>
@@ -742,7 +810,7 @@ export default function App() {
             {/* SUB-VIEW 6: ORGANIZATION DASHBOARD */}
             {uniSubView === 'org-dashboard' && (
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-emerald-500/30 p-8 rounded-3xl shadow-2xl space-y-6">
-                <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
                   <div>
                     <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Organization Dashboard</span>
                     <h3 className="text-2xl font-black text-white">{orgName} Party Hub</h3>
@@ -755,7 +823,7 @@ export default function App() {
                   </button>
                 </div>
 
-                <div className="max-xl space-y-4">
+                <div className="max-w-xl space-y-4">
                   <h4 className="text-sm font-bold text-white">Register Candidate under {orgName}</h4>
                   <form onSubmit={handleAddCandidate} className="space-y-4">
                     <div>
@@ -876,7 +944,7 @@ export default function App() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">Upload Verification Bundle (PDF / ZIP)</label>
-                <input type="file" onChange={(e) => setRegDoc(e.target.files[0])} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white" required />
+                <input type="file" onChange={(e) => setRegDoc(e.target.files[0])} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white" required />
               </div>
 
               <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
