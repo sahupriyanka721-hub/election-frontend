@@ -81,7 +81,7 @@ export default function App() {
       eligible: '35,000+',
       status: 'Approved',
       docName: 'LPU_Registration_Bundle.pdf',
-      image=https://plus.unsplash.com/premium_photo-1713296255442-e9338f42aad8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dW5pdmVyc2l0eXxlbnwwfHwwfHx8MA%3D%3D 
+      image: https://plus.unsplash.com/premium_photo-1713296255442-e9338f42aad8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dW5pdmVyc2l0eXxlbnwwfHwwfHx8MA%3D%3D ,
                 candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
         { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 }
