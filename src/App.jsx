@@ -25,8 +25,8 @@ export default function App() {
   const [isOrgLoggedIn, setIsOrgLoggedIn] = useState(false);
   const [orgName, setOrgName] = useState('');
 
-  // Global Admin Credentials States
-  const [adminUsername, setAdminUsername] = useState('');
+  // Global Admin Credentials States (Changed Username to Email)
+  const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
@@ -81,7 +81,8 @@ export default function App() {
       eligible: '35,000+',
       status: 'Approved',
       docName: 'LPU_Registration_Bundle.pdf',
-image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', candidates: [
+      image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Custom selected image
+      candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
         { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 }
       ]
@@ -113,11 +114,11 @@ image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&
 
   const handleAdminLogin = (e) => {
     e.preventDefault();
-    if (adminUsername === 'admin' && adminPassword === 'admin123') {
+    if (adminEmail === 'admin@univote.com' && adminPassword === 'admin123') {
       setIsAdminLoggedIn(true);
       alert("Admin Logged In Successfully!");
     } else {
-      alert("Invalid Admin ID or Password!");
+      alert("Invalid Admin Email or Password! (Hint: admin@univote.com / admin123)");
     }
   };
 
@@ -474,7 +475,7 @@ image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&
           </div>
         )}
 
-        {/* VIEW 3: ADMIN LOGIN & DASHBOARD */}
+        {/* VIEW 3: ADMIN LOGIN & DASHBOARD (Updated Username to Email) */}
         {currentView === 'admin' && (
           <div>
             {!isAdminLoggedIn ? (
@@ -487,12 +488,12 @@ image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&
 
                 <form onSubmit={handleAdminLogin} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Admin Username</label>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Admin Email</label>
                     <input 
-                      type="text" 
-                      value={adminUsername}
-                      onChange={(e) => setAdminUsername(e.target.value)}
-                      placeholder="Username"
+                      type="email" 
+                      value={adminEmail}
+                      onChange={(e) => setAdminEmail(e.target.value)}
+                      placeholder="admin@univote.com"
                       className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
                       required 
                     />
@@ -968,7 +969,7 @@ image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&
 
               <div>
                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Voters Count</label>
-                <input type="text" value={regEligible} onChange={(e) => setRegEligible(e.target.value)} placeholder="e.g. 40,000+" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
+                <input type="text" value={regEligible} onChange={(e) => setregEligible(e.target.value)} placeholder="e.g. 40,000+" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
               </div>
 
               <div>
