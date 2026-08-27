@@ -6,7 +6,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'admin'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('voting');
+  const [activeTab, setActiveTab] = useState('voting'); // 'voting', 'manager', 'org-dashboard'
 
   // Mobile Menu State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,7 +25,7 @@ export default function App() {
   const [isOrgLoggedIn, setIsOrgLoggedIn] = useState(false);
   const [orgName, setOrgName] = useState('');
 
-  // Global Admin Credentials States (Changed Username to Email)
+  // Global Admin Credentials States (Email-based)
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -44,7 +44,7 @@ export default function App() {
   const [regEligible, setRegEligible] = useState('');
   const [regDoc, setRegDoc] = useState(null);
   
-  // Unique & Clean Universities List with Working Campus Images
+  // Universities List with Working Images
   const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
@@ -81,7 +81,7 @@ export default function App() {
       eligible: '35,000+',
       status: 'Approved',
       docName: 'LPU_Registration_Bundle.pdf',
-      image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Custom selected image
+      image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
         { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 }
@@ -400,11 +400,11 @@ export default function App() {
             </div>
             
             <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight leading-[1.1] bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-              Next-Gen Student Union Elections & Compliance Hub
+              Next-Gen Student Union Elections & Organization Hub
             </h1>
             
             <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
-              Transforming campus democracies with transparent verification routing, secure Google-authenticated balloting, and real-time standing tracking.
+              Comprehensive university and organization information dashboards with transparent verification routing and secure Google-authenticated balloting.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 pt-2">
@@ -431,7 +431,7 @@ export default function App() {
               <div>
                 <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest inline-block mb-2">Verified Portal</span>
                 <h2 className="text-3xl font-black text-white">Approved Universities</h2>
-                <p className="text-gray-400 text-xs md:text-sm mt-1">Select your approved institution to cast secure ballots.</p>
+                <p className="text-gray-400 text-xs md:text-sm mt-1">Select your approved institution to open the complete organization & student dashboard.</p>
               </div>
               <button 
                 onClick={() => setShowRegModal(true)}
@@ -463,10 +463,10 @@ export default function App() {
                       <strong className="text-white bg-gray-800/60 px-2.5 py-1 rounded-lg border border-gray-700/50">{uni.eligible}</strong>
                     </div>
                     <button 
-                      onClick={() => { setSelectedUni(uni); setActiveTab('voting'); setUniSubView('portal'); }}
+                      onClick={() => { setSelectedUni(uni); setActiveTab('dashboard'); setUniSubView('portal'); }}
                       className="w-full bg-gray-800/80 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 text-sm py-3 rounded-xl transition-all font-semibold text-center text-white shadow-lg border border-gray-700/50"
                     >
-                      Open Portal →
+                      Open Dashboard →
                     </button>
                   </div>
                 </div>
@@ -475,7 +475,7 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 3: ADMIN LOGIN & DASHBOARD (Updated Username to Email) */}
+        {/* VIEW 3: ADMIN LOGIN & DASHBOARD */}
         {currentView === 'admin' && (
           <div>
             {!isAdminLoggedIn ? (
@@ -585,7 +585,7 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 4: SELECTED UNIVERSITY PORTAL WITH SIDEBAR & CAMPUS BANNER IMAGE */}
+        {/* VIEW 4: SELECTED UNIVERSITY & ORGANIZATION DASHBOARD */}
         {selectedUni && (
           <div className="animate-fadeIn space-y-6">
             <button 
@@ -601,12 +601,12 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#030508] via-[#030508]/60 to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest mb-2 inline-block backdrop-blur-md">Institution Portal</span>
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest mb-2 inline-block backdrop-blur-md">University & Organization Dashboard</span>
                   <h2 className="text-3xl md:text-4xl font-black text-white">{selectedUni.name}</h2>
-                  <p className="text-gray-300 text-xs md:text-sm mt-1">📍 {selectedUni.location} • Student Union Election 2026</p>
+                  <p className="text-gray-300 text-xs md:text-sm mt-1">📍 {selectedUni.location} • Comprehensive Info Hub</p>
                 </div>
                 <div className="bg-gray-900/80 backdrop-blur-md border border-gray-800 px-4 py-2 rounded-2xl text-xs text-gray-300">
-                  Eligible Voters: <strong className="text-white">{selectedUni.eligible}</strong>
+                  Total Eligible Voters: <strong className="text-white">{selectedUni.eligible}</strong>
                 </div>
               </div>
             </div>
@@ -616,13 +616,20 @@ export default function App() {
               
               {/* SIDEBAR NAVIGATION */}
               <div className="lg:col-span-1 bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-4 rounded-3xl backdrop-blur-xl h-fit space-y-2 shadow-xl">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">Navigation Menu</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">Dashboard Navigation</p>
                 
+                <button 
+                  onClick={() => { setActiveTab('dashboard'); setUniSubView('portal'); }}
+                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'portal' && activeTab === 'dashboard' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'}`}
+                >
+                  <span className="text-base">📊</span> University Info Hub
+                </button>
+
                 <button 
                   onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
                   className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'portal' && activeTab === 'voting' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'}`}
                 >
-                  <span className="text-base">🗳️</span> Voting Booth
+                  <span className="text-base">🗳️</span> Voting & Students
                 </button>
 
                 <button 
@@ -650,6 +657,70 @@ export default function App() {
               {/* MAIN CONTENT AREA */}
               <div className="lg:col-span-3">
 
+                {/* SUB-VIEW 0: UNIVERSITY & ORGANIZATION OVERVIEW DASHBOARD */}
+                {uniSubView === 'portal' && activeTab === 'dashboard' && (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-8 rounded-3xl shadow-2xl space-y-6">
+                      <div>
+                        <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Master Information Record</span>
+                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Overview</h3>
+                        <p className="text-xs text-gray-400 mt-1">{selectedUni.desc}</p>
+                      </div>
+
+                      {/* Stat Cards */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 shadow-inner">
+                          <p className="text-xs text-gray-400 font-semibold">Total Registered Voters</p>
+                          <p className="text-2xl font-black text-white mt-1">{selectedUni.eligible}</p>
+                        </div>
+                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 shadow-inner">
+                          <p className="text-xs text-gray-400 font-semibold">Active Student Organizations</p>
+                          <p className="text-2xl font-black text-blue-400 mt-1">3 Bodies</p>
+                        </div>
+                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 shadow-inner">
+                          <p className="text-xs text-gray-400 font-semibold">Registered Candidates</p>
+                          <p className="text-2xl font-black text-emerald-400 mt-1">{selectedUni.candidates.length}</p>
+                        </div>
+                      </div>
+
+                      {/* Organization & Student Bodies Info */}
+                      <div className="space-y-3 pt-2">
+                        <h4 className="text-sm font-bold text-white uppercase tracking-wider">Associated Student Organizations</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 flex items-center justify-between">
+                            <div>
+                              <p className="text-xs font-bold text-white">Youth Front Council</p>
+                              <p className="text-[10px] text-gray-400">Primary Student Governing Body</p>
+                            </div>
+                            <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">Verified</span>
+                          </div>
+                          <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 flex items-center justify-between">
+                            <div>
+                              <p className="text-xs font-bold text-white">Panther Student Union</p>
+                              <p className="text-[10px] text-gray-400">Campus Welfare & Activities</p>
+                            </div>
+                            <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">Verified</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Document Compliance Bundle */}
+                      <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                          <p className="text-xs font-bold text-white">Institutional Verification Bundle</p>
+                          <p className="text-[11px] text-blue-400 mt-0.5">📄 {selectedUni.docName || 'Compliance_Package.pdf'}</p>
+                        </div>
+                        <button 
+                          onClick={() => alert("Viewing compliance document for " + selectedUni.name)}
+                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg"
+                        >
+                          View Document Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* SUB-VIEW 1: VOTING BOOTH */}
                 {uniSubView === 'portal' && activeTab === 'voting' && (
                   <div className="space-y-4">
@@ -665,7 +736,7 @@ export default function App() {
                           <div key={cand.id} className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl space-y-4 shadow-xl">
                             <div className="flex justify-between items-center">
                               <div>
-                                <span className="text-[10px] bg-blue-950/80 text-blue-400 px-3 py-1 rounded-full border border-blue-900/60 font-bold uppercase">Party: {cand.party}</span>
+                                <span className="text-[10px] bg-blue-950/80 text-blue-400 px-3 py-1 rounded-full border border-blue-900/60 font-bold uppercase">Organization / Party: {cand.party}</span>
                                 <h4 className="font-bold text-lg text-white mt-2">{cand.name}</h4>
                               </div>
                               <button 
@@ -695,7 +766,7 @@ export default function App() {
                 {uniSubView === 'portal' && activeTab === 'manager' && (
                   <div className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-8 rounded-3xl shadow-2xl">
                     <h3 className="text-xl font-bold text-white mb-2">Register New Candidate</h3>
-                    <p className="text-xs text-gray-400 mb-6">Add candidate nomination for student union elections.</p>
+                    <p className="text-xs text-gray-400 mb-6">Add candidate nomination under university student organizations.</p>
                     <form onSubmit={handleAddCandidate} className="space-y-4">
                       <div>
                         <label className="block text-xs font-semibold text-gray-300 mb-2">Candidate Name</label>
@@ -709,7 +780,7 @@ export default function App() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-2">Party Name</label>
+                        <label className="block text-xs font-semibold text-gray-300 mb-2">Organization / Party Name</label>
                         <input 
                           type="text" 
                           value={candidateParty}
@@ -969,7 +1040,7 @@ export default function App() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Voters Count</label>
-                <input type="text" value={regEligible} onChange={(e) => setregEligible(e.target.value)} placeholder="e.g. 40,000+" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
+                <input type="text" value={regEligible} onChange={(e) => setRegEligible(e.target.value)} placeholder="e.g. 40,000+" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
               </div>
 
               <div>
