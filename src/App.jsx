@@ -30,6 +30,9 @@ export default function App() {
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
+  // Advanced Admin Panel Sub-Tabs ('overview', 'universities-mgmt', 'students-mgmt', 'system-logs')
+  const [adminTab, setAdminTab] = useState('overview');
+
   // Admin Document/University Detail Modal State
   const [adminSelectedUni, setAdminSelectedUni] = useState(null);
 
@@ -256,6 +259,13 @@ export default function App() {
     alert(`University status updated to: ${action}`);
   };
 
+  const handleDeleteUniversity = (uniId) => {
+    if (window.confirm("Are you sure you want to delete this university from the system?")) {
+      setUniversities(universities.filter(uni => uni.id !== uniId));
+      alert("University removed successfully.");
+    }
+  };
+
   const getTotalVotes = (candidates) => {
     const total = candidates.reduce((acc, curr) => acc + curr.votes, 0);
     return total === 0 ? 1 : total;
@@ -475,15 +485,15 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 3: ADMIN LOGIN & DASHBOARD */}
+        {/* VIEW 3: ADVANCED ADMIN PANEL & LOGIN */}
         {currentView === 'admin' && (
           <div>
             {!isAdminLoggedIn ? (
               <div className="max-w-md mx-auto mt-12 bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
                 <div className="text-center mb-6">
                   <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Restricted Access</span>
-                  <h2 className="text-2xl font-black text-white">Admin Portal Login</h2>
-                  <p className="text-xs text-gray-400 mt-1">Please authenticate to access document review settings.</p>
+                  <h2 className="text-2xl font-black text-white">Admin Panel Login</h2>
+                  <p className="text-xs text-gray-400 mt-1">Please authenticate to access full system management.</p>
                 </div>
 
                 <form onSubmit={handleAdminLogin} className="space-y-4">
@@ -510,76 +520,196 @@ export default function App() {
                     />
                   </div>
                   <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
-                    Login
+                    Login to Admin Panel
                   </button>
                 </form>
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-900 p-6 rounded-3xl border border-gray-800 gap-4">
+                {/* Admin Header Bar */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-gray-900 to-gray-950 p-6 rounded-3xl border border-gray-800 gap-4 shadow-xl">
                   <div>
-                    <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Authenticated Session</span>
-                    <h2 className="text-2xl font-black text-white">Admin Document Review Dashboard</h2>
-                    <p className="text-gray-400 text-xs mt-1">Click on any university name or attached document to view full verification details.</p>
+                    <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Super Admin Active</span>
+                    <h2 className="text-2xl font-black text-white">National Control & Admin Panel</h2>
+                    <p className="text-gray-400 text-xs mt-1">Manage universities, approve compliance documents, and monitor live system status.</p>
                   </div>
                   <button 
                     onClick={() => setIsAdminLoggedIn(false)}
-                    className="bg-red-600/80 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
+                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition shadow-lg"
                   >
                     Admin Logout
                   </button>
                 </div>
 
-                <div className="space-y-4">
-                  {universities.map((uni) => (
-                    <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl backdrop-blur-md">
-                      <div className="space-y-2">
-                        <div className="flex flex-wrap items-center gap-3">
-                          <h3 
-                            onClick={() => setAdminSelectedUni(uni)}
-                            className="text-lg font-bold text-white cursor-pointer hover:text-blue-400 transition"
-                          >
-                            {uni.name} 🔍
-                          </h3>
-                          <span className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
-                            uni.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                            uni.status === 'Rejected' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
-                            'bg-amber-950 text-amber-400 border border-amber-800'
-                          }`}>
-                            {uni.status}
-                          </span>
+                {/* Admin Navigation Tabs */}
+                <div className="flex flex-wrap gap-2 bg-gray-900/60 p-2 rounded-2xl border border-gray-800">
+                  <button 
+                    onClick={() => setAdminTab('overview')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'overview' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    📊 System Overview
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('universities-mgmt')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'universities-mgmt' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    🏛️ University Approvals ({universities.filter(u => u.status === 'Pending').length})
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('students-mgmt')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'students-mgmt' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    👥 Student Voters Directory
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('system-logs')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'system-logs' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    ⚙️ System Activity Logs
+                  </button>
+                </div>
+
+                {/* ADMIN TAB 1: SYSTEM OVERVIEW */}
+                {adminTab === 'overview' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
+                        <p className="text-xs text-gray-400 font-semibold">Total Universities</p>
+                        <p className="text-3xl font-black text-white mt-2">{universities.length}</p>
+                      </div>
+                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
+                        <p className="text-xs text-gray-400 font-semibold">Pending Approvals</p>
+                        <p className="text-3xl font-black text-amber-400 mt-2">{universities.filter(u => u.status === 'Pending').length}</p>
+                      </div>
+                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
+                        <p className="text-xs text-gray-400 font-semibold">Active Ballots</p>
+                        <p className="text-3xl font-black text-emerald-400 mt-2">{universities.filter(u => u.status === 'Approved').length}</p>
+                      </div>
+                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
+                        <p className="text-xs text-gray-400 font-semibold">System Security</p>
+                        <p className="text-3xl font-black text-blue-400 mt-2">Encrypted</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ADMIN TAB 2: UNIVERSITY APPROVALS & MANAGEMENT */}
+                {adminTab === 'universities-mgmt' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <h3 className="text-lg font-bold text-white mb-2">University Document Verification & Status Control</h3>
+                    {universities.map((uni) => (
+                      <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-3">
+                            <h4 
+                              onClick={() => setAdminSelectedUni(uni)}
+                              className="text-lg font-bold text-white cursor-pointer hover:text-blue-400 transition"
+                            >
+                              {uni.name} 🔍
+                            </h4>
+                            <span className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
+                              uni.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
+                              uni.status === 'Rejected' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
+                              'bg-amber-950 text-amber-400 border border-amber-800'
+                            }`}>
+                              {uni.status}
+                            </span>
+                          </div>
+                          <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Eligible Voters: {uni.eligible}</p>
+                          <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
+                          
+                          <div className="flex items-center gap-2 pt-1">
+                            <span className="text-xs text-gray-400 font-semibold">Document Bundle:</span>
+                            <button 
+                              onClick={() => setAdminSelectedUni(uni)}
+                              className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1 bg-transparent border-0 cursor-pointer"
+                            >
+                              📄 {uni.docName || 'Verification_Package.pdf'}
+                            </button>
+                          </div>
                         </div>
-                        <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Voters: {uni.eligible}</p>
-                        <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
-                        
-                        <div className="flex items-center gap-2 pt-1">
-                          <span className="text-xs text-gray-400 font-semibold">Attached Document Bundle:</span>
+
+                        <div className="flex items-center gap-2.5 w-full md:w-auto">
                           <button 
-                            onClick={() => setAdminSelectedUni(uni)}
-                            className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1 bg-transparent border-0 cursor-pointer"
+                            onClick={() => handleAdminAction(uni.id, 'Approved')}
+                            className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg"
                           >
-                            📄 {uni.docName || 'Verification_Package.pdf'}
+                            Approve ✓
+                          </button>
+                          <button 
+                            onClick={() => handleAdminAction(uni.id, 'Rejected')}
+                            className="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg"
+                          >
+                            Reject ✕
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteUniversity(uni.id)}
+                            className="bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition"
+                          >
+                            🗑️
                           </button>
                         </div>
                       </div>
+                    ))}
+                  </div>
+                )}
 
-                      <div className="flex items-center gap-3 w-full md:w-auto">
-                        <button 
-                          onClick={() => handleAdminAction(uni.id, 'Approved')}
-                          className="flex-1 md:flex-none bg-emerald-600/90 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg"
-                        >
-                          Approve ✓
-                        </button>
-                        <button 
-                          onClick={() => handleAdminAction(uni.id, 'Rejected')}
-                          className="flex-1 md:flex-none bg-rose-600/90 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg"
-                        >
-                          Reject ✕
-                        </button>
+                {/* ADMIN TAB 3: STUDENT VOTERS DIRECTORY */}
+                {adminTab === 'students-mgmt' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl space-y-4 animate-fadeIn">
+                    <h3 className="text-lg font-bold text-white">Registered Student Voters Directory</h3>
+                    <p className="text-xs text-gray-400">List of authenticated Google users and student electors across all platforms.</p>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="border-b border-gray-800 text-gray-400 uppercase">
+                          <tr>
+                            <th className="pb-3">Voter Profile</th>
+                            <th className="pb-3">Email Address</th>
+                            <th className="pb-3">Authentication Status</th>
+                            <th className="pb-3">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-800/60 text-gray-300">
+                          {user ? (
+                            <tr>
+                              <td className="py-3 flex items-center gap-2">
+                                <img src={user.photoURL} alt="" className="w-6 h-6 rounded-full border border-blue-500 object-cover" />
+                                <span className="font-bold text-white">{user.displayName || 'Active Student'}</span>
+                              </td>
+                              <td className="py-3 text-blue-400">{user.email}</td>
+                              <td className="py-3"><span className="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-800 font-semibold">Verified Google Auth</span></td>
+                              <td className="py-3"><button onClick={() => alert("Voter account verified and active.")} className="text-blue-400 hover:underline">Inspect</button></td>
+                            </tr>
+                          ) : (
+                            <tr>
+                              <td colSpan="4" className="py-6 text-center text-gray-500">No active sessions logged in currently. Sign in with Google to view voter logs.</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* ADMIN TAB 4: SYSTEM LOGS */}
+                {adminTab === 'system-logs' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl space-y-4 animate-fadeIn">
+                    <h3 className="text-lg font-bold text-white">System Audit Trail & Security Logs</h3>
+                    <div className="space-y-2 font-mono text-[11px]">
+                      <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-emerald-400">
+                        [2026-08-31 11:30:12] SUCCESS: Admin Panel authenticated successfully via administrator credentials.
+                      </div>
+                      <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-blue-400">
+                        [2026-08-31 10:15:44] INFO: University compliance bundles verified for Graphic Era and Amity.
+                      </div>
+                      <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-gray-300">
+                        [2026-08-31 09:00:05] SYSTEM: Secure Ballot Registry initialized with active encryption keys.
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
+
               </div>
             )}
           </div>
@@ -1028,7 +1158,7 @@ export default function App() {
                   <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Jharkhand State University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location</label>
+                  <label className="block y-text text-xs font-semibold text-gray-300 mb-1.5">Location</label>
                   <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
                 </div>
               </div>
