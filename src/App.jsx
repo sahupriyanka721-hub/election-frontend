@@ -6,13 +6,13 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'admin'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('voting'); // 'voting', 'manager', 'org-dashboard'
+  const [activeTab, setActiveTab] = useState('voting'); // 'voting', 'manager', 'org-dashboard', 'student-portal'
 
   // Mobile Menu State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // University Internal Admin & Organization States
-  const [uniSubView, setUniSubView] = useState('portal'); // 'portal', 'uni-admin-login', 'uni-admin-dashboard', 'org-login', 'org-dashboard'
+  const [uniSubView, setUniSubView] = useState('portal'); // 'portal', 'uni-admin-login', 'uni-admin-dashboard', 'org-login', 'org-dashboard', 'student-portal'
   
   // University Admin Auth
   const [uniAdminEmail, setUniAdminEmail] = useState('');
@@ -698,13 +698,13 @@ export default function App() {
                     <h3 className="text-lg font-bold text-white">System Audit Trail & Security Logs</h3>
                     <div className="space-y-2 font-mono text-[11px]">
                       <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-emerald-400">
-                        [2026-08-31 11:30:12] SUCCESS: Admin Panel authenticated successfully via administrator credentials.
+                        [2026-09-01 12:00:00] SUCCESS: Admin Panel authenticated successfully via administrator credentials.
                       </div>
                       <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-blue-400">
-                        [2026-08-31 10:15:44] INFO: University compliance bundles verified for Graphic Era and Amity.
+                        [2026-09-01 11:15:22] INFO: Student Portal features updated and synchronized across all active regions.
                       </div>
                       <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-gray-300">
-                        [2026-08-31 09:00:05] SYSTEM: Secure Ballot Registry initialized with active encryption keys.
+                        [2026-09-01 09:00:05] SYSTEM: Secure Ballot Registry initialized with active encryption keys.
                       </div>
                     </div>
                   </div>
@@ -731,7 +731,7 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#030508] via-[#030508]/60 to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest mb-2 inline-block backdrop-blur-md">University & Organization Dashboard</span>
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest mb-2 inline-block backdrop-blur-md">University Hub & Student Portal</span>
                   <h2 className="text-3xl md:text-4xl font-black text-white">{selectedUni.name}</h2>
                   <p className="text-gray-300 text-xs md:text-sm mt-1">📍 {selectedUni.location} • Comprehensive Info Hub</p>
                 </div>
@@ -759,7 +759,14 @@ export default function App() {
                   onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
                   className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'portal' && activeTab === 'voting' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'}`}
                 >
-                  <span className="text-base">🗳️</span> Voting & Students
+                  <span className="text-base">🗳️</span> Voting & Standings
+                </button>
+
+                <button 
+                  onClick={() => setUniSubView('student-portal')}
+                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'student-portal' ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/30' : 'text-sky-400 hover:bg-sky-950/30 hover:text-sky-300'}`}
+                >
+                  <span className="text-base">🎓</span> Student Portal
                 </button>
 
                 <button 
@@ -848,6 +855,77 @@ export default function App() {
                         </button>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* SUB-VIEW: STUDENT PORTAL (NEWLY ADDED) */}
+                {uniSubView === 'student-portal' && (
+                  <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-sky-500/30 p-8 rounded-3xl shadow-2xl space-y-6 animate-fadeIn">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
+                      <div>
+                        <span className="text-xs bg-sky-500/15 text-sky-400 px-3 py-1 rounded-full border border-sky-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Student Portal Hub</span>
+                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Student Section</h3>
+                      </div>
+                      {user ? (
+                        <div className="flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-xl border border-gray-800">
+                          <img src={user.photoURL} alt="" className="w-6 h-6 rounded-full border border-sky-500 object-cover" />
+                          <span className="text-xs font-bold text-white">{user.displayName}</span>
+                        </div>
+                      ) : (
+                        <button onClick={handleGoogleLogin} className="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">
+                          Sign in to Access Portal
+                        </button>
+                      )}
+                    </div>
+
+                    {user ? (
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
+                            <p className="text-xs text-gray-400 font-semibold">Student Status</p>
+                            <p className="text-xl font-black text-emerald-400 mt-1">Verified Voter</p>
+                          </div>
+                          <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
+                            <p className="text-xs text-gray-400 font-semibold">University Affiliation</p>
+                            <p className="text-sm font-bold text-white mt-1 truncate">{selectedUni.name}</p>
+                          </div>
+                          <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
+                            <p className="text-xs text-gray-400 font-semibold">Ballot Eligibility</p>
+                            <p className="text-xl font-black text-sky-400 mt-1">Open</p>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-950 p-6 rounded-2xl border border-gray-800 space-y-4">
+                          <h4 className="text-sm font-bold text-white uppercase tracking-wider">Student Announcements & Directives</h4>
+                          <div className="space-y-2.5 text-xs text-gray-300">
+                            <div className="bg-gray-900 p-3.5 rounded-xl border border-gray-800 flex justify-between items-center">
+                              <span>📢 Annual Student Union Elections 2026 guidelines are now live. Cast your vote securely.</span>
+                              <span className="text-[10px] text-sky-400 bg-sky-950 px-2 py-1 rounded border border-sky-800">New</span>
+                            </div>
+                            <div className="bg-gray-900 p-3.5 rounded-xl border border-gray-800 flex justify-between items-center">
+                              <span>📋 Candidate nomination manifestos have been uploaded to the voting booth tab.</span>
+                              <span className="text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded">Info</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-2">
+                          <button 
+                            onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
+                            className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 text-white px-6 py-3 rounded-xl text-xs font-bold shadow-lg transition"
+                          >
+                            Go to Voting Booth →
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 space-y-4 bg-gray-950 rounded-2xl border border-gray-800">
+                        <p className="text-sm text-gray-400">Please sign in with your Google account to unlock your personalized student portal dashboard.</p>
+                        <button onClick={handleGoogleLogin} className="bg-sky-600 hover:bg-sky-500 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg">
+                          Sign in with Google Now
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
