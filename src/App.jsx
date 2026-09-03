@@ -39,6 +39,17 @@ export default function App() {
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
+  // Student Marks Management States (Inside Student Portal)
+  const [studentMarks, setStudentMarks] = useState([
+    { id: 1, subject: 'Data Structures & Algorithms', marks: '88/100', grade: 'A+' },
+    { id: 2, subject: 'Database Management Systems', marks: '82/100', grade: 'A' },
+    { id: 3, subject: 'Software Engineering', marks: '90/100', grade: 'O' },
+    { id: 4, subject: 'Computer Networks', marks: '75/100', grade: 'B+' }
+  ]);
+  const [newSubject, setNewSubject] = useState('');
+  const [newMarks, setNewMarks] = useState('');
+  const [newGrade, setNewGrade] = useState('');
+
   // University Registration Form States
   const [showRegModal, setShowRegModal] = useState(false);
   const [regUniName, setRegUniName] = useState('');
@@ -211,6 +222,28 @@ export default function App() {
     setCandidateName('');
     setCandidateParty('');
     alert("Candidate registered successfully for " + selectedUni.name);
+  };
+
+  // Handler to Update / Add Student Marks
+  const handleUpdateMarks = (e) => {
+    e.preventDefault();
+    if (!newSubject.trim() || !newMarks.trim() || !newGrade.trim()) {
+      alert("Please fill in all subject details!");
+      return;
+    }
+
+    const updatedMarkItem = {
+      id: Date.now(),
+      subject: newSubject,
+      marks: newMarks,
+      grade: newGrade
+    };
+
+    setStudentMarks([...studentMarks, updatedMarkItem]);
+    setNewSubject('');
+    setNewMarks('');
+    setNewGrade('');
+    alert("Student marks updated successfully!");
   };
 
   const handleUniversityRegistration = (e) => {
@@ -701,7 +734,7 @@ export default function App() {
                         [2026-09-01 12:00:00] SUCCESS: Admin Panel authenticated successfully via administrator credentials.
                       </div>
                       <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-blue-400">
-                        [2026-09-01 11:15:22] INFO: Student Portal features updated and synchronized across all active regions.
+                        [2026-09-01 11:15:22] INFO: Student Portal updated with subject-wise marks update interface.
                       </div>
                       <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-gray-300">
                         [2026-09-01 09:00:05] SYSTEM: Secure Ballot Registry initialized with active encryption keys.
@@ -766,7 +799,7 @@ export default function App() {
                   onClick={() => setUniSubView('student-portal')}
                   className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'student-portal' ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/30' : 'text-sky-400 hover:bg-sky-950/30 hover:text-sky-300'}`}
                 >
-                  <span className="text-base">🎓</span> Student Portal
+                  <span className="text-base">🎓</span> Student Portal & Marks
                 </button>
 
                 <button 
@@ -858,13 +891,13 @@ export default function App() {
                   </div>
                 )}
 
-                {/* SUB-VIEW: STUDENT PORTAL (NEWLY ADDED) */}
+                {/* SUB-VIEW: STUDENT PORTAL & MARKS UPDATE INTERFACE */}
                 {uniSubView === 'student-portal' && (
                   <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-sky-500/30 p-8 rounded-3xl shadow-2xl space-y-6 animate-fadeIn">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
                       <div>
-                        <span className="text-xs bg-sky-500/15 text-sky-400 px-3 py-1 rounded-full border border-sky-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Student Portal Hub</span>
-                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Student Section</h3>
+                        <span className="text-xs bg-sky-500/15 text-sky-400 px-3 py-1 rounded-full border border-sky-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Student Portal & Academic Records</span>
+                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Student Hub</h3>
                       </div>
                       {user ? (
                         <div className="flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-xl border border-gray-800">
@@ -880,6 +913,7 @@ export default function App() {
 
                     {user ? (
                       <div className="space-y-6">
+                        {/* Student Info Stats */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
                             <p className="text-xs text-gray-400 font-semibold">Student Status</p>
@@ -890,23 +924,80 @@ export default function App() {
                             <p className="text-sm font-bold text-white mt-1 truncate">{selectedUni.name}</p>
                           </div>
                           <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                            <p className="text-xs text-gray-400 font-semibold">Ballot Eligibility</p>
-                            <p className="text-xl font-black text-sky-400 mt-1">Open</p>
+                            <p className="text-xs text-gray-400 font-semibold">Academic Semester</p>
+                            <p className="text-xl font-black text-sky-400 mt-1">Semester 6</p>
                           </div>
                         </div>
 
+                        {/* SUBJECT-WISE MARKS TABLE */}
                         <div className="bg-gray-950 p-6 rounded-2xl border border-gray-800 space-y-4">
-                          <h4 className="text-sm font-bold text-white uppercase tracking-wider">Student Announcements & Directives</h4>
-                          <div className="space-y-2.5 text-xs text-gray-300">
-                            <div className="bg-gray-900 p-3.5 rounded-xl border border-gray-800 flex justify-between items-center">
-                              <span>📢 Annual Student Union Elections 2026 guidelines are now live. Cast your vote securely.</span>
-                              <span className="text-[10px] text-sky-400 bg-sky-950 px-2 py-1 rounded border border-sky-800">New</span>
-                            </div>
-                            <div className="bg-gray-900 p-3.5 rounded-xl border border-gray-800 flex justify-between items-center">
-                              <span>📋 Candidate nomination manifestos have been uploaded to the voting booth tab.</span>
-                              <span className="text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded">Info</span>
-                            </div>
+                          <h4 className="text-sm font-bold text-white uppercase tracking-wider">Subject-Wise Latest Marks & Grades</h4>
+                          
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs">
+                              <thead className="border-b border-gray-800 text-gray-400 uppercase">
+                                <tr>
+                                  <th className="pb-3">Subject Name</th>
+                                  <th className="pb-3">Marks Obtained</th>
+                                  <th className="pb-3">Grade</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-800/60 text-gray-300">
+                                {studentMarks.map((item) => (
+                                  <tr key={item.id}>
+                                    <td className="py-3 font-semibold text-white">{item.subject}</td>
+                                    <td className="py-3 text-sky-400 font-bold">{item.marks}</td>
+                                    <td className="py-3"><span className="bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">{item.grade}</span></td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
                           </div>
+                        </div>
+
+                        {/* INTERFACE TO UPDATE/ADD LATEST MARKS */}
+                        <div className="bg-gray-950 p-6 rounded-2xl border border-gray-800 space-y-4">
+                          <h4 className="text-sm font-bold text-white uppercase tracking-wider">Update / Add Latest Subject Marks</h4>
+                          <form onSubmit={handleUpdateMarks} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                              <label className="block text-[11px] font-semibold text-gray-300 mb-1">Subject Name</label>
+                              <input 
+                                type="text" 
+                                value={newSubject}
+                                onChange={(e) => setNewSubject(e.target.value)}
+                                placeholder="e.g. Artificial Intelligence" 
+                                className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-semibold text-gray-300 mb-1">Marks (e.g. 92/100)</label>
+                              <input 
+                                type="text" 
+                                value={newMarks}
+                                onChange={(e) => setNewMarks(e.target.value)}
+                                placeholder="e.g. 92/100" 
+                                className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-semibold text-gray-300 mb-1">Grade</label>
+                              <input 
+                                type="text" 
+                                value={newGrade}
+                                onChange={(e) => setNewGrade(e.target.value)}
+                                placeholder="e.g. O or A+" 
+                                className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
+                                required
+                              />
+                            </div>
+                            <div className="sm:col-span-3 pt-2">
+                              <button type="submit" className="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-xl text-xs font-bold shadow-lg transition">
+                                Update / Add Marks Record
+                              </button>
+                            </div>
+                          </form>
                         </div>
 
                         <div className="flex justify-end gap-3 pt-2">
@@ -920,7 +1011,7 @@ export default function App() {
                       </div>
                     ) : (
                       <div className="text-center py-12 space-y-4 bg-gray-950 rounded-2xl border border-gray-800">
-                        <p className="text-sm text-gray-400">Please sign in with your Google account to unlock your personalized student portal dashboard.</p>
+                        <p className="text-sm text-gray-400">Please sign in with your Google account to unlock your personalized student portal dashboard and latest academic marks.</p>
                         <button onClick={handleGoogleLogin} className="bg-sky-600 hover:bg-sky-500 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg">
                           Sign in with Google Now
                         </button>
@@ -1236,7 +1327,7 @@ export default function App() {
                   <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Jharkhand State University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
                 </div>
                 <div>
-                  <label className="block y-text text-xs font-semibold text-gray-300 mb-1.5">Location</label>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location</label>
                   <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
                 </div>
               </div>
