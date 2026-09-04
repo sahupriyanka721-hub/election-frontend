@@ -8,6 +8,9 @@ export default function App() {
   const [selectedUni, setSelectedUni] = useState(null);
   const [activeTab, setActiveTab] = useState('voting'); // 'voting', 'manager', 'org-dashboard', 'student-portal'
 
+  // Dark / Light Mode State
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
   // Mobile Menu State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -224,7 +227,6 @@ export default function App() {
     alert("Candidate registered successfully for " + selectedUni.name);
   };
 
-  // Handler to Update / Add Student Marks
   const handleUpdateMarks = (e) => {
     e.preventDefault();
     if (!newSubject.trim() || !newMarks.trim() || !newGrade.trim()) {
@@ -305,18 +307,18 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030508] text-gray-100 font-sans relative overflow-hidden selection:bg-blue-500 selection:text-white">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#030508] text-gray-100' : 'bg-gray-50 text-gray-900'} font-sans relative overflow-hidden selection:bg-blue-500 selection:text-white transition-colors duration-300`}>
       <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       {/* Navbar */}
-      <nav className="p-4 border-b border-gray-800/60 backdrop-blur-xl bg-[#030508]/90 sticky top-0 z-50 shadow-2xl">
+      <nav className={`p-4 border-b ${isDarkMode ? 'border-gray-800/60 bg-[#030508]/90' : 'border-gray-200 bg-white/90'} backdrop-blur-xl sticky top-0 z-50 shadow-2xl transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="cursor-pointer flex items-center gap-2.5" onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-600/30">V</div>
             <div>
               <h1 className="text-sm md:text-lg font-black tracking-wider text-white bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">UniVote Pro</h1>
-              <p className="text-[8px] md:text-[9px] text-gray-400 tracking-wide font-medium">National Campus Election Portal</p>
+              <p className={`text-[8px] md:text-[9px] ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} tracking-wide font-medium`}>National Campus Election Portal</p>
             </div>
           </div>
 
@@ -324,28 +326,37 @@ export default function App() {
           <div className="hidden md:flex items-center gap-3">
             <button 
               onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); }}
-              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
             >
               Home
             </button>
             <button 
               onClick={() => { setCurrentView('universities'); setSelectedUni(null); setUniSubView('portal'); }}
-              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
             >
               Universities
             </button>
             <button 
               onClick={() => { setCurrentView('admin'); setSelectedUni(null); setUniSubView('portal'); }}
-              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
             >
               Admin Panel 🛡️
             </button>
 
+            {/* Dark / Light Mode Toggle Button */}
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${isDarkMode ? 'bg-gray-800/80 border-gray-700 text-yellow-400 hover:bg-gray-700' : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+              title="Toggle Dark/Light Mode"
+            >
+              {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+            </button>
+
             {user ? (
-              <div className="flex items-center gap-2.5 bg-gray-900/90 border border-gray-700/60 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md ml-2">
+              <div className={`flex items-center gap-2.5 ${isDarkMode ? 'bg-gray-900/90 border-gray-700/60' : 'bg-gray-100 border-gray-300'} border px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md ml-2`}>
                 <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-blue-500 shadow-md object-cover" />
                 <div className="text-left">
-                  <p className="text-[11px] font-bold text-white leading-tight">{user.displayName || 'User'}</p>
+                  <p className={`text-[11px] font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} leading-tight`}>{user.displayName || 'User'}</p>
                   <p className="text-[9px] text-blue-400 font-medium truncate max-w-[100px]">{user.email}</p>
                 </div>
                 <button 
@@ -367,12 +378,19 @@ export default function App() {
 
           {/* Mobile Hamburger Button */}
           <div className="flex md:hidden items-center gap-2">
+            {/* Dark / Light Mode Toggle Button (Mobile) */}
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={`p-2 rounded-xl text-xs font-semibold border ${isDarkMode ? 'bg-gray-900 border-gray-800 text-yellow-400' : 'bg-gray-100 border-gray-300 text-gray-700'}`}
+            >
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
             {user && (
               <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border-2 border-blue-500 object-cover" />
             )}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="bg-gray-900 border border-gray-800 text-gray-200 p-2 rounded-xl focus:outline-none"
+              className={`${isDarkMode ? 'bg-gray-900 border-gray-800 text-gray-200' : 'bg-gray-100 border-gray-300 text-gray-800'} border p-2 rounded-xl focus:outline-none`}
             >
               {mobileMenuOpen ? '✕' : '☰'}
             </button>
@@ -381,33 +399,33 @@ export default function App() {
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-gray-800/80 flex flex-col gap-2.5 animate-fadeIn">
+          <div className={`md:hidden mt-4 pt-4 border-t ${isDarkMode ? 'border-gray-800/80' : 'border-gray-200'} flex flex-col gap-2.5 animate-fadeIn`}>
             <button 
               onClick={() => { setCurrentView('home'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}
-              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:bg-gray-900'}`}
+              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'home' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : isDarkMode ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100'}`}
             >
               🏠 Home
             </button>
             <button 
               onClick={() => { setCurrentView('universities'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}
-              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:bg-gray-900'}`}
+              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'universities' && !selectedUni ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : isDarkMode ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100'}`}
             >
               🏛️ Universities
             </button>
             <button 
               onClick={() => { setCurrentView('admin'); setSelectedUni(null); setUniSubView('portal'); setMobileMenuOpen(false); }}
-              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : 'text-gray-300 hover:bg-gray-900'}`}
+              className={`text-left text-sm font-semibold px-4 py-2.5 rounded-xl transition ${currentView === 'admin' ? 'text-blue-400 bg-blue-950/40 border border-blue-800/40' : isDarkMode ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100'}`}
             >
               🛡️ Admin Panel
             </button>
 
-            <div className="pt-2 border-t border-gray-800/60 mt-1">
+            <div className={`pt-2 border-t ${isDarkMode ? 'border-gray-800/60' : 'border-gray-200'} mt-1`}>
               {user ? (
-                <div className="flex flex-col gap-3 bg-gray-950 p-3 rounded-2xl border border-gray-800">
+                <div className={`flex flex-col gap-3 ${isDarkMode ? 'bg-gray-950 border-gray-800' : 'bg-gray-100 border-gray-300'} p-3 rounded-2xl border`}>
                   <div className="flex items-center gap-2.5">
                     <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-blue-500 object-cover" />
                     <div>
-                      <p className="text-xs font-bold text-white">{user.displayName || 'User'}</p>
+                      <p className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{user.displayName || 'User'}</p>
                       <p className="text-[10px] text-blue-400 truncate max-w-[200px]">{user.email}</p>
                     </div>
                   </div>
@@ -442,11 +460,11 @@ export default function App() {
               Secure Digital Ballot System 2026
             </div>
             
-            <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight leading-[1.1] bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+            <h1 className={`text-4xl md:text-7xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'} tracking-tight leading-[1.1] bg-gradient-to-r ${isDarkMode ? 'from-white via-gray-200 to-gray-400' : 'from-gray-900 via-gray-800 to-gray-600'} bg-clip-text text-transparent`}>
               Next-Gen Student Union Elections & Organization Hub
             </h1>
             
-            <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium`}>
               Comprehensive university and organization information dashboards with transparent verification routing and secure Google-authenticated balloting.
             </p>
 
@@ -459,7 +477,7 @@ export default function App() {
               </button>
               <button 
                 onClick={() => setShowRegModal(true)}
-                className="bg-gray-900/90 hover:bg-gray-800 text-white border border-gray-700/80 px-8 py-4 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95"
+                className={`${isDarkMode ? 'bg-gray-900/90 text-white border-gray-700/80 hover:bg-gray-800' : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'} border px-8 py-4 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95`}
               >
                 Register University 🏛️
               </button>
@@ -473,8 +491,8 @@ export default function App() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div>
                 <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-semibold uppercase tracking-widest inline-block mb-2">Verified Portal</span>
-                <h2 className="text-3xl font-black text-white">Approved Universities</h2>
-                <p className="text-gray-400 text-xs md:text-sm mt-1">Select your approved institution to open the complete organization & student dashboard.</p>
+                <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Approved Universities</h2>
+                <p className={`text-xs md:text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Select your approved institution to open the complete organization & student dashboard.</p>
               </div>
               <button 
                 onClick={() => setShowRegModal(true)}
@@ -488,26 +506,26 @@ export default function App() {
               {universities.filter(uni => uni.status === 'Approved').map((uni) => (
                 <div 
                   key={uni.id} 
-                  className="group relative bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 hover:border-blue-500/60 hover:shadow-xl backdrop-blur-xl"
+                  className={`group relative ${isDarkMode ? 'bg-gradient-to-b from-gray-900/90 to-gray-950/90 border-gray-800/80 hover:border-blue-500/60' : 'bg-white border-gray-200 hover:border-blue-400 shadow-md'} border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 hover:shadow-xl backdrop-blur-xl`}
                 >
-                  <div className="relative h-48 w-full overflow-hidden bg-gray-950">
+                  <div className={`relative h-48 w-full overflow-hidden ${isDarkMode ? 'bg-gray-950' : 'bg-gray-100'}`}>
                     <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/40 to-transparent"></div>
+                    <div className={`absolute inset-0 bg-gradient-to-t ${isDarkMode ? 'from-gray-950 via-gray-950/40' : 'from-white/90 via-white/20'} to-transparent`}></div>
                     <span className="absolute top-4 right-4 text-[10px] bg-emerald-950/90 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/60 font-semibold tracking-wider backdrop-blur-md">Active</span>
                   </div>
 
                   <div className="p-6 pt-2">
-                    <h3 className="font-bold text-lg text-white mb-1 group-hover:text-blue-400 transition-colors">{uni.name}</h3>
+                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-1 group-hover:text-blue-400 transition-colors`}>{uni.name}</h3>
                     <p className="text-xs text-blue-400/90 mb-3 font-medium">📍 {uni.location}</p>
-                    <p className="text-xs text-gray-400 mb-6 leading-relaxed line-clamp-2">{uni.desc}</p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6 leading-relaxed line-clamp-2`}>{uni.desc}</p>
                   
-                    <div className="flex justify-between items-center text-xs text-gray-400 mb-4 border-t border-gray-800/80 pt-3">
+                    <div className={`flex justify-between items-center text-xs ${isDarkMode ? 'text-gray-400 border-gray-800/80' : 'text-gray-600 border-gray-200'} mb-4 border-t pt-3`}>
                       <span>Eligible Voters:</span>
-                      <strong className="text-white bg-gray-800/60 px-2.5 py-1 rounded-lg border border-gray-700/50">{uni.eligible}</strong>
+                      <strong className={`${isDarkMode ? 'text-white bg-gray-800/60 border-gray-700/50' : 'text-gray-900 bg-gray-100 border-gray-200'} px-2.5 py-1 rounded-lg border`}>{uni.eligible}</strong>
                     </div>
                     <button 
                       onClick={() => { setSelectedUni(uni); setActiveTab('dashboard'); setUniSubView('portal'); }}
-                      className="w-full bg-gray-800/80 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 text-sm py-3 rounded-xl transition-all font-semibold text-center text-white shadow-lg border border-gray-700/50"
+                      className={`w-full ${isDarkMode ? 'bg-gray-800/80 border-gray-700/50 text-white' : 'bg-gray-100 border-gray-200 text-gray-800 hover:bg-gray-200'} hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white text-sm py-3 rounded-xl transition-all font-semibold text-center shadow-lg border`}
                     >
                       Open Dashboard →
                     </button>
@@ -522,33 +540,33 @@ export default function App() {
         {currentView === 'admin' && (
           <div>
             {!isAdminLoggedIn ? (
-              <div className="max-w-md mx-auto mt-12 bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+              <div className={`max-w-md mx-auto mt-12 ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-gray-800' : 'bg-white border-gray-200 shadow-xl'} border p-8 rounded-3xl backdrop-blur-md`}>
                 <div className="text-center mb-6">
                   <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Restricted Access</span>
-                  <h2 className="text-2xl font-black text-white">Admin Panel Login</h2>
-                  <p className="text-xs text-gray-400 mt-1">Please authenticate to access full system management.</p>
+                  <h2 className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Admin Panel Login</h2>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Please authenticate to access full system management.</p>
                 </div>
 
                 <form onSubmit={handleAdminLogin} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Admin Email</label>
+                    <label className={`block text-xs font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1.5`}>Admin Email</label>
                     <input 
                       type="email" 
                       value={adminEmail}
                       onChange={(e) => setAdminEmail(e.target.value)}
                       placeholder="admin@univote.com"
-                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                      className={`w-full ${isDarkMode ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500`}
                       required 
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
+                    <label className={`block text-xs font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1.5`}>Password</label>
                     <input 
                       type="password" 
                       value={adminPassword}
                       onChange={(e) => setAdminPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                      className={`w-full ${isDarkMode ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500`}
                       required 
                     />
                   </div>
@@ -560,11 +578,11 @@ export default function App() {
             ) : (
               <div className="space-y-6">
                 {/* Admin Header Bar */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-gray-900 to-gray-950 p-6 rounded-3xl border border-gray-800 gap-4 shadow-xl">
+                <div className={`flex flex-col md:flex-row justify-between items-start md:items-center ${isDarkMode ? 'from-gray-900 to-gray-950 border-gray-800' : 'from-gray-100 to-white border-gray-200'} bg-gradient-to-r p-6 rounded-3xl border gap-4 shadow-xl`}>
                   <div>
                     <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Super Admin Active</span>
-                    <h2 className="text-2xl font-black text-white">National Control & Admin Panel</h2>
-                    <p className="text-gray-400 text-xs mt-1">Manage universities, approve compliance documents, and monitor live system status.</p>
+                    <h2 className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>National Control & Admin Panel</h2>
+                    <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Manage universities, approve compliance documents, and monitor live system status.</p>
                   </div>
                   <button 
                     onClick={() => setIsAdminLoggedIn(false)}
@@ -575,28 +593,28 @@ export default function App() {
                 </div>
 
                 {/* Admin Navigation Tabs */}
-                <div className="flex flex-wrap gap-2 bg-gray-900/60 p-2 rounded-2xl border border-gray-800">
+                <div className={`flex flex-wrap gap-2 ${isDarkMode ? 'bg-gray-900/60 border-gray-800' : 'bg-gray-200 border-gray-300'} p-2 rounded-2xl border`}>
                   <button 
                     onClick={() => setAdminTab('overview')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'overview' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'overview' ? 'bg-blue-600 text-white shadow-lg' : isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}
                   >
                     📊 System Overview
                   </button>
                   <button 
                     onClick={() => setAdminTab('universities-mgmt')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'universities-mgmt' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'universities-mgmt' ? 'bg-blue-600 text-white shadow-lg' : isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}
                   >
                     🏛️ University Approvals ({universities.filter(u => u.status === 'Pending').length})
                   </button>
                   <button 
                     onClick={() => setAdminTab('students-mgmt')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'students-mgmt' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'students-mgmt' ? 'bg-blue-600 text-white shadow-lg' : isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}
                   >
                     👥 Student Voters Directory
                   </button>
                   <button 
                     onClick={() => setAdminTab('system-logs')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'system-logs' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${adminTab === 'system-logs' ? 'bg-blue-600 text-white shadow-lg' : isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}
                   >
                     ⚙️ System Activity Logs
                   </button>
@@ -606,755 +624,30 @@ export default function App() {
                 {adminTab === 'overview' && (
                   <div className="space-y-6 animate-fadeIn">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
-                        <p className="text-xs text-gray-400 font-semibold">Total Universities</p>
-                        <p className="text-3xl font-black text-white mt-2">{universities.length}</p>
+                      <div className={`${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200 shadow-md'} p-6 rounded-3xl border`}>
+                        <p className={`text-xs font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total Universities</p>
+                        <p className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'} mt-2`}>{universities.length}</p>
                       </div>
-                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
-                        <p className="text-xs text-gray-400 font-semibold">Pending Approvals</p>
+                      <div className={`${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200 shadow-md'} p-6 rounded-3xl border`}>
+                        <p className={`text-xs font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Pending Approvals</p>
                         <p className="text-3xl font-black text-amber-400 mt-2">{universities.filter(u => u.status === 'Pending').length}</p>
                       </div>
-                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
-                        <p className="text-xs text-gray-400 font-semibold">Active Ballots</p>
+                      <div className={`${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200 shadow-md'} p-6 rounded-3xl border`}>
+                        <p className={`text-xs font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Active Ballots</p>
                         <p className="text-3xl font-black text-emerald-400 mt-2">{universities.filter(u => u.status === 'Approved').length}</p>
                       </div>
-                      <div className="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-xl">
-                        <p className="text-xs text-gray-400 font-semibold">System Security</p>
+                      <div className={`${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200 shadow-md'} p-6 rounded-3xl border`}>
+                        <p className={`text-xs font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>System Security</p>
                         <p className="text-3xl font-black text-blue-400 mt-2">Encrypted</p>
                       </div>
                     </div>
                   </div>
                 )}
-
-                {/* ADMIN TAB 2: UNIVERSITY APPROVALS & MANAGEMENT */}
-                {adminTab === 'universities-mgmt' && (
-                  <div className="space-y-4 animate-fadeIn">
-                    <h3 className="text-lg font-bold text-white mb-2">University Document Verification & Status Control</h3>
-                    {universities.map((uni) => (
-                      <div key={uni.id} className="bg-gradient-to-r from-gray-900 to-gray-950 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap items-center gap-3">
-                            <h4 
-                              onClick={() => setAdminSelectedUni(uni)}
-                              className="text-lg font-bold text-white cursor-pointer hover:text-blue-400 transition"
-                            >
-                              {uni.name} 🔍
-                            </h4>
-                            <span className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
-                              uni.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                              uni.status === 'Rejected' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
-                              'bg-amber-950 text-amber-400 border border-amber-800'
-                            }`}>
-                              {uni.status}
-                            </span>
-                          </div>
-                          <p className="text-xs text-blue-400 font-medium">📍 {uni.location} | Eligible Voters: {uni.eligible}</p>
-                          <p className="text-xs text-gray-400 max-w-xl">{uni.desc}</p>
-                          
-                          <div className="flex items-center gap-2 pt-1">
-                            <span className="text-xs text-gray-400 font-semibold">Document Bundle:</span>
-                            <button 
-                              onClick={() => setAdminSelectedUni(uni)}
-                              className="text-xs text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1 bg-transparent border-0 cursor-pointer"
-                            >
-                              📄 {uni.docName || 'Verification_Package.pdf'}
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2.5 w-full md:w-auto">
-                          <button 
-                            onClick={() => handleAdminAction(uni.id, 'Approved')}
-                            className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg"
-                          >
-                            Approve ✓
-                          </button>
-                          <button 
-                            onClick={() => handleAdminAction(uni.id, 'Rejected')}
-                            className="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg"
-                          >
-                            Reject ✕
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteUniversity(uni.id)}
-                            className="bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* ADMIN TAB 3: STUDENT VOTERS DIRECTORY */}
-                {adminTab === 'students-mgmt' && (
-                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl space-y-4 animate-fadeIn">
-                    <h3 className="text-lg font-bold text-white">Registered Student Voters Directory</h3>
-                    <p className="text-xs text-gray-400">List of authenticated Google users and student electors across all platforms.</p>
-                    
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs">
-                        <thead className="border-b border-gray-800 text-gray-400 uppercase">
-                          <tr>
-                            <th className="pb-3">Voter Profile</th>
-                            <th className="pb-3">Email Address</th>
-                            <th className="pb-3">Authentication Status</th>
-                            <th className="pb-3">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-800/60 text-gray-300">
-                          {user ? (
-                            <tr>
-                              <td className="py-3 flex items-center gap-2">
-                                <img src={user.photoURL} alt="" className="w-6 h-6 rounded-full border border-blue-500 object-cover" />
-                                <span className="font-bold text-white">{user.displayName || 'Active Student'}</span>
-                              </td>
-                              <td className="py-3 text-blue-400">{user.email}</td>
-                              <td className="py-3"><span className="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-800 font-semibold">Verified Google Auth</span></td>
-                              <td className="py-3"><button onClick={() => alert("Voter account verified and active.")} className="text-blue-400 hover:underline">Inspect</button></td>
-                            </tr>
-                          ) : (
-                            <tr>
-                              <td colSpan="4" className="py-6 text-center text-gray-500">No active sessions logged in currently. Sign in with Google to view voter logs.</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* ADMIN TAB 4: SYSTEM LOGS */}
-                {adminTab === 'system-logs' && (
-                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl space-y-4 animate-fadeIn">
-                    <h3 className="text-lg font-bold text-white">System Audit Trail & Security Logs</h3>
-                    <div className="space-y-2 font-mono text-[11px]">
-                      <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-emerald-400">
-                        [2026-09-01 12:00:00] SUCCESS: Admin Panel authenticated successfully via administrator credentials.
-                      </div>
-                      <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-blue-400">
-                        [2026-09-01 11:15:22] INFO: Student Portal updated with subject-wise marks update interface.
-                      </div>
-                      <div className="bg-gray-950 p-3 rounded-xl border border-gray-800/80 text-gray-300">
-                        [2026-09-01 09:00:05] SYSTEM: Secure Ballot Registry initialized with active encryption keys.
-                      </div>
-                    </div>
-                  </div>
-                )}
-
               </div>
             )}
           </div>
         )}
-
-        {/* VIEW 4: SELECTED UNIVERSITY & ORGANIZATION DASHBOARD */}
-        {selectedUni && (
-          <div className="animate-fadeIn space-y-6">
-            <button 
-              onClick={() => { setSelectedUni(null); setUniSubView('portal'); }}
-              className="text-sm text-blue-400 hover:text-blue-300 hover:-translate-x-1 transition inline-flex items-center gap-1 font-semibold"
-            >
-              ← Back to Universities
-            </button>
-            
-            {/* University Banner Image Section */}
-            <div className="relative h-64 md:h-80 w-full rounded-3xl overflow-hidden border border-gray-800 shadow-2xl bg-gray-950">
-              <img src={selectedUni.image} alt={selectedUni.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030508] via-[#030508]/60 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                <div>
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest mb-2 inline-block backdrop-blur-md">University Hub & Student Portal</span>
-                  <h2 className="text-3xl md:text-4xl font-black text-white">{selectedUni.name}</h2>
-                  <p className="text-gray-300 text-xs md:text-sm mt-1">📍 {selectedUni.location} • Comprehensive Info Hub</p>
-                </div>
-                <div className="bg-gray-900/80 backdrop-blur-md border border-gray-800 px-4 py-2 rounded-2xl text-xs text-gray-300">
-                  Total Eligible Voters: <strong className="text-white">{selectedUni.eligible}</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Layout with Sidebar & Content Panel */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              
-              {/* SIDEBAR NAVIGATION */}
-              <div className="lg:col-span-1 bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-4 rounded-3xl backdrop-blur-xl h-fit space-y-2 shadow-xl">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">Dashboard Navigation</p>
-                
-                <button 
-                  onClick={() => { setActiveTab('dashboard'); setUniSubView('portal'); }}
-                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'portal' && activeTab === 'dashboard' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'}`}
-                >
-                  <span className="text-base">📊</span> University Info Hub
-                </button>
-
-                <button 
-                  onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
-                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'portal' && activeTab === 'voting' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'}`}
-                >
-                  <span className="text-base">🗳️</span> Voting & Standings
-                </button>
-
-                <button 
-                  onClick={() => setUniSubView('student-portal')}
-                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'student-portal' ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/30' : 'text-sky-400 hover:bg-sky-950/30 hover:text-sky-300'}`}
-                >
-                  <span className="text-base">🎓</span> Student Portal & Marks
-                </button>
-
-                <button 
-                  onClick={() => { setActiveTab('manager'); setUniSubView('portal'); }}
-                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView === 'portal' && activeTab === 'manager' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'}`}
-                >
-                  <span className="text-base">👥</span> Candidate Manager
-                </button>
-
-                <button 
-                  onClick={() => setUniSubView(isUniAdminLoggedIn ? 'uni-admin-dashboard' : 'uni-admin-login')}
-                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView.includes('uni-admin') ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'text-purple-400 hover:bg-purple-950/30 hover:text-purple-300'}`}
-                >
-                  <span className="text-base">🛡️</span> Uni Admin Panel
-                </button>
-
-                <button 
-                  onClick={() => setUniSubView(isOrgLoggedIn ? 'org-dashboard' : 'org-login')}
-                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-3 ${uniSubView.includes('org') ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30' : 'text-emerald-400 hover:bg-emerald-950/30 hover:text-emerald-300'}`}
-                >
-                  <span className="text-base">🏛️</span> Organizations Hub
-                </button>
-              </div>
-
-              {/* MAIN CONTENT AREA */}
-              <div className="lg:col-span-3">
-
-                {/* SUB-VIEW 0: UNIVERSITY & ORGANIZATION OVERVIEW DASHBOARD */}
-                {uniSubView === 'portal' && activeTab === 'dashboard' && (
-                  <div className="space-y-6">
-                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-8 rounded-3xl shadow-2xl space-y-6">
-                      <div>
-                        <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Master Information Record</span>
-                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Overview</h3>
-                        <p className="text-xs text-gray-400 mt-1">{selectedUni.desc}</p>
-                      </div>
-
-                      {/* Stat Cards */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-xs text-gray-400 font-semibold">Total Registered Voters</p>
-                          <p className="text-2xl font-black text-white mt-1">{selectedUni.eligible}</p>
-                        </div>
-                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-xs text-gray-400 font-semibold">Active Student Organizations</p>
-                          <p className="text-2xl font-black text-blue-400 mt-1">3 Bodies</p>
-                        </div>
-                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-xs text-gray-400 font-semibold">Registered Candidates</p>
-                          <p className="text-2xl font-black text-emerald-400 mt-1">{selectedUni.candidates.length}</p>
-                        </div>
-                      </div>
-
-                      {/* Organization & Student Bodies Info */}
-                      <div className="space-y-3 pt-2">
-                        <h4 className="text-sm font-bold text-white uppercase tracking-wider">Associated Student Organizations</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 flex items-center justify-between">
-                            <div>
-                              <p className="text-xs font-bold text-white">Youth Front Council</p>
-                              <p className="text-[10px] text-gray-400">Primary Student Governing Body</p>
-                            </div>
-                            <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">Verified</span>
-                          </div>
-                          <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 flex items-center justify-between">
-                            <div>
-                              <p className="text-xs font-bold text-white">Panther Student Union</p>
-                              <p className="text-[10px] text-gray-400">Campus Welfare & Activities</p>
-                            </div>
-                            <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">Verified</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Document Compliance Bundle */}
-                      <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                          <p className="text-xs font-bold text-white">Institutional Verification Bundle</p>
-                          <p className="text-[11px] text-blue-400 mt-0.5">📄 {selectedUni.docName || 'Compliance_Package.pdf'}</p>
-                        </div>
-                        <button 
-                          onClick={() => alert("Viewing compliance document for " + selectedUni.name)}
-                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg"
-                        >
-                          View Document Details
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* SUB-VIEW: STUDENT PORTAL & MARKS UPDATE INTERFACE */}
-                {uniSubView === 'student-portal' && (
-                  <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-sky-500/30 p-8 rounded-3xl shadow-2xl space-y-6 animate-fadeIn">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
-                      <div>
-                        <span className="text-xs bg-sky-500/15 text-sky-400 px-3 py-1 rounded-full border border-sky-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Student Portal & Academic Records</span>
-                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Student Hub</h3>
-                      </div>
-                      {user ? (
-                        <div className="flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-xl border border-gray-800">
-                          <img src={user.photoURL} alt="" className="w-6 h-6 rounded-full border border-sky-500 object-cover" />
-                          <span className="text-xs font-bold text-white">{user.displayName}</span>
-                        </div>
-                      ) : (
-                        <button onClick={handleGoogleLogin} className="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">
-                          Sign in to Access Portal
-                        </button>
-                      )}
-                    </div>
-
-                    {user ? (
-                      <div className="space-y-6">
-                        {/* Student Info Stats */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                            <p className="text-xs text-gray-400 font-semibold">Student Status</p>
-                            <p className="text-xl font-black text-emerald-400 mt-1">Verified Voter</p>
-                          </div>
-                          <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                            <p className="text-xs text-gray-400 font-semibold">University Affiliation</p>
-                            <p className="text-sm font-bold text-white mt-1 truncate">{selectedUni.name}</p>
-                          </div>
-                          <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                            <p className="text-xs text-gray-400 font-semibold">Academic Semester</p>
-                            <p className="text-xl font-black text-sky-400 mt-1">Semester 6</p>
-                          </div>
-                        </div>
-
-                        {/* SUBJECT-WISE MARKS TABLE */}
-                        <div className="bg-gray-950 p-6 rounded-2xl border border-gray-800 space-y-4">
-                          <h4 className="text-sm font-bold text-white uppercase tracking-wider">Subject-Wise Latest Marks & Grades</h4>
-                          
-                          <div className="overflow-x-auto">
-                            <table className="w-full text-left text-xs">
-                              <thead className="border-b border-gray-800 text-gray-400 uppercase">
-                                <tr>
-                                  <th className="pb-3">Subject Name</th>
-                                  <th className="pb-3">Marks Obtained</th>
-                                  <th className="pb-3">Grade</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-gray-800/60 text-gray-300">
-                                {studentMarks.map((item) => (
-                                  <tr key={item.id}>
-                                    <td className="py-3 font-semibold text-white">{item.subject}</td>
-                                    <td className="py-3 text-sky-400 font-bold">{item.marks}</td>
-                                    <td className="py-3"><span className="bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">{item.grade}</span></td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-
-                        {/* INTERFACE TO UPDATE/ADD LATEST MARKS */}
-                        <div className="bg-gray-950 p-6 rounded-2xl border border-gray-800 space-y-4">
-                          <h4 className="text-sm font-bold text-white uppercase tracking-wider">Update / Add Latest Subject Marks</h4>
-                          <form onSubmit={handleUpdateMarks} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div>
-                              <label className="block text-[11px] font-semibold text-gray-300 mb-1">Subject Name</label>
-                              <input 
-                                type="text" 
-                                value={newSubject}
-                                onChange={(e) => setNewSubject(e.target.value)}
-                                placeholder="e.g. Artificial Intelligence" 
-                                className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[11px] font-semibold text-gray-300 mb-1">Marks (e.g. 92/100)</label>
-                              <input 
-                                type="text" 
-                                value={newMarks}
-                                onChange={(e) => setNewMarks(e.target.value)}
-                                placeholder="e.g. 92/100" 
-                                className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[11px] font-semibold text-gray-300 mb-1">Grade</label>
-                              <input 
-                                type="text" 
-                                value={newGrade}
-                                onChange={(e) => setNewGrade(e.target.value)}
-                                placeholder="e.g. O or A+" 
-                                className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
-                                required
-                              />
-                            </div>
-                            <div className="sm:col-span-3 pt-2">
-                              <button type="submit" className="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-xl text-xs font-bold shadow-lg transition">
-                                Update / Add Marks Record
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-2">
-                          <button 
-                            onClick={() => { setActiveTab('voting'); setUniSubView('portal'); }}
-                            className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 text-white px-6 py-3 rounded-xl text-xs font-bold shadow-lg transition"
-                          >
-                            Go to Voting Booth →
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-12 space-y-4 bg-gray-950 rounded-2xl border border-gray-800">
-                        <p className="text-sm text-gray-400">Please sign in with your Google account to unlock your personalized student portal dashboard and latest academic marks.</p>
-                        <button onClick={handleGoogleLogin} className="bg-sky-600 hover:bg-sky-500 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg">
-                          Sign in with Google Now
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* SUB-VIEW 1: VOTING BOOTH */}
-                {uniSubView === 'portal' && activeTab === 'voting' && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-bold text-white mb-2">Live Candidates & Standings</h3>
-                    {selectedUni.candidates.length === 0 ? (
-                      <p className="text-xs text-gray-400 bg-gray-900 p-6 rounded-2xl border border-gray-800">No candidates registered yet.</p>
-                    ) : (
-                      selectedUni.candidates.map((cand) => {
-                        const total = getTotalVotes(selectedUni.candidates);
-                        const percentage = Math.round((cand.votes / total) * 100);
-
-                        return (
-                          <div key={cand.id} className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-6 rounded-3xl space-y-4 shadow-xl">
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <span className="text-[10px] bg-blue-950/80 text-blue-400 px-3 py-1 rounded-full border border-blue-900/60 font-bold uppercase">Organization / Party: {cand.party}</span>
-                                <h4 className="font-bold text-lg text-white mt-2">{cand.name}</h4>
-                              </div>
-                              <button 
-                                onClick={() => handleVote(selectedUni.id, cand.id)}
-                                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg active:scale-95"
-                              >
-                                Cast Vote
-                              </button>
-                            </div>
-                            <div>
-                              <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
-                                <span>Votes: <strong className="text-white">{cand.votes}</strong></span>
-                                <span className="text-blue-400 font-bold">{percentage}% Share</span>
-                              </div>
-                              <div className="w-full bg-gray-950 h-2.5 rounded-full overflow-hidden border border-gray-800">
-                                <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full" style={{ width: `${percentage}%` }}></div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                )}
-
-                {/* SUB-VIEW 2: CANDIDATE MANAGER */}
-                {uniSubView === 'portal' && activeTab === 'manager' && (
-                  <div className="bg-gradient-to-b from-gray-900/90 to-gray-950/90 border border-gray-800/80 p-8 rounded-3xl shadow-2xl">
-                    <h3 className="text-xl font-bold text-white mb-2">Register New Candidate</h3>
-                    <p className="text-xs text-gray-400 mb-6">Add candidate nomination under university student organizations.</p>
-                    <form onSubmit={handleAddCandidate} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-2">Candidate Name</label>
-                        <input 
-                          type="text" 
-                          value={candidateName}
-                          onChange={(e) => setCandidateName(e.target.value)}
-                          placeholder="e.g. Amit Sharma"
-                          className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-2">Organization / Party Name</label>
-                        <input 
-                          type="text" 
-                          value={candidateParty}
-                          onChange={(e) => setCandidateParty(e.target.value)}
-                          placeholder="e.g. Youth Front"
-                          className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                          required
-                        />
-                      </div>
-                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
-                        Add Candidate
-                      </button>
-                    </form>
-                  </div>
-                )}
-
-                {/* SUB-VIEW 3: UNIVERSITY ADMIN LOGIN */}
-                {uniSubView === 'uni-admin-login' && (
-                  <div className="max-w-md mx-auto bg-gradient-to-b from-gray-900 to-gray-950 border border-purple-500/30 p-8 rounded-3xl shadow-2xl">
-                    <div className="text-center mb-6">
-                      <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Institution Control</span>
-                      <h3 className="text-2xl font-black text-white">{selectedUni.name} Admin</h3>
-                      <p className="text-xs text-gray-400 mt-1">Sign in with university administrative credentials.</p>
-                    </div>
-                    <form onSubmit={handleUniAdminLoginSubmit} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1.5">Admin Email</label>
-                        <input 
-                          type="email" 
-                          value={uniAdminEmail}
-                          onChange={(e) => setUniAdminEmail(e.target.value)}
-                          placeholder="admin@university.edu"
-                          className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-purple-500"
-                          required 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
-                        <input 
-                          type="password" 
-                          value={uniAdminPassword}
-                          onChange={(e) => setUniAdminPassword(e.target.value)}
-                          placeholder="••••••••"
-                          className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-purple-500"
-                          required 
-                        />
-                      </div>
-                      <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
-                        Login to Uni Admin Panel
-                      </button>
-                    </form>
-                  </div>
-                )}
-
-                {/* SUB-VIEW 4: UNIVERSITY ADMIN DASHBOARD */}
-                {uniSubView === 'uni-admin-dashboard' && (
-                  <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-purple-500/30 p-8 rounded-3xl shadow-2xl space-y-6">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
-                      <div>
-                        <span className="text-xs bg-purple-500/15 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Authenticated Admin</span>
-                        <h3 className="text-2xl font-black text-white">{selectedUni.name} Management Panel</h3>
-                      </div>
-                      <button 
-                        onClick={() => { setIsUniAdminLoggedIn(false); setUniSubView('uni-admin-login'); }}
-                        className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
-                      >
-                        Logout Admin
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                        <p className="text-xs text-gray-400 font-semibold">Total Voters Registered</p>
-                        <p className="text-2xl font-black text-white mt-1">{selectedUni.eligible}</p>
-                      </div>
-                      <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                        <p className="text-xs text-gray-400 font-semibold">Active Candidates</p>
-                        <p className="text-2xl font-black text-blue-400 mt-1">{selectedUni.candidates.length}</p>
-                      </div>
-                      <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800">
-                        <p className="text-xs text-gray-400 font-semibold">Election Status</p>
-                        <p className="text-2xl font-black text-emerald-400 mt-1">Live & Secure</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* SUB-VIEW 5: ORGANIZATION LOGIN */}
-                {uniSubView === 'org-login' && (
-                  <div className="max-w-md mx-auto bg-gradient-to-b from-gray-900 to-gray-950 border border-emerald-500/30 p-8 rounded-3xl shadow-2xl">
-                    <div className="text-center mb-6">
-                      <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-2">Student Body / Party Portal</span>
-                      <h3 className="text-2xl font-black text-white">Organization Login</h3>
-                      <p className="text-xs text-gray-400 mt-1">Sign in with organization credentials to manage campaign entries.</p>
-                    </div>
-                    <form onSubmit={handleOrgLoginSubmit} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1.5">Organization Email</label>
-                        <input 
-                          type="email" 
-                          value={orgEmail}
-                          onChange={(e) => setOrgEmail(e.target.value)}
-                          placeholder="youthfront@org.com"
-                          className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
-                          required 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
-                        <input 
-                          type="password" 
-                          value={orgPassword}
-                          onChange={(e) => setOrgPassword(e.target.value)}
-                          placeholder="••••••••"
-                          className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
-                          required 
-                        />
-                      </div>
-                      <button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
-                        Login to Organization Portal
-                      </button>
-                    </form>
-                  </div>
-                )}
-
-                {/* SUB-VIEW 6: ORGANIZATION DASHBOARD */}
-                {uniSubView === 'org-dashboard' && (
-                  <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-emerald-500/30 p-8 rounded-3xl shadow-2xl space-y-6">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-4">
-                      <div>
-                        <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold uppercase tracking-widest inline-block mb-1">Organization Dashboard</span>
-                        <h3 className="text-2xl font-black text-white">{orgName} Party Hub</h3>
-                      </div>
-                      <button 
-                        onClick={() => { setIsOrgLoggedIn(false); setUniSubView('org-login'); }}
-                        className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
-                      >
-                        Logout Org
-                      </button>
-                    </div>
-
-                    <div className="max-w-xl space-y-4">
-                      <h4 className="text-sm font-bold text-white">Register Candidate under {orgName}</h4>
-                      <form onSubmit={handleAddCandidate} className="space-y-4">
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-2">Candidate Name</label>
-                          <input 
-                            type="text" 
-                            value={candidateName}
-                            onChange={(e) => setCandidateName(e.target.value)}
-                            placeholder="e.g. Rahul Sharma"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-300 mb-2">Party Affiliation</label>
-                          <input 
-                            type="text" 
-                            value={candidateParty}
-                            onChange={(e) => setCandidateParty(e.target.value)}
-                            placeholder={orgName}
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
-                            required
-                          />
-                        </div>
-                        <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg">
-                          Submit Candidate Nomination
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                )}
-
-              </div>
-            </div>
-
-          </div>
-        )}
-
       </main>
-
-      {/* ADMIN UNIVERSITY & DOCUMENT DETAIL MODAL */}
-      {adminSelectedUni && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-3xl max-w-xl w-full shadow-2xl relative space-y-4">
-            <button onClick={() => setAdminSelectedUni(null)} className="absolute top-5 right-5 text-gray-400 hover:text-white text-lg font-bold">✕</button>
-
-            <div>
-              <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30 font-semibold uppercase tracking-widest inline-block mb-2">University Full Details</span>
-              <h3 className="text-2xl font-black text-white">{adminSelectedUni.name}</h3>
-              <p className="text-xs text-blue-400 mt-1 font-medium">📍 {adminSelectedUni.location}</p>
-            </div>
-
-            <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 space-y-3">
-              <div>
-                <p className="text-[11px] text-gray-400 font-semibold">Description:</p>
-                <p className="text-xs text-gray-200 mt-0.5">{adminSelectedUni.desc}</p>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-gray-800/80">
-                <span className="text-[11px] text-gray-400 font-semibold">Eligible Voters:</span>
-                <span className="text-xs text-white font-bold">{adminSelectedUni.eligible}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-gray-800/80">
-                <span className="text-[11px] text-gray-400 font-semibold">Current Status:</span>
-                <span className="text-xs text-emerald-400 font-bold uppercase">{adminSelectedUni.status}</span>
-              </div>
-            </div>
-
-            <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 space-y-2">
-              <p className="text-[11px] text-gray-400 font-semibold">Attached Verification Bundle:</p>
-              <div className="flex items-center justify-between bg-gray-900 p-3 rounded-xl border border-gray-800">
-                <span className="text-xs text-blue-400 font-medium">📄 {adminSelectedUni.docName || 'Verification_Document.pdf'}</span>
-                <button 
-                  onClick={() => alert("Downloading / Viewing document: " + (adminSelectedUni.docName || 'Document.pdf'))}
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition"
-                >
-                  View / Download
-                </button>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setAdminSelectedUni(null)} 
-              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl text-xs font-bold transition mt-2"
-            >
-              Close Details
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* REGISTRATION MODAL */}
-      {showRegModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-3xl max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onClick={() => setShowRegModal(false)} className="absolute top-5 right-5 text-gray-400 hover:text-white text-lg font-bold">✕</button>
-
-            <h3 className="text-2xl font-black text-white mb-1">Register Your University</h3>
-            <p className="text-xs text-gray-400 mb-6">Complete state & UGC route documentation setup for establishing a private university.</p>
-
-            <form onSubmit={handleUniversityRegistration} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">University Name</label>
-                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Jharkhand State University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1.5">Location</label>
-                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Description</label>
-                <textarea value={regDesc} onChange={(e) => setRegDesc(e.target.value)} placeholder="Brief description..." rows="2" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 resize-none" required></textarea>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Voters Count</label>
-                <input type="text" value={regEligible} onChange={(e) => setRegEligible(e.target.value)} placeholder="e.g. 40,000+" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500" required />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Upload Verification Bundle (PDF / ZIP)</label>
-                <input type="file" onChange={(e) => setRegDoc(e.target.files[0])} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white" required />
-              </div>
-
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg mt-2">
-                Submit for Admin Approval
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
