@@ -14,6 +14,13 @@ export default function App() {
   // Mobile Menu State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Authentication Modal & OTP States
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('select'); // 'select', 'otp-phone', 'otp-verify'
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('');
+
   // University Internal Admin & Organization States
   const [isUniAdminLoggedIn, setIsUniAdminLoggedIn] = useState(false);
   const [uniAdminEmail, setUniAdminEmail] = useState('');
@@ -112,7 +119,9 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -124,16 +133,53 @@ export default function App() {
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
+      setShowAuthModal(false);
     } catch (error) {
       alert("Login failed: " + error.message);
     }
   };
 
+  const handleSendOtp = (e) => {
+    e.preventDefault();
+    if (!phoneNumber || phoneNumber.length < 10) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    // Generate a random 4-digit OTP
+    const mockOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    setGeneratedOtp(mockOtp);
+    setAuthMode('otp-verify');
+    alert(`[Simulation SMS] Your Student Login OTP is: ${mockOtp}`);
+  };
+
+  const handleVerifyOtp = (e) => {
+    e.preventDefault();
+    if (otpCode === generatedOtp) {
+      // Create a mock user object for phone login
+      const phoneUser = {
+        displayName: `Student (+91 ${phoneNumber.slice(-5)})`,
+        email: `student_${phoneNumber}@univote.com`,
+        photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+      };
+      setUser(phoneUser);
+      setShowAuthModal(false);
+      setAuthMode('select');
+      setPhoneNumber('');
+      setOtpCode('');
+      alert("OTP Verified Successfully! Welcome to UniVote Pro.");
+    } else {
+      alert("Invalid OTP! Please check the code sent to your phone.");
+    }
+  };
+
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      if (auth.currentUser) {
+        await signOut(auth);
+      }
+      setUser(null);
     } catch (error) {
-      alert("Logout failed: " + error.message);
+      setUser(null);
     }
   };
 
@@ -149,7 +195,7 @@ export default function App() {
 
   const handleVote = (uniId, candidateId) => {
     if (!user) {
-      alert("Please sign in with Google first to cast your vote!");
+      setShowAuthModal(true);
       return;
     }
 
@@ -180,7 +226,7 @@ export default function App() {
   const handleAddCandidate = (e) => {
     e.preventDefault();
     if (!user && !isOrgLoggedIn) {
-      alert("Please sign in or log in as an organization to register candidates!");
+      setShowAuthModal(true);
       return;
     }
     if (!candidateName.trim() || !candidateParty.trim()) {
@@ -331,7 +377,7 @@ export default function App() {
               <div className={`flex items-center gap-2.5 border px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md ml-2 ${isDark ? 'bg-gray-900/90 border-gray-700/60' : 'bg-gray-100 border-gray-200'}`}>
                 <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-blue-500 shadow-md object-cover" />
                 <div className="text-left">
-                  <p className={`text-[11px] font-bold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.displayName || 'User'}</p>
+                  <p className={`text-[11px] font-bold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.displayName || 'Student'}</p>
                   <p className="text-[9px] text-blue-400 font-medium truncate max-w-[100px]">{user.email}</p>
                 </div>
                 <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition ml-1">
@@ -339,8 +385,8 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              <button onClick={handleGoogleLogin} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-600/20 active:scale-95 ml-2">
-                Sign in with Google
+              <button onClick={() => { setAuthMode('select'); setShowAuthModal(true); }} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-600/20 active:scale-95 ml-2">
+                Student Login / Sign In
               </button>
             )}
           </div>
@@ -367,7 +413,7 @@ export default function App() {
               {user ? (
                 <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full bg-red-600 text-white py-2 rounded-xl text-xs font-semibold">Logout</button>
               ) : (
-                <button onClick={() => { handleGoogleLogin(); setMobileMenuOpen(false); }} className="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-bold">Sign in with Google</button>
+                <button onClick={() => { setAuthMode('select'); setShowAuthModal(true); setMobileMenuOpen(false); }} className="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-bold">Student Login / Sign In</button>
               )}
             </div>
           </div>
@@ -388,7 +434,7 @@ export default function App() {
               Next-Gen Student Union Elections & Organization Hub
             </h1>
             <p className={`text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Comprehensive university and organization information dashboards with transparent verification routing and secure Google-authenticated balloting.
+              Comprehensive university and organization information dashboards with transparent verification routing and secure Google & OTP authenticated balloting.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-2">
               <button onClick={() => setCurrentView('universities')} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-blue-600/30 transition-all hover:scale-105">
@@ -487,7 +533,7 @@ export default function App() {
           </div>
         )}
 
-        {/* EXACT AMITY / UNIVERSITY DASHBOARD MATCHING SECOND SCREENSHOT */}
+        {/* UNIVERSITY DASHBOARD */}
         {selectedUni && (
           <div className="space-y-6">
             {/* University Header Banner */}
@@ -507,7 +553,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Dashboard Layout: Left Nav + Right Content (Matching Screenshot 2) */}
+            {/* Dashboard Layout: Left Nav + Right Content */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               
               {/* Left Navigation Sidebar */}
@@ -536,7 +582,6 @@ export default function App() {
                 
                 {activeTab === 'portal' && (
                   <div className="space-y-6">
-                    {/* Master Information Record Box */}
                     <div className={`border p-6 rounded-3xl shadow-xl space-y-6 ${isDark ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-gray-800' : 'bg-white border-gray-200'}`}>
                       <div>
                         <span className="text-[10px] bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold uppercase tracking-widest">Master Information Record</span>
@@ -560,7 +605,6 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Associated Student Organizations */}
                     <div className={`border p-6 rounded-3xl shadow-xl space-y-4 ${isDark ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-gray-800' : 'bg-white border-gray-200'}`}>
                       <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Associated Student Organizations</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -575,7 +619,6 @@ export default function App() {
                         ))}
                       </div>
 
-                      {/* Institutional Verification Bundle */}
                       <div className={`mt-6 p-4 rounded-2xl border flex justify-between items-center ${isDark ? 'bg-gray-950 border-gray-800' : 'bg-gray-100 border-gray-200'}`}>
                         <div>
                           <p className="text-[10px] text-gray-400 font-bold uppercase">Institutional Verification Bundle</p>
@@ -685,6 +728,62 @@ export default function App() {
                 )}
 
               </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* STUDENT AUTHENTICATION MODAL (GOOGLE + OTP) */}
+        {showAuthModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className={`border p-6 md:p-8 rounded-3xl max-w-md w-full space-y-6 shadow-2xl relative ${isDark ? 'bg-gray-900 border-gray-800 text-white' : 'bg-white border-gray-200 text-gray-900'}`}>
+              <button onClick={() => setShowAuthModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white font-bold">✕</button>
+              
+              <div className="text-center space-y-1">
+                <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border font-semibold uppercase tracking-widest inline-block mb-1">Student Portal Authentication</span>
+                <h3 className="text-2xl font-black">Secure Sign In</h3>
+                <p className="text-xs text-gray-400">Choose your preferred login method to cast your vote.</p>
+              </div>
+
+              {authMode === 'select' && (
+                <div className="space-y-3 pt-2">
+                  <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-bold p-3.5 rounded-2xl border border-gray-300 shadow transition text-sm">
+                    <span className="text-lg">🌐</span> Sign in with Google
+                  </button>
+                  <button onClick={() => setAuthMode('otp-phone')} className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white font-bold p-3.5 rounded-2xl shadow-lg transition text-sm">
+                    <span className="text-lg">📱</span> Login with Phone OTP
+                  </button>
+                </div>
+              )}
+
+              {authMode === 'otp-phone' && (
+                <form onSubmit={handleSendOtp} className="space-y-4 pt-2">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-gray-400">Mobile Number (10 digits)</label>
+                    <div className="flex gap-2">
+                      <span className={`border rounded-xl p-3 text-sm flex items-center ${isDark ? 'bg-gray-950 border-gray-800 text-gray-300' : 'bg-gray-50 border-gray-300'}`}>+91</span>
+                      <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="9876543210" maxLength="10" className={`w-full border rounded-xl p-3 text-sm ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setAuthMode('select')} className={`w-1/3 border py-3 rounded-xl text-xs font-bold ${isDark ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>Back</button>
+                    <button type="submit" className="w-2/3 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow">Send OTP</button>
+                  </div>
+                </form>
+              )}
+
+              {authMode === 'otp-verify' && (
+                <form onSubmit={handleVerifyOtp} className="space-y-4 pt-2">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-gray-400">Enter 4-digit OTP sent to +91 {phoneNumber}</label>
+                    <input type="text" value={otpCode} onChange={e => setOtpCode(e.target.value)} placeholder="1234" maxLength="4" className={`w-full border rounded-xl p-3 text-center tracking-widest text-lg font-black ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setAuthMode('otp-phone')} className={`w-1/3 border py-3 rounded-xl text-xs font-bold ${isDark ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>Change No.</button>
+                    <button type="submit" className="w-2/3 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-bold shadow">Verify & Login</button>
+                  </div>
+                </form>
+              )}
 
             </div>
           </div>
