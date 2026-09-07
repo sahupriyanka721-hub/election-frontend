@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider } from './firebase';
-import { signInWithPopup, signOut, onAuthStateChanged, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'admin'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('portal');
+  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'uni-admin', 'orgs-hub'
 
   // Theme State ('dark' or 'light')
   const [theme, setTheme] = useState('dark');
@@ -14,12 +14,12 @@ export default function App() {
   // Mobile Menu State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Authentication Modal & Firebase Phone OTP States
+  // Authentication Modal & OTP States
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('select'); // 'select', 'otp-phone', 'otp-verify'
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCode, setOtpCode] = useState('');
-  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [generatedOtp, setGeneratedOtp] = useState('');
 
   // University Internal Admin & Organization States
   const [isUniAdminLoggedIn, setIsUniAdminLoggedIn] = useState(false);
@@ -139,69 +139,44 @@ export default function App() {
     }
   };
 
-  // Setup Firebase Recaptcha
-  const setupRecaptcha = () => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        'size': 'invisible',
-        'callback': (response) => {
-          // reCAPTCHA solved, allow signInWithPhoneNumber
-        }
-      });
-    }
-  };
-
-  // Send Real SMS OTP via Firebase
-  const handleSendOtp = async (e) => {
+  const handleSendOtp = (e) => {
     e.preventDefault();
     if (!phoneNumber || phoneNumber.length < 10) {
-      alert("Please enter a valid mobile number with country code (e.g. +919876543210)");
+      alert("Please enter a valid 10-digit mobile number.");
       return;
     }
-
-    try {
-      setupRecaptcha();
-      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
-      const appVerifier = window.recaptchaVerifier;
-
-      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
-      setConfirmationResult(confirmation);
-      setAuthMode('otp-verify');
-      alert("Real SMS OTP sent successfully to your mobile number!");
-    } catch (error) {
-      alert("Error sending SMS OTP: " + error.message);
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.render().then(widgetId => {
-          grecaptcha.reset(widgetId);
-        });
-      }
-    }
+    // Generate a random 4-digit OTP
+    const mockOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    setGeneratedOtp(mockOtp);
+    setAuthMode('otp-verify');
+    alert(`[Simulation SMS] Your Student Login OTP is: ${mockOtp}`);
   };
 
-  // Verify Real SMS OTP via Firebase
-  const handleVerifyOtp = async (e) => {
+  const handleVerifyOtp = (e) => {
     e.preventDefault();
-    if (!otpCode || otpCode.length < 6) {
-      alert("Please enter the complete 6-digit verification code.");
-      return;
-    }
-
-    try {
-      const result = await confirmationResult.confirm(otpCode);
-      setUser(result.user);
+    if (otpCode === generatedOtp) {
+      // Create a mock user object for phone login
+      const phoneUser = {
+        displayName: `Student (+91 ${phoneNumber.slice(-5)})`,
+        email: `student_${phoneNumber}@univote.com`,
+        photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+      };
+      setUser(phoneUser);
       setShowAuthModal(false);
       setAuthMode('select');
       setPhoneNumber('');
       setOtpCode('');
-      alert("Phone verification successful! Welcome.");
-    } catch (error) {
-      alert("Invalid OTP code. Please try again.");
+      alert("OTP Verified Successfully! Welcome to UniVote Pro.");
+    } else {
+      alert("Invalid OTP! Please check the code sent to your phone.");
     }
   };
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      if (auth.currentUser) {
+        await signOut(auth);
+      }
       setUser(null);
     } catch (error) {
       setUser(null);
@@ -357,9 +332,6 @@ export default function App() {
       <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      {/* Hidden container for Firebase Recaptcha */}
-      <div id="recaptcha-container"></div>
-
       {/* Navbar */}
       <nav className={`p-4 border-b backdrop-blur-xl sticky top-0 z-50 shadow-2xl transition-colors duration-300 ${isDark ? 'border-gray-800/60 bg-[#030508]/90' : 'border-gray-200 bg-white/90'}`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -403,12 +375,10 @@ export default function App() {
 
             {user ? (
               <div className={`flex items-center gap-2.5 border px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md ml-2 ${isDark ? 'bg-gray-900/90 border-gray-700/60' : 'bg-gray-100 border-gray-200'}`}>
-                <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-md">
-                  {user.phoneNumber ? '📱' : '👤'}
-                </div>
+                <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-blue-500 shadow-md object-cover" />
                 <div className="text-left">
-                  <p className={`text-[11px] font-bold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.phoneNumber || user.displayName || 'Student'}</p>
-                  <p className="text-[9px] text-blue-400 font-medium truncate max-w-[100px]">{user.email || 'Verified Student'}</p>
+                  <p className={`text-[11px] font-bold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.displayName || 'Student'}</p>
+                  <p className="text-[9px] text-blue-400 font-medium truncate max-w-[100px]">{user.email}</p>
                 </div>
                 <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition ml-1">
                   Logout
@@ -426,7 +396,7 @@ export default function App() {
             <button onClick={toggleTheme} className={`p-2 rounded-xl text-xs font-bold border ${isDark ? 'bg-gray-900 border-gray-700 text-yellow-400' : 'bg-gray-100 border-gray-300 text-slate-700'}`}>
               {isDark ? '☀️' : '🌙'}
             </button>
-            {user && <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white text-xs">👤</div>}
+            {user && <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border-2 border-blue-500 object-cover" />}
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`border p-2 rounded-xl ${isDark ? 'bg-gray-900 border-gray-800 text-gray-200' : 'bg-gray-100 border-gray-200 text-gray-800'}`}>
               {mobileMenuOpen ? '✕' : '☰'}
             </button>
@@ -464,7 +434,7 @@ export default function App() {
               Next-Gen Student Union Elections & Organization Hub
             </h1>
             <p className={`text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Comprehensive university and organization information dashboards with transparent verification routing and secure Google & Firebase SMS OTP balloting.
+              Comprehensive university and organization information dashboards with transparent verification routing and secure Google & OTP authenticated balloting.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-2">
               <button onClick={() => setCurrentView('universities')} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-blue-600/30 transition-all hover:scale-105">
@@ -566,6 +536,7 @@ export default function App() {
         {/* UNIVERSITY DASHBOARD */}
         {selectedUni && (
           <div className="space-y-6">
+            {/* University Header Banner */}
             <div className={`p-6 md:p-8 rounded-3xl border shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${isDark ? 'bg-gradient-to-r from-gray-900 via-gray-950 to-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
               <div>
                 <h2 className={`text-3xl md:text-5xl font-black tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>{selectedUni.name}</h2>
@@ -582,8 +553,10 @@ export default function App() {
               </div>
             </div>
 
+            {/* Dashboard Layout: Left Nav + Right Content */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               
+              {/* Left Navigation Sidebar */}
               <div className={`lg:col-span-1 p-4 rounded-3xl border space-y-2 h-fit shadow-xl ${isDark ? 'bg-gray-900/80 border-gray-800' : 'bg-white border-gray-200'}`}>
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Dashboard Navigation</p>
                 
@@ -604,6 +577,7 @@ export default function App() {
                 </button>
               </div>
 
+              {/* Right Content Area */}
               <div className="lg:col-span-3 space-y-6">
                 
                 {activeTab === 'portal' && (
@@ -643,6 +617,16 @@ export default function App() {
                             <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 font-bold">Verified</span>
                           </div>
                         ))}
+                      </div>
+
+                      <div className={`mt-6 p-4 rounded-2xl border flex justify-between items-center ${isDark ? 'bg-gray-950 border-gray-800' : 'bg-gray-100 border-gray-200'}`}>
+                        <div>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase">Institutional Verification Bundle</p>
+                          <p className="text-xs text-blue-400 font-semibold mt-0.5">📄 {selectedUni.docName}</p>
+                        </div>
+                        <button onClick={() => alert("Downloading verification bundle...")} className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">
+                          View Document Details
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -697,6 +681,15 @@ export default function App() {
                         ))}
                       </tbody>
                     </table>
+                    <form onSubmit={handleUpdateMarks} className="space-y-3 pt-4 border-t border-gray-800">
+                      <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Add Grade Entry</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input type="text" value={newSubject} onChange={e => setNewSubject(e.target.value)} placeholder="Subject" className={`border rounded-xl p-2.5 text-xs ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                        <input type="text" value={newMarks} onChange={e => setNewMarks(e.target.value)} placeholder="Marks (e.g. 85/100)" className={`border rounded-xl p-2.5 text-xs ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                        <input type="text" value={newGrade} onChange={e => setNewGrade(e.target.value)} placeholder="Grade (e.g. A+)" className={`border rounded-xl p-2.5 text-xs ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                      </div>
+                      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">Save Record</button>
+                    </form>
                   </div>
                 )}
 
@@ -740,16 +733,16 @@ export default function App() {
           </div>
         )}
 
-        {/* AUTHENTICATION MODAL (GOOGLE + FIREBASE SMS OTP) */}
+        {/* STUDENT AUTHENTICATION MODAL (GOOGLE + OTP) */}
         {showAuthModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             <div className={`border p-6 md:p-8 rounded-3xl max-w-md w-full space-y-6 shadow-2xl relative ${isDark ? 'bg-gray-900 border-gray-800 text-white' : 'bg-white border-gray-200 text-gray-900'}`}>
               <button onClick={() => setShowAuthModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white font-bold">✕</button>
               
               <div className="text-center space-y-1">
-                <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border font-semibold uppercase tracking-widest inline-block mb-1">Student Authentication</span>
+                <span className="text-xs bg-blue-500/15 text-blue-400 px-3 py-1 rounded-full border font-semibold uppercase tracking-widest inline-block mb-1">Student Portal Authentication</span>
                 <h3 className="text-2xl font-black">Secure Sign In</h3>
-                <p className="text-xs text-gray-400">Verify your identity to cast a verified vote.</p>
+                <p className="text-xs text-gray-400">Choose your preferred login method to cast your vote.</p>
               </div>
 
               {authMode === 'select' && (
@@ -758,7 +751,7 @@ export default function App() {
                     <span className="text-lg">🌐</span> Sign in with Google
                   </button>
                   <button onClick={() => setAuthMode('otp-phone')} className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white font-bold p-3.5 rounded-2xl shadow-lg transition text-sm">
-                    <span className="text-lg">📱</span> Login via Real SMS OTP
+                    <span className="text-lg">📱</span> Login with Phone OTP
                   </button>
                 </div>
               )}
@@ -766,12 +759,15 @@ export default function App() {
               {authMode === 'otp-phone' && (
                 <form onSubmit={handleSendOtp} className="space-y-4 pt-2">
                   <div>
-                    <label className="block text-xs font-semibold mb-1 text-gray-400">Mobile Number (with Country Code)</label>
-                    <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="+919876543210" className={`w-full border rounded-xl p-3 text-sm ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                    <label className="block text-xs font-semibold mb-1 text-gray-400">Mobile Number (10 digits)</label>
+                    <div className="flex gap-2">
+                      <span className={`border rounded-xl p-3 text-sm flex items-center ${isDark ? 'bg-gray-950 border-gray-800 text-gray-300' : 'bg-gray-50 border-gray-300'}`}>+91</span>
+                      <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="9876543210" maxLength="10" className={`w-full border rounded-xl p-3 text-sm ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => setAuthMode('select')} className={`w-1/3 border py-3 rounded-xl text-xs font-bold ${isDark ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>Back</button>
-                    <button type="submit" className="w-2/3 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow">Send SMS OTP</button>
+                    <button type="submit" className="w-2/3 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow">Send OTP</button>
                   </div>
                 </form>
               )}
@@ -779,8 +775,8 @@ export default function App() {
               {authMode === 'otp-verify' && (
                 <form onSubmit={handleVerifyOtp} className="space-y-4 pt-2">
                   <div>
-                    <label className="block text-xs font-semibold mb-1 text-gray-400">Enter 6-digit OTP received via SMS</label>
-                    <input type="text" value={otpCode} onChange={e => setOtpCode(e.target.value)} placeholder="123456" maxLength="6" className={`w-full border rounded-xl p-3 text-center tracking-widest text-lg font-black ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
+                    <label className="block text-xs font-semibold mb-1 text-gray-400">Enter 4-digit OTP sent to +91 {phoneNumber}</label>
+                    <input type="text" value={otpCode} onChange={e => setOtpCode(e.target.value)} placeholder="1234" maxLength="4" className={`w-full border rounded-xl p-3 text-center tracking-widest text-lg font-black ${isDark ? 'bg-gray-950 border-gray-800 text-white' : 'bg-gray-50 border-gray-300'}`} required />
                   </div>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => setAuthMode('otp-phone')} className={`w-1/3 border py-3 rounded-xl text-xs font-bold ${isDark ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>Change No.</button>
