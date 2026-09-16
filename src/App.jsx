@@ -16,7 +16,7 @@ export default function App() {
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  // University Registration Form States (Sponsoring Body -> State Govt -> UGC Route)
+  // University Registration Form States (Sponsoring Body -> State Govt -> UGC)
   const [regUniName, setRegUniName] = useState('');
   const [regLocation, setRegLocation] = useState('');
   const [regTrustDeed, setRegTrustDeed] = useState('');
@@ -31,12 +31,12 @@ export default function App() {
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
-  // Student Document Verification Upload States
-  const [aadhaar, setAadhaar] = useState('');
-  const [pan, setPan] = useState('');
+  // Student Document Verification Upload States (File upload support)
+  const [aadhaarFile, setAadhaarFile] = useState('');
+  const [panFile, setPanFile] = useState('');
   const [tenthFile, setTenthFile] = useState('');
   const [twelfthFile, setTwelfthFile] = useState('');
-  const [charCert, setCharCert] = useState('');
+  const [charCertFile, setCharCertFile] = useState('');
   const [docSubmitted, setDocSubmitted] = useState(false);
 
   // Student Marks Management States
@@ -146,7 +146,7 @@ export default function App() {
       trust: regTrustDeed
     };
     setRegisteredApplications([...registeredApplications, newApp]);
-    alert("University registration application submitted via Sponsoring Body route!");
+    alert("University registration submitted successfully through Sponsoring Body → State Govt → UGC route!");
     setRegUniName('');
     setRegTrustDeed('');
     setRegPan('');
@@ -158,17 +158,8 @@ export default function App() {
   const handleApproveUni = (id) => {
     setRegisteredApplications(registeredApplications.map(app => {
       if (app.id === id) {
-        const approvedItem = { 
-          id: 'uni-' + Date.now(), 
-          name: app.name, 
-          location: app.location, 
-          desc: 'Newly approved university through regulatory pathway.', 
-          eligible: '10,000+',
-          status: 'Approved', 
-          image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', 
-          candidates: [] 
-        };
-        setUniversities(prev => [...prev, approvedItem]);
+        const approvedItem = { ...app, status: 'Approved', id: 'uni-' + Date.now(), image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', desc: 'Newly approved university through regulatory pathway.', candidates: [] };
+        setUniversities([...universities, approvedItem]);
         return { ...app, status: 'Approved' };
       }
       return app;
@@ -242,7 +233,7 @@ export default function App() {
     setNewSubject('');
     setNewMarks('');
     setNewGrade('');
-    alert("Student academic record updated successfully!");
+    alert("Student marks updated successfully!");
   };
 
   const handleDocumentSubmit = (e) => {
@@ -252,7 +243,7 @@ export default function App() {
       return;
     }
     setDocSubmitted(true);
-    alert("All verification documents submitted successfully!");
+    alert("All verification documents uploaded successfully!");
   };
 
   const isDark = theme === 'dark';
@@ -298,7 +289,7 @@ export default function App() {
       {/* Main Container */}
       <main className="p-6 max-w-7xl mx-auto">
 
-        {/* 1. Enhanced Landing Page */}
+        {/* 1. Enhanced Landing Page / Home View */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-12 space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -321,7 +312,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* 3D Effect Cards */}
+            {/* Quick Feature Cards with 3D Effect */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
                 <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">🏛️</div>
@@ -348,7 +339,7 @@ export default function App() {
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold tracking-tight">Approved Universities & Campuses</h2>
-                <p className="text-xs text-gray-400 mt-1">Select an institution to access its dedicated portal and voting booth.</p>
+                <p className="text-xs text-gray-400 mt-1">Select an institution to access its dedicated portal, voting booth, and management tools.</p>
               </div>
               <button onClick={() => setCurrentView('home')} className="text-xs text-blue-400 hover:underline">← Back to Home</button>
             </div>
@@ -359,7 +350,9 @@ export default function App() {
                   <div>
                     <div className="h-44 overflow-hidden relative">
                       <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-                      <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">{uni.status}</span>
+                      <div className="absolute top-3 right-3 bg-emerald-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                        {uni.status}
+                      </div>
                     </div>
                     <div className="p-5">
                       <h3 className="font-bold text-lg text-white mb-1">{uni.name}</h3>
@@ -378,7 +371,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 3. University Registration Form */}
+        {/* 3. University Registration Form (Sponsoring Body Route) */}
         {currentView === 'register-uni' && (
           <div className="max-w-3xl mx-auto bg-gray-900/90 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6">
             <div className="flex justify-between items-center border-b border-gray-800 pb-4">
@@ -393,14 +386,15 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">University Name</label>
-                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white outline-none" required />
+                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" required />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">Location (State / City)</label>
-                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white outline-none" required />
+                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" required />
                 </div>
               </div>
 
+              {/* Document Sections */}
               <div className="space-y-4 pt-2">
                 <h3 className="text-sm font-bold text-blue-400 uppercase tracking-wider">A. Sponsoring Body Documents</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -415,7 +409,7 @@ export default function App() {
                 <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
               </div>
 
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
+              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
                 Submit Application for State & UGC Review
               </button>
             </form>
@@ -428,7 +422,7 @@ export default function App() {
             <div className="text-center space-y-2">
               <div className="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl">🔐</div>
               <h2 className="text-xl font-bold text-white">Admin Secure Login</h2>
-              <p className="text-xs text-gray-400">Enter email and password to access admin panel.</p>
+              <p className="text-xs text-gray-400">Enter admin credentials to manage university approvals.</p>
             </div>
             <form onSubmit={handleAdminLogin} className="space-y-4">
               <div>
@@ -450,7 +444,7 @@ export default function App() {
         )}
 
         {/* 5. Admin Dashboard (View & Approve University Registrations) */}
-        {currentView === 'admin-panel' && isAdminLoggedIn && (
+        {currentView === 'admin' && isAdminLoggedIn && (
           <div className="space-y-6">
             <div className="flex justify-between items-center border-b border-gray-800 pb-4">
               <div>
@@ -604,34 +598,34 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Document Verification Tab (with Aadhaar, PAN, 10th, 12th & Character Certificate) */}
+                {/* Document Verification Tab with File Upload Inputs */}
                 {activeTab === 'documents' && (
                   <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
                     <h3 className="text-xl font-bold text-white">Student Verification Document Portal</h3>
-                    <p className="text-xs text-gray-400">Upload and submit your identity and academic certificates for {selectedUni.name}.</p>
+                    <p className="text-xs text-gray-400">Upload your identity and academic certificates for {selectedUni.name}.</p>
                     
                     <form onSubmit={handleDocumentSubmit} className="space-y-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1">Aadhaar Card Number / Proof</label>
-                        <input type="text" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} placeholder="Enter Aadhaar Number or Reference" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Aadhaar Card Document / PDF</label>
+                        <input type="file" onChange={(e) => setAadhaarFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1">PAN Card Number</label>
-                        <input type="text" value={pan} onChange={(e) => setPan(e.target.value)} placeholder="Enter PAN Number" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">PAN Card Document / PDF</label>
+                        <input type="file" onChange={(e) => setPanFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1">10th Marksheet Reference / Link</label>
-                        <input type="text" value={tenthFile} onChange={(e) => setTenthFile(e.target.value)} placeholder="Enter 10th marksheet reference or link" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">10th Marksheet (PDF/Image)</label>
+                        <input type="file" onChange={(e) => setTenthFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1">12th Marksheet Reference / Link</label>
-                        <input type="text" value={twelfthFile} onChange={(e) => setTwelfthFile(e.target.value)} placeholder="Enter 12th marksheet reference or link" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">12th Marksheet (PDF/Image)</label>
+                        <input type="file" onChange={(e) => setTwelfthFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1">Character Certificate</label>
-                        <input type="text" value={charCert} onChange={(e) => setCharCert(e.target.value)} placeholder="Enter character certificate reference or link" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Character Certificate (PDF/Image)</label>
+                        <input type="file" onChange={(e) => setCharCertFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
-                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md">
+                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md transition">
                         Submit All Documents for Verification
                       </button>
                       {docSubmitted && <p className="text-xs text-emerald-400 text-center font-bold">✓ All verification documents uploaded successfully!</p>}
