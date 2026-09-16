@@ -5,11 +5,19 @@ import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 export default function App() {
   const [user, setUser] = useState(null);
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('voting'); // 'voting' or 'manager'
+  const [activeTab, setActiveTab] = useState('voting'); // 'voting', 'manager', or 'documents'
 
   // Form states for Event Manager Portal
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
+
+  // Form states for Student Document Upload
+  const [aadhaar, setAadhaar] = useState('');
+  const [pan, setPan] = useState('');
+  const [tenthFile, setTenthFile] = useState('');
+  const [twelfthFile, setTwelfthFile] = useState('');
+  const [charCert, setCharCert] = useState('');
+  const [docSubmitted, setDocSubmitted] = useState(false);
   
   const [universities, setUniversities] = useState([
     { 
@@ -100,7 +108,6 @@ export default function App() {
       return uni;
     }));
 
-    // Update selectedUni state as well to re-render instantly
     setSelectedUni(prev => {
       if (!prev) return prev;
       return {
@@ -147,6 +154,16 @@ export default function App() {
     alert("Candidate registered successfully for " + selectedUni.name);
   };
 
+  const handleDocumentSubmit = (e) => {
+    e.preventDefault();
+    if (!user) {
+      alert("Please sign in with Google to upload verification documents!");
+      return;
+    }
+    setDocSubmitted(true);
+    alert("Documents uploaded successfully for verification!");
+  };
+
   return (
     <div className="min-h-screen bg-[#0b0f17] text-gray-100 font-sans">
       <nav className="p-4 border-b border-gray-800 flex justify-between items-center max-w-7xl mx-auto">
@@ -183,7 +200,7 @@ export default function App() {
         {!selectedUni ? (
           <div>
             <h2 className="text-3xl font-bold text-center mb-2">Select Your University</h2>
-            <p className="text-gray-400 text-center mb-8">Click on your institution to view candidates, manage events, access voter authentication, and cast votes.</p>
+            <p className="text-gray-400 text-center mb-8">Click on your institution to view candidates, upload verification documents, and cast votes.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {universities.map((uni) => (
@@ -224,12 +241,18 @@ export default function App() {
             <h2 className="text-3xl font-bold text-white mb-1">{selectedUni.name}</h2>
             <p className="text-gray-400 mb-6">Student Union Election 2026 Portal</p>
 
-            <div className="flex gap-4 mb-8 border-b border-gray-800 pb-4">
+            <div className="flex flex-wrap gap-4 mb-8 border-b border-gray-800 pb-4">
               <button 
                 onClick={() => setActiveTab('voting')}
                 className={`px-4 py-2 rounded text-sm font-medium transition ${activeTab === 'voting' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white bg-gray-900'}`}
               >
                 Student Voting Booth
+              </button>
+              <button 
+                onClick={() => setActiveTab('documents')}
+                className={`px-4 py-2 rounded text-sm font-medium transition ${activeTab === 'documents' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white bg-gray-900'}`}
+              >
+                Upload Verification Docs
               </button>
               <button 
                 onClick={() => setActiveTab('manager')}
@@ -257,6 +280,89 @@ export default function App() {
                     </button>
                   </div>
                 ))}
+              </div>
+            ) : activeTab === 'documents' ? (
+              <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl">
+                <h3 className="text-xl font-bold text-white mb-2">Student Verification Document Portal</h3>
+                <p className="text-xs text-gray-400 mb-6">Upload required academic and identification documents for {selectedUni.name} election eligibility.</p>
+
+                {user ? (
+                  docSubmitted ? (
+                    <div className="bg-green-950 border border-green-800 p-4 rounded text-center">
+                      <p className="text-sm text-green-400 font-semibold mb-1">Documents Successfully Uploaded!</p>
+                      <p className="text-xs text-gray-300">Your verification is under review by the university board.</p>
+                      <button onClick={() => setDocSubmitted(false)} className="mt-4 text-xs bg-gray-800 text-white px-3 py-1.5 rounded hover:bg-gray-700">Re-upload / Update</button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleDocumentSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-xs text-gray-300 mb-1">Aadhaar Card Number / File</label>
+                        <input 
+                          type="text" 
+                          value={aadhaar}
+                          onChange={(e) => setAadhaar(e.target.value)}
+                          placeholder="Enter Aadhaar Number or File Name" 
+                          className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-300 mb-1">PAN Card Number / File</label>
+                        <input 
+                          type="text" 
+                          value={pan}
+                          onChange={(e) => setPan(e.target.value)}
+                          placeholder="Enter PAN Number or File Name" 
+                          className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-300 mb-1">10th Marksheet (Upload Document)</label>
+                        <input 
+                          type="file" 
+                          onChange={(e) => setTenthFile(e.target.files[0]?.name || '')}
+                          className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-xs text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-300 mb-1">12th Marksheet (Upload Document)</label>
+                        <input 
+                          type="file" 
+                          onChange={(e) => setTwelfthFile(e.target.files[0]?.name || '')}
+                          className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-xs text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-300 mb-1">Character Certificate (Upload Document)</label>
+                        <input 
+                          type="file" 
+                          onChange={(e) => setCharCert(e.target.files[0]?.name || '')}
+                          className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-xs text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                          required
+                        />
+                      </div>
+                      <button 
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded text-sm font-medium transition"
+                      >
+                        Submit Documents for Verification
+                      </button>
+                    </form>
+                  )
+                ) : (
+                  <div className="text-center py-8 bg-gray-950 rounded border border-gray-800">
+                    <p className="text-sm text-gray-300 mb-4">You must be signed in with Google to upload verification documents.</p>
+                    <button 
+                      onClick={handleGoogleLogin}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded text-sm font-medium transition"
+                    >
+                      Sign in with Google Now
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl">
