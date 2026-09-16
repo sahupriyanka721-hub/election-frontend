@@ -1,49 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { auth, googleProvider, db } from './firebase';
+import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 
-function App() {
-  const [selectedUniv, setSelectedUniv] = useState(null);
+export default function App() {
   const [user, setUser] = useState(null);
-  const [hasVoted, setHasVoted] = useState(false);
+  const [selectedUni, setSelectedUni] = useState(null);
+  const [activeTab, setActiveTab] = useState('voting'); // 'voting' or 'manager'
 
-  const [parties, setParties] = useState([
-    { id: 'abvp', name: 'ABVP', candidate: 'Aarav Sharma', votes: 120 },
-    { id: 'nsui', name: 'NSUI', candidate: 'Priya Verma', votes: 95 },
-    { id: 'aisa', name: 'AISA', candidate: 'Rohan Gupta', votes: 45 }
-  ]);
-
-  const universities = [
-    {
-      id: 'geu',
-      name: 'Graphic Era University',
-      location: 'Dehradun, Uttarakhand',
-      desc: 'Graphic Era (Deemed to be University) student union election portal.',
-      eligible: '18,500+'
+  // Form states for Event Manager Portal
+  const [candidateName, setCandidateName] = useState('');
+  const [candidateParty, setCandidateParty] = useState('');
+  
+  const [universities, setUniversities] = useState([
+    { 
+      id: 'graphic-era', 
+      name: 'Graphic Era University', 
+      location: 'Dehradun, Uttarakhand', 
+      desc: 'Graphic Era (Deemed to be University) student union election portal.', 
+      eligible: '18,500+',
+      candidates: [
+        { id: 1, name: 'Aarav Sharma', party: 'ABVP', votes: 120 },
+        { id: 2, name: 'Rahul Verma', party: 'NSUI', votes: 95 }
+      ]
     },
-    {
-      id: 'amity',
-      name: 'Amity University',
-      location: 'Noida, Uttar Pradesh',
-      desc: 'Annual Student Council Election for Amity University main campus.',
-      eligible: '25,000+'
+    { 
+      id: 'amity', 
+      name: 'Amity University', 
+      location: 'Noida, Uttar Pradesh', 
+      desc: 'Annual Student Council Election for Amity University main campus.', 
+      eligible: '25,000+',
+      candidates: [
+        { id: 1, name: 'Priya Singh', party: 'Youth Front', votes: 150 },
+        { id: 2, name: 'Amit Kumar', party: 'Student Voice', votes: 130 }
+      ]
     },
-    {
-      id: 'lpu',
-      name: 'Lovely Professional University',
-      location: 'Phagwara, Punjab',
-      desc: 'Official Campus Senate Election Portal.',
-      eligible: '35,000+'
+    { 
+      id: 'lpu', 
+      name: 'Lovely Professional University', 
+      location: 'Phagwara, Punjab', 
+      desc: 'Official Campus Senate Election Portal.', 
+      eligible: '35,000+',
+      candidates: [
+        { id: 1, name: 'Simran Kaur', party: 'Panah', votes: 210 },
+        { id: 2, name: 'Rohit Gupta', party: 'Campus Alliance', votes: 180 }
+      ]
     },
-    {
-      id: 'cu',
-      name: 'Chandigarh University',
-      location: 'Mohali, Punjab',
-      desc: 'Central Student Representative Elections.',
-      eligible: '30,000+'
+    { 
+      id: 'chandigarh', 
+      name: 'Chandigarh University', 
+      location: 'Mohali, Punjab', 
+      desc: 'Central Student Representative Elections.', 
+      eligible: '30,000+',
+      candidates: [
+        { id: 1, name: 'Vikas Patel', party: 'Inquilab', votes: 160 },
+        { id: 2, name: 'Neha Sharma', party: 'Students Association', votes: 145 }
+      ]
     }
-  ];
+  ]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -54,132 +67,249 @@ function App() {
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log("Logged in successfully:", result.user);
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
-      console.error("Login Error details:", error.code, error.message);
-      if (error.code === 'auth/popup-blocked') {
-        alert("Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.");
-      } else {
-        alert(`Login failed: ${error.message}`);
-      }
+      alert("Login failed: " + error.message);
     }
   };
 
-  const handleVote = async (id) => {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      alert("Logout failed: " + error.message);
+    }
+  };
+
+  const handleVote = (uniId, candidateId) => {
     if (!user) {
       alert("Please sign in with Google first to cast your vote!");
       return;
     }
-    if (hasVoted) {
-      alert("You have already cast your vote!");
+
+    setUniversities(universities.map(uni => {
+      if (uni.id === uniId) {
+        const updatedCandidates = uni.candidates.map(cand => {
+          if (cand.id === candidateId) {
+            return { ...cand, votes: cand.votes + 1 };
+          }
+          return cand;
+        });
+        return { ...uni, candidates: updatedCandidates };
+      }
+      return uni;
+    }));
+
+    // Update selectedUni state as well to re-render instantly
+    setSelectedUni(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        candidates: prev.candidates.map(c => c.id === candidateId ? { ...c, votes: c.votes + 1 } : c)
+      };
+    });
+
+    alert("Vote recorded successfully!");
+  };
+
+  const handleAddCandidate = (e) => {
+    e.preventDefault();
+    if (!user) {
+      alert("Please sign in with Google to register candidates!");
+      return;
+    }
+    if (!candidateName.trim() || !candidateParty.trim()) {
+      alert("Please fill in all fields.");
       return;
     }
 
-    try {
-      setParties(parties.map(p => p.id === id ? { ...p, votes: p.votes + 1 } : p));
-      setHasVoted(true);
+    const newCandidate = {
+      id: Date.now(),
+      name: candidateName,
+      party: candidateParty,
+      votes: 0
+    };
 
-      if (selectedUniv) {
-        const voteRef = doc(db, 'votes', `${selectedUniv.id}_${id}`);
-        await setDoc(voteRef, {
-          university: selectedUniv.name,
-          partyId: id,
-          voterEmail: user.email,
-          timestamp: new Date()
-        }, { merge: true });
+    setUniversities(universities.map(uni => {
+      if (uni.id === selectedUni.id) {
+        return { ...uni, candidates: [...uni.candidates, newCandidate] };
       }
+      return uni;
+    }));
 
-      alert("Your vote has been submitted successfully!");
-    } catch (error) {
-      console.error("Voting error:", error);
-      alert("Vote submitted successfully!");
-    }
+    setSelectedUni(prev => ({
+      ...prev,
+      candidates: [...prev.candidates, newCandidate]
+    }));
+
+    setCandidateName('');
+    setCandidateParty('');
+    alert("Candidate registered successfully for " + selectedUni.name);
   };
 
   return (
-    <div style={{ backgroundColor: '#0f172a', color: '#fff', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      {/* Header Bar */}
-      <header style={{ padding: '20px 40px', borderBottom: '1px solid #1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ backgroundColor: '#2563eb', padding: '8px 12px', borderRadius: '8px', fontWeight: 'bold' }}>🗳️</div>
-          <div>
-            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>UniVote Pro</h2>
-            <small style={{ color: '#64748b' }}>National Campus Election & Event Management Portal</small>
-          </div>
+    <div className="min-h-screen bg-[#0b0f17] text-gray-100 font-sans">
+      <nav className="p-4 border-b border-gray-800 flex justify-between items-center max-w-7xl mx-auto">
+        <div>
+          <h1 className="text-xl font-bold tracking-wider text-white">UniVote Pro</h1>
+          <p className="text-[10px] text-gray-400">National Campus Election & Event Management Portal</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <span style={{ backgroundColor: '#064e3b', color: '#34d399', padding: '5px 12px', borderRadius: '20px', fontSize: '12px' }}>● Live Connection Active</span>
+        <div className="flex items-center gap-4">
+          <span className="text-xs text-green-400 hidden md:flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span> Live Connection Active
+          </span>
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '14px', color: '#e2e8f0' }}>Welcome, {user.displayName}</span>
-              <button onClick={() => signOut(auth)} style={{ padding: '6px 12px', backgroundColor: '#dc2626', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-300">Hello, {user.displayName}</span>
+              <button 
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-medium transition"
+              >
+                Logout
+              </button>
             </div>
           ) : (
-            <button onClick={handleGoogleLogin} style={{ padding: '8px 16px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Sign in with Google</button>
+            <button 
+              onClick={handleGoogleLogin}
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-medium transition"
+            >
+              Sign in with Google
+            </button>
           )}
         </div>
-      </header>
+      </nav>
 
-      {/* Main Content */}
-      <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-        {!selectedUniv ? (
+      <main className="p-8 max-w-7xl mx-auto">
+        {!selectedUni ? (
           <div>
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-              <h1 style={{ fontSize: '32px', marginBottom: '10px' }}>Select Your University</h1>
-              <p style={{ color: '#94a3b8' }}>Click on your institution to view candidates, manage events, access voter authentication, and cast votes.</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-              {universities.map((univ) => (
-                <div key={univ.id} style={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <h2 className="text-3xl font-bold text-center mb-2">Select Your University</h2>
+            <p className="text-gray-400 text-center mb-8">Click on your institution to view candidates, manage events, access voter authentication, and cast votes.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {universities.map((uni) => (
+                <div key={uni.id} className="bg-gray-900 border border-gray-800 p-6 rounded-xl flex flex-col justify-between hover:border-blue-500 transition relative">
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
-                      <span style={{ fontSize: '24px' }}>🏛️</span>
-                      <span style={{ backgroundColor: '#064e3b', color: '#34d399', padding: '4px 8px', borderRadius: '12px', fontSize: '10px' }}>Elections & Events Active</span>
+                    <div className="flex justify-between items-start mb-3">
+                      <span className="text-xl">🏛️</span>
+                      <span className="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800">Elections Active</span>
                     </div>
-                    <h3 style={{ margin: '0 0 5px 0' }}>{univ.name}</h3>
-                    <p style={{ color: '#e2e8f0', fontSize: '12px', margin: '0 0 10px 0' }}>📍 {univ.location}</p>
-                    <p style={{ color: '#94a3b8', fontSize: '13px', lineHeight: '1.4' }}>{univ.desc}</p>
+                    <h3 className="font-bold text-lg text-white mb-1">{uni.name}</h3>
+                    <p className="text-xs text-blue-400 mb-2">📍 {uni.location}</p>
+                    <p className="text-xs text-gray-400 mb-6">{uni.desc}</p>
                   </div>
-                  <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <small style={{ color: '#64748b' }}>Eligible: <strong style={{ color: '#cbd5e1' }}>{univ.eligible}</strong></small>
-                    <button onClick={() => setSelectedUniv(univ)} style={{ backgroundColor: 'transparent', color: '#38bdf8', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>Open Portal ➔</button>
+                  <div>
+                    <div className="flex justify-between items-center text-xs text-gray-400 mb-3 border-t border-gray-800 pt-3">
+                      <span>Eligible: <strong className="text-white">{uni.eligible}</strong></span>
+                    </div>
+                    <button 
+                      onClick={() => { setSelectedUni(uni); setActiveTab('voting'); }}
+                      className="w-full bg-gray-800 hover:bg-blue-600 text-sm py-2 rounded transition font-medium text-center text-white"
+                    >
+                      Open Portal →
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         ) : (
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <button onClick={() => setSelectedUniv(null)} style={{ backgroundColor: '#334155', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', marginBottom: '20px' }}>
+          <div>
+            <button 
+              onClick={() => setSelectedUni(null)}
+              className="text-sm text-blue-400 hover:underline mb-6 block"
+            >
               ← Back to Universities
             </button>
-            <h2 style={{ fontSize: '28px', marginBottom: '5px' }}>{selectedUniv.name}</h2>
-            <p style={{ color: '#94a3b8', marginBottom: '30px' }}>Student Union Election 2026 - Cast Your Vote</p>
+            
+            <h2 className="text-3xl font-bold text-white mb-1">{selectedUni.name}</h2>
+            <p className="text-gray-400 mb-6">Student Union Election 2026 Portal</p>
 
-            <div style={{ display: 'grid', gap: '20px' }}>
-              {parties.map((party) => (
-                <div key={party.id} style={{ border: '1px solid #334155', padding: '20px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b' }}>
-                  <div>
-                    <h3 style={{ margin: 0, color: '#38bdf8' }}>Party: {party.name}</h3>
-                    <p style={{ margin: '5px 0', color: '#e2e8f0', fontSize: '16px' }}>Candidate: <strong>{party.candidate}</strong></p>
-                    <small style={{ color: '#94a3b8' }}>Total Votes: {party.votes}</small>
-                  </div>
-                  <button 
-                    onClick={() => handleVote(party.id)}
-                    disabled={hasVoted}
-                    style={{ padding: '10px 24px', backgroundColor: hasVoted ? '#475569' : '#22c55e', color: '#fff', border: 'none', borderRadius: '6px', cursor: hasVoted ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-                    {hasVoted ? 'Voted' : 'Vote'}
-                  </button>
-                </div>
-              ))}
+            <div className="flex gap-4 mb-8 border-b border-gray-800 pb-4">
+              <button 
+                onClick={() => setActiveTab('voting')}
+                className={`px-4 py-2 rounded text-sm font-medium transition ${activeTab === 'voting' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white bg-gray-900'}`}
+              >
+                Student Voting Booth
+              </button>
+              <button 
+                onClick={() => setActiveTab('manager')}
+                className={`px-4 py-2 rounded text-sm font-medium transition ${activeTab === 'manager' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white bg-gray-900'}`}
+              >
+                Event Manager Portal (Org Registration)
+              </button>
             </div>
+
+            {activeTab === 'voting' ? (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white mb-2">Active Candidates</h3>
+                {selectedUni.candidates.map((cand) => (
+                  <div key={cand.id} className="bg-gray-900 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] text-blue-400 font-semibold uppercase">Party: {cand.party}</span>
+                      <h4 className="font-bold text-sm text-white mt-1">Candidate: {cand.name}</h4>
+                      <p className="text-xs text-gray-400 mt-1">Total Votes: {cand.votes}</p>
+                    </div>
+                    <button 
+                      onClick={() => handleVote(selectedUni.id, cand.id)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded text-sm font-medium transition"
+                    >
+                      Vote
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl">
+                <h3 className="text-xl font-bold text-white mb-2">Register New Candidate / Organization</h3>
+                <p className="text-xs text-gray-400 mb-6">Organizers can sign in with Google and register new candidates for {selectedUni.name}.</p>
+
+                {user ? (
+                  <form onSubmit={handleAddCandidate} className="space-y-4">
+                    <div>
+                      <label className="block text-xs text-gray-300 mb-1">Candidate Name</label>
+                      <input 
+                        type="text" 
+                        value={candidateName}
+                        onChange={(e) => setCandidateName(e.target.value)}
+                        placeholder="e.g. Amit Sharma"
+                        className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-300 mb-1">Party / Organization Name</label>
+                      <input 
+                        type="text" 
+                        value={candidateParty}
+                        onChange={(e) => setCandidateParty(e.target.value)}
+                        placeholder="e.g. Student Alliance"
+                        className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded text-sm font-medium transition"
+                    >
+                      Add Candidate to Election
+                    </button>
+                  </form>
+                ) : (
+                  <div className="text-center py-8 bg-gray-950 rounded border border-gray-800">
+                    <p className="text-sm text-gray-300 mb-4">You must be signed in with Google to register candidates.</p>
+                    <button 
+                      onClick={handleGoogleLogin}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded text-sm font-medium transition"
+                    >
+                      Sign in with Google Now
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
-
-export default App;
