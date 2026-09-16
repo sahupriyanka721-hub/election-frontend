@@ -1,27 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider } from './firebase';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'admin'
+  const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'register-uni', 'admin'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents'
+  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents', 'admin-panel'
 
   // Theme State ('dark' or 'light')
   const [theme, setTheme] = useState('dark');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Form states for Event Manager Portal
+  // Admin Login States (Email & Password)
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  // University Registration Form States (Sponsoring Body -> State Govt -> UGC)
+  const [regUniName, setRegUniName] = useState('');
+  const [regLocation, setRegLocation] = useState('');
+  const [regTrustDeed, setRegTrustDeed] = useState('');
+  const [regPan, setRegPan] = useState('');
+  const [regLandDoc, setRegLandDoc] = useState('');
+  const [regCorpusFund, setRegCorpusFund] = useState('');
+  const [registeredApplications, setRegisteredApplications] = useState([
+    { id: 1, name: 'Jharkhand Technical University', location: 'Ranchi, Jharkhand', status: 'Pending Approval', trust: 'JTU Educational Trust' }
+  ]);
+
+  // Form states for Candidate Manager
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
-  // Form states for Student Document Verification Upload
+  // Student Document Verification Upload States
   const [aadhaar, setAadhaar] = useState('');
   const [pan, setPan] = useState('');
   const [tenthFile, setTenthFile] = useState('');
   const [twelfthFile, setTwelfthFile] = useState('');
-  const [charCert, setCharCert] = useState('');
   const [docSubmitted, setDocSubmitted] = useState(false);
 
   // Student Marks Management States
@@ -30,16 +44,19 @@ export default function App() {
     { id: 2, subject: 'Database Management Systems', marks: '82/100', grade: 'A' },
     { id: 3, subject: 'Software Engineering', marks: '90/100', grade: 'O' }
   ]);
+  const [newSubject, setNewSubject] = useState('');
+  const [newMarks, setNewMarks] = useState('');
+  const [newGrade, setNewGrade] = useState('');
 
+  // Unique Universities Data (No Duplicates)
   const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
       name: 'Graphic Era University', 
       location: 'Dehradun, Uttarakhand', 
-      desc: 'Graphic Era (Deemed to be University) student union election portal.', 
+      desc: 'Graphic Era (Deemed to be University) student union election & management portal.', 
       eligible: '18,500+',
       status: 'Approved',
-      docName: 'Graphic_Era_Trust_Docs.pdf',
       image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80',
       candidates: [
         { id: 1, name: 'Aarav Sharma', party: 'Vivant', votes: 120 },
@@ -53,7 +70,6 @@ export default function App() {
       desc: 'Annual Student Council Election for Amity University main campus.', 
       eligible: '25,000+',
       status: 'Approved',
-      docName: 'Amity_Compliance_Bundle.pdf',
       image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80',
       candidates: [
         { id: 1, name: 'Aditya Roy', party: 'Youth Front', votes: 150 }
@@ -63,10 +79,9 @@ export default function App() {
       id: 'lpu', 
       name: 'Lovely Professional University', 
       location: 'Phagwara, Punjab', 
-      desc: 'Official Campus Senate Election Portal.', 
+      desc: 'Official Campus Senate Election & Organisation Portal.', 
       eligible: '35,000+',
       status: 'Approved',
-      docName: 'LPU_Registration_Bundle.pdf',
       image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&auto=format&fit=crop',
       candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
@@ -105,6 +120,53 @@ export default function App() {
     }
   };
 
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    // Secure simulation or actual firebase email/password auth for admin
+    if (adminEmail === 'admin@univote.com' && adminPassword === 'Admin@1234') {
+      setIsAdminLoggedIn(true);
+      setCurrentView('admin');
+      alert("Admin logged in successfully!");
+    } else {
+      alert("Invalid Admin Credentials!");
+    }
+  };
+
+  const handleUniversityRegistration = (e) => {
+    e.preventDefault();
+    if (!regUniName || !regTrustDeed || !regPan) {
+      alert("Please fill in mandatory fields.");
+      return;
+    }
+    const newApp = {
+      id: Date.now(),
+      name: regUniName,
+      location: regLocation || 'India',
+      status: 'Pending Approval',
+      trust: regTrustDeed
+    };
+    setRegisteredApplications([...registeredApplications, newApp]);
+    alert("University registration submitted successfully through Sponsoring Body → State Govt → UGC route!");
+    setRegUniName('');
+    setRegTrustDeed('');
+    setRegPan('');
+    setRegLandDoc('');
+    setRegCorpusFund('');
+    setCurrentView('universities');
+  };
+
+  const handleApproveUni = (id) => {
+    setRegisteredApplications(registeredApplications.map(app => {
+      if (app.id === id) {
+        const approvedItem = { ...app, status: 'Approved', id: 'uni-' + Date.now(), image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', desc: 'Newly approved university through regulatory pathway.', candidates: [] };
+        setUniversities([...universities, approvedItem]);
+        return { ...app, status: 'Approved' };
+      }
+      return app;
+    }));
+    alert("University approved and added to active network!");
+  };
+
   const handleVote = (uniId, candidateId) => {
     if (!user) {
       alert("Please sign in with Google first to cast your vote!");
@@ -137,14 +199,7 @@ export default function App() {
 
   const handleAddCandidate = (e) => {
     e.preventDefault();
-    if (!user) {
-      alert("Please sign in with Google to register candidates!");
-      return;
-    }
-    if (!candidateName.trim() || !candidateParty.trim()) {
-      alert("Please fill in all fields.");
-      return;
-    }
+    if (!candidateName.trim() || !candidateParty.trim()) return;
 
     const newCandidate = {
       id: Date.now(),
@@ -170,39 +225,52 @@ export default function App() {
     alert("Candidate registered successfully!");
   };
 
-  const handleDocumentSubmit = (e) => {
+  const handleAddMark = (e) => {
     e.preventDefault();
-    if (!user) {
-      alert("Please sign in with Google to upload verification documents!");
-      return;
-    }
-    setDocSubmitted(true);
-    alert("Verification documents submitted successfully!");
+    if (!newSubject || !newMarks || !newGrade) return;
+    const item = { id: Date.now(), subject: newSubject, marks: newMarks, grade: newGrade };
+    setStudentMarks([...studentMarks, item]);
+    setNewSubject('');
+    setNewMarks('');
+    setNewGrade('');
+    alert("Student marks updated successfully!");
   };
 
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen font-sans relative transition-colors duration-300 ${isDark ? 'bg-[#030508] text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen font-sans relative transition-all duration-300 ${isDark ? 'bg-[#05070c] text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       
       {/* Navbar */}
-      <nav className={`p-4 border-b sticky top-0 z-50 ${isDark ? 'border-gray-800 bg-[#030508]/90' : 'border-gray-200 bg-white/90'}`}>
+      <nav className={`p-4 border-b sticky top-0 z-50 backdrop-blur-md ${isDark ? 'border-gray-800/80 bg-[#05070c]/80' : 'border-gray-200 bg-white/80'}`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="cursor-pointer" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
-            <h1 className="text-lg font-bold text-white">UniVote Pro</h1>
-            <p className="text-[9px] text-gray-400">National Campus Election Portal</p>
+          <div className="cursor-pointer flex items-center gap-2" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-md">U</div>
+            <div>
+              <h1 className="text-base font-extrabold tracking-tight">UniVote Pro</h1>
+              <p className="text-[9px] text-gray-400">National University & Election Portal</p>
+            </div>
           </div>
+          
           <div className="flex items-center gap-3">
-            <button onClick={toggleTheme} className="px-3 py-1 rounded text-xs border bg-gray-800 text-yellow-400">
-              {isDark ? '☀️ Light' : '🌙 Dark'}
+            <button onClick={() => setCurrentView('register-uni')} className="hidden md:block bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-3 py-1.5 rounded-xl text-xs font-semibold text-white shadow-md transition transform hover:-translate-y-0.5">
+              🏛️ Register as University
+            </button>
+            <button onClick={() => setCurrentView('admin-login')} className="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 border border-gray-700 transition">
+              🔐 Admin Portal
+            </button>
+            <button onClick={toggleTheme} className="p-2 rounded-xl border border-gray-700 bg-gray-900/50 text-yellow-400 text-xs transition">
+              {isDark ? '☀️' : '🌙'}
             </button>
             {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-300">Hi, {user.displayName}</span>
-                <button onClick={handleLogout} className="bg-red-600 px-3 py-1 rounded text-xs text-white">Logout</button>
+              <div className="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1 rounded-xl">
+                <span className="text-xs text-gray-300 font-medium">{user.displayName}</span>
+                <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 px-2 py-1 rounded-lg text-[10px] text-white font-bold">Logout</button>
               </div>
             ) : (
-              <button onClick={handleGoogleLogin} className="bg-blue-600 px-3 py-1 rounded text-xs text-white font-medium">Sign in with Google</button>
+              <button onClick={handleGoogleLogin} className="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-lg transition transform hover:-translate-y-0.5">
+                Sign in with Google
+              </button>
             )}
           </div>
         </div>
@@ -210,120 +278,358 @@ export default function App() {
 
       {/* Main Container */}
       <main className="p-6 max-w-7xl mx-auto">
+
+        {/* 1. Enhanced Landing Page / Home View */}
         {currentView === 'home' && !selectedUni && (
-          <div className="text-center py-16 space-y-6">
-            <h2 className="text-4xl font-bold">Select Your University Portal</h2>
-            <p className="text-gray-400 max-w-xl mx-auto">Choose your institution to cast votes, check student records, and upload verification documents.</p>
-            <button onClick={() => setCurrentView('universities')} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg">
-              Explore Universities →
-            </button>
+          <div className="py-12 space-y-12">
+            <div className="text-center space-y-4 max-w-3xl mx-auto">
+              <span className="bg-blue-500/10 text-blue-400 text-[11px] font-bold px-3 py-1 rounded-full border border-blue-500/20">
+                Official Campus & Regulatory Framework
+              </span>
+              <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+                Empowering Higher Education & Democratic Elections
+              </h2>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                A secure unified platform for university registration via Sponsoring Body, State Govt & UGC route, document verification, student record management, and digital campus elections.
+              </p>
+              <div className="flex justify-center gap-4 pt-4">
+                <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-blue-600/20 transition transform hover:-translate-y-1">
+                  Explore Universities & Portals →
+                </button>
+                <button onClick={() => setCurrentView('register-uni')} className="bg-gray-900 hover:bg-gray-800 border border-gray-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition transform hover:-translate-y-1">
+                  🏛️ Register New University
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Feature Cards with 3D Effect */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
+                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">🏛️</div>
+                <h3 className="text-lg font-bold text-white mb-2">University Setup Route</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Sponsoring Body (Trust/Society) → State Govt → UGC Compliance workflow with automated document verification.</p>
+              </div>
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">🗳️</div>
+                <h3 className="text-lg font-bold text-white mb-2">Campus Voting Booth</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Secure, authenticated student voting booths for annual student union elections with live vote tracking.</p>
+              </div>
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
+                <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">📊</div>
+                <h3 className="text-lg font-bold text-white mb-2">Student Portal & Records</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, academic results, and verification credentials.</p>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* 2. Universities List View */}
         {currentView === 'universities' && !selectedUni && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Approved Universities</h2>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">Approved Universities & Campuses</h2>
+                <p className="text-xs text-gray-400 mt-1">Select an institution to access its dedicated portal, voting booth, and management tools.</p>
+              </div>
+              <button onClick={() => setCurrentView('home')} className="text-xs text-blue-400 hover:underline">← Back to Home</button>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {universities.map(uni => (
-                <div key={uni.id} className="bg-gray-900 border border-gray-800 p-5 rounded-2xl flex flex-col justify-between">
+                <div key={uni.id} className="bg-gray-900/90 border border-gray-800 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/50 flex flex-col justify-between group">
                   <div>
-                    <img src={uni.image} alt={uni.name} className="w-full h-36 object-cover rounded-xl mb-4" />
-                    <h3 className="font-bold text-lg text-white">{uni.name}</h3>
-                    <p className="text-xs text-blue-400 mb-2">📍 {uni.location}</p>
-                    <p className="text-xs text-gray-400 mb-4">{uni.desc}</p>
+                    <div className="h-44 overflow-hidden relative">
+                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                      <div className="absolute top-3 right-3 bg-emerald-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                        {uni.status}
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-lg text-white mb-1">{uni.name}</h3>
+                      <p className="text-xs text-blue-400 font-medium mb-2">📍 {uni.location}</p>
+                      <p className="text-xs text-gray-400 line-clamp-2">{uni.desc}</p>
+                    </div>
                   </div>
-                  <button onClick={() => { setSelectedUni(uni); setActiveTab('voting'); }} className="w-full bg-blue-600 text-white py-2 rounded-xl text-sm font-medium">
-                    Open Portal →
-                  </button>
+                  <div className="p-5 pt-0">
+                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-xl text-xs font-bold shadow-md transition">
+                      Open University Portal →
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {selectedUni && (
-          <div>
-            <button onClick={() => setSelectedUni(null)} className="text-sm text-blue-400 mb-4 block">← Back to Universities</button>
-            <h2 className="text-3xl font-bold text-white mb-2">{selectedUni.name}</h2>
-            
-            {/* Dashboard Tabs including Document Verification */}
-            <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-800 pb-3">
-              <button onClick={() => setActiveTab('voting')} className={`px-4 py-2 rounded-lg text-xs font-semibold ${activeTab === 'voting' ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400'}`}>
-                Voting Booth
-              </button>
-              <button onClick={() => setActiveTab('documents')} className={`px-4 py-2 rounded-lg text-xs font-semibold ${activeTab === 'documents' ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400'}`}>
-                📄 Document Verification & Upload
-              </button>
-              <button onClick={() => setActiveTab('manager')} className={`px-4 py-2 rounded-lg text-xs font-semibold ${activeTab === 'manager' ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400'}`}>
-                Candidate Manager
-              </button>
+        {/* 3. University Registration Form (Sponsoring Body Route) */}
+        {currentView === 'register-uni' && (
+          <div className="max-w-3xl mx-auto bg-gray-900/90 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6">
+            <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-white">University Registration Portal</h2>
+                <p className="text-xs text-gray-400 mt-1">Sponsoring Body → State Govt → UGC Setup Route Application Form</p>
+              </div>
+              <button onClick={() => setCurrentView('home')} className="text-xs text-blue-400 hover:underline">Cancel</button>
             </div>
 
-            {/* Voting Tab */}
-            {activeTab === 'voting' && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold">Active Candidates</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedUni.candidates.map(cand => (
-                    <div key={cand.id} className="bg-gray-900 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
-                      <div>
-                        <h4 className="font-bold text-white">{cand.name}</h4>
-                        <p className="text-xs text-blue-400">Party: {cand.party}</p>
-                        <p className="text-xs text-gray-400 mt-1">Votes: {cand.votes}</p>
-                      </div>
-                      <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg text-xs font-bold text-white">
-                        Vote
-                      </button>
-                    </div>
-                  ))}
+            <form onSubmit={handleUniversityRegistration} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1">University Name</label>
+                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" required />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1">Location (State / City)</label>
+                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" required />
                 </div>
               </div>
-            )}
 
-            {/* Document Verification Tab */}
-            {activeTab === 'documents' && (
-              <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl max-w-2xl">
-                <h3 className="text-xl font-bold mb-2">Student Document Verification</h3>
-                <p className="text-xs text-gray-400 mb-6">Upload your academic and identity certificates to verify your eligibility for the student union polls.</p>
-                
-                <form onSubmit={handleDocumentSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">Aadhaar Number / ID Proof</label>
-                    <input type="text" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} placeholder="Enter 12-digit Aadhaar number" className="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm text-white" required />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">PAN Card Number</label>
-                    <input type="text" value={pan} onChange={(e) => setPan(e.target.value)} placeholder="Enter PAN number" className="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm text-white" required />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">10th Marksheet (PDF/Image Link)</label>
-                    <input type="text" value={tenthFile} onChange={(e) => setTenthFile(e.target.value)} placeholder="Paste document drive link or filename" className="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm text-white" required />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">12th Marksheet (PDF/Image Link)</label>
-                    <input type="text" value={twelfthFile} onChange={(e) => setTwelfthFile(e.target.value)} placeholder="Paste document drive link or filename" className="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm text-white" required />
-                  </div>
-                  <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white transition">
-                    Submit Documents for Verification
-                  </button>
-                  {docSubmitted && <p className="text-xs text-emerald-400 text-center font-medium mt-2">✓ Documents submitted successfully and pending approval.</p>}
-                </form>
-              </div>
-            )}
+              {/* Document Sections */}
+              <div className="space-y-4 pt-2">
+                <h3 className="text-sm font-bold text-blue-400 uppercase tracking-wider">A. Sponsoring Body Documents</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input type="text" value={regTrustDeed} onChange={(e) => setRegTrustDeed(e.target.value)} placeholder="Trust Deed / Society Reg. Number" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                  <input type="text" value={regPan} onChange={(e) => setRegPan(e.target.value)} placeholder="Trust PAN Number" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                </div>
 
-            {/* Candidate Manager Tab */}
-            {activeTab === 'manager' && (
-              <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl max-w-xl">
-                <h3 className="text-xl font-bold mb-4">Register New Candidate</h3>
-                <form onSubmit={handleAddCandidate} className="space-y-4">
-                  <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="Candidate Full Name" className="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm text-white" required />
-                  <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="Party / Alliance Name" className="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm text-white" required />
-                  <button type="submit" className="w-full bg-blue-600 py-2.5 rounded-xl font-bold text-sm text-white">Add Candidate</button>
-                </form>
+                <h3 className="text-sm font-bold text-blue-400 uppercase tracking-wider pt-2">B. Land & Infrastructure (Min 50 Acres)</h3>
+                <input type="text" value={regLandDoc} onChange={(e) => setRegLandDoc(e.target.value)} placeholder="Sale Deed / CLU Certificate Link or Ref" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+
+                <h3 className="text-sm font-bold text-blue-400 uppercase tracking-wider pt-2">C. Financial Documents</h3>
+                <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
               </div>
-            )}
+
+              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
+                Submit Application for State & UGC Review
+              </button>
+            </form>
           </div>
         )}
+
+        {/* 4. Admin Login Portal (Email & Password) */}
+        {currentView === 'admin-login' && !isAdminLoggedIn && (
+          <div className="max-w-md mx-auto bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 my-12">
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl">🔐</div>
+              <h2 className="text-xl font-bold text-white">Admin Secure Login</h2>
+              <p className="text-xs text-gray-400">Enter admin credentials to manage university approvals.</p>
+            </div>
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1">Admin Email ID</label>
+                <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="admin@univote.com" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1">Password</label>
+                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+              </div>
+              <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md transition">
+                Login as Admin
+              </button>
+              <div className="text-center pt-2">
+                <button type="button" onClick={() => setCurrentView('home')} className="text-xs text-gray-400 hover:text-white">← Return to Home</button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* 5. Admin Dashboard (View & Approve University Registrations) */}
+        {currentView === 'admin' && isAdminLoggedIn && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-white">Admin Control Panel</h2>
+                <p className="text-xs text-gray-400">Review sponsoring body documents and approve university applications.</p>
+              </div>
+              <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-600/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-red-500/30">Logout Admin</button>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+              <h3 className="text-lg font-bold text-white">Pending University Applications</h3>
+              <div className="space-y-3">
+                {registeredApplications.map(app => (
+                  <div key={app.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                      <h4 className="font-bold text-white text-sm">{app.name}</h4>
+                      <p className="text-xs text-blue-400">📍 {app.location} | Trust: {app.trust}</p>
+                      <p className="text-[11px] text-gray-400 mt-1">Status: <span className="text-amber-400 font-semibold">{app.status}</span></p>
+                    </div>
+                    {app.status === 'Pending Approval' ? (
+                      <button onClick={() => handleApproveUni(app.id)} className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md">
+                        Approve & Publish
+                      </button>
+                    ) : (
+                      <span className="text-xs font-bold text-emerald-400">✓ Approved</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 6. University Interface & Dashboard with Sidebar */}
+        {selectedUni && (
+          <div className="space-y-6">
+            <button onClick={() => setSelectedUni(null)} className="text-xs text-blue-400 hover:underline">← Back to Universities</button>
+            
+            {/* University Header with Dynamic Random Image Banner */}
+            <div className="relative h-56 rounded-3xl overflow-hidden shadow-2xl border border-gray-800 flex items-end p-6">
+              <div className="absolute inset-0 bg-cover bg-center filter brightness-50" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#05070c] via-transparent to-transparent"></div>
+              <div className="relative z-10">
+                <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Active Campus</span>
+                <h2 className="text-3xl font-extrabold text-white mt-2">{selectedUni.name}</h2>
+                <p className="text-xs text-gray-300">📍 {selectedUni.location} • Eligible Voters: {selectedUni.eligible}</p>
+              </div>
+            </div>
+
+            {/* University Portal Layout (Sidebar + Content) */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              
+              {/* Sidebar Options */}
+              <div className="bg-gray-900/90 border border-gray-800 p-4 rounded-2xl space-y-2 h-fit shadow-xl">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 pb-2">University Menu</p>
+                <button onClick={() => setActiveTab('portal')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'portal' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  🏠 University Overview
+                </button>
+                <button onClick={() => setActiveTab('voting')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'voting' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  🗳️ Voting Booth
+                </button>
+                <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'student-portal' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  🎓 Student Portal & Marks
+                </button>
+                <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'documents' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  📄 Document Verification
+                </button>
+                <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'manager' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  🏛️ Organisation Panel
+                </button>
+              </div>
+
+              {/* Main Content Area */}
+              <div className="md:col-span-3 space-y-6">
+
+                {/* Overview Tab */}
+                {activeTab === 'portal' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl space-y-4 shadow-xl">
+                    <h3 className="text-xl font-bold text-white">Welcome to {selectedUni.name} Portal</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">{selectedUni.desc}</p>
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                      <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <p className="text-[10px] text-gray-400 font-semibold uppercase">Total Registered Candidates</p>
+                        <p className="text-2xl font-extrabold text-blue-400 mt-1">{selectedUni.candidates.length}</p>
+                      </div>
+                      <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <p className="text-[10px] text-gray-400 font-semibold uppercase">Verification Status</p>
+                        <p className="text-2xl font-extrabold text-emerald-400 mt-1">Verified</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Voting Booth Tab */}
+                {activeTab === 'voting' && (
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-white">Active Election Candidates</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedUni.candidates.map(cand => (
+                        <div key={cand.id} className="bg-gray-900 border border-gray-800 p-5 rounded-2xl flex justify-between items-center shadow-lg">
+                          <div>
+                            <h4 className="font-bold text-white text-base">{cand.name}</h4>
+                            <p className="text-xs text-blue-400 font-medium">Party: {cand.party}</p>
+                            <p className="text-xs text-gray-400 mt-1">Current Votes: <span className="font-bold text-white">{cand.votes}</span></p>
+                          </div>
+                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md transition">
+                            Vote Now
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Student Portal & Marks Update Interface */}
+                {activeTab === 'student-portal' && (
+                  <div className="space-y-6">
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                      <h3 className="text-xl font-bold text-white">Student Academic Results & Marks</h3>
+                      <p className="text-xs text-gray-400">View and update latest subject-wise grades and marks.</p>
+                      
+                      <div className="space-y-2 pt-2">
+                        {studentMarks.map(m => (
+                          <div key={m.id} className="bg-gray-950 border border-gray-800 p-3.5 rounded-xl flex justify-between items-center">
+                            <div>
+                              <h4 className="font-semibold text-white text-sm">{m.subject}</h4>
+                              <p className="text-xs text-gray-400">Marks: {m.marks}</p>
+                            </div>
+                            <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-lg text-xs font-bold">
+                              Grade: {m.grade}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Add New Marks Interface */}
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                      <h3 className="text-lg font-bold text-white">Update / Add Subject Marks</h3>
+                      <form onSubmit={handleAddMark} className="space-y-3">
+                        <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="Subject Name (e.g. Operating Systems)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="Marks (e.g. 85/100)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                          <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="Grade (e.g. A+)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                        </div>
+                        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm text-white shadow-md">
+                          Add / Update Marks
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                )}
+
+                {/* Document Verification Tab */}
+                {activeTab === 'documents' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h3 className="text-xl font-bold text-white">Document Verification Portal</h3>
+                    <p className="text-xs text-gray-400">Submit your identity and academic records to verify eligibility.</p>
+                    <form onSubmit={(e) => { e.preventDefault(); setDocSubmitted(true); alert("Documents submitted successfully!"); }} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Aadhaar Number / ID Proof</label>
+                        <input type="text" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} placeholder="Enter Aadhaar Number" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">PAN Card Number</label>
+                        <input type="text" value={pan} onChange={(e) => setPan(e.target.value)} placeholder="Enter PAN Card" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                      </div>
+                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md">
+                        Submit Verification Documents
+                      </button>
+                      {docSubmitted && <p className="text-xs text-emerald-400 text-center font-bold">✓ Verification documents uploaded successfully!</p>}
+                    </form>
+                  </div>
+                )}
+
+                {/* Organisation Panel / Candidate Manager Tab */}
+                {activeTab === 'manager' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h3 className="text-xl font-bold text-white">Organisation & Candidate Panel</h3>
+                    <p className="text-xs text-gray-400">Register new election candidates for {selectedUni.name}.</p>
+                    <form onSubmit={handleAddCandidate} className="space-y-4">
+                      <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="Candidate Full Name" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                      <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="Party Name" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
+                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md">
+                        Register Candidate
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   );
