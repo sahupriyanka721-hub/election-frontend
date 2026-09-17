@@ -36,13 +36,17 @@ export default function App() {
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
-  // Student Document Verification Upload States (File upload support & submissions list)
+  // Student Document Verification Upload States
   const [aadhaarFile, setAadhaarFile] = useState('');
   const [panFile, setPanFile] = useState('');
   const [tenthFile, setTenthFile] = useState('');
   const [twelfthFile, setTwelfthFile] = useState('');
   const [charCertFile, setCharCertFile] = useState('');
   const [docSubmitted, setDocSubmitted] = useState(false);
+
+  // University Admin Image Upload States
+  const [newBannerImage, setNewBannerImage] = useState('');
+  const [newGalleryImage, setNewGalleryImage] = useState('');
 
   // Centralized storage for student document submissions per university
   const [submittedSubmissions, setSubmittedSubmissions] = useState([
@@ -70,7 +74,7 @@ export default function App() {
   const [newMarks, setNewMarks] = useState('');
   const [newGrade, setNewGrade] = useState('');
 
-  // Unique Universities Data (No Duplicates)
+  // Unique Universities Data (No Duplicates) with Gallery Support
   const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
@@ -80,6 +84,10 @@ export default function App() {
       eligible: '18,500+',
       status: 'Approved',
       image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80',
+      gallery: [
+        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80'
+      ],
       candidates: [
         { id: 1, name: 'Aarav Sharma', party: 'Vivant', votes: 120 },
         { id: 2, name: 'Rahul Verma', party: 'Ojashvi', votes: 95 }
@@ -93,6 +101,9 @@ export default function App() {
       eligible: '25,000+',
       status: 'Approved',
       image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80',
+      gallery: [
+        'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80'
+      ],
       candidates: [
         { id: 1, name: 'Aditya Roy', party: 'Youth Front', votes: 150 }
       ]
@@ -105,6 +116,9 @@ export default function App() {
       eligible: '35,000+',
       status: 'Approved',
       image: 'https://images.unsplash.com/photo-1595535373655-4b9c2aae42d1?q=80&w=938&auto=format&fit=crop',
+      gallery: [
+        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'
+      ],
       candidates: [
         { id: 1, name: 'Simran Kaur', party: 'Panther Group', votes: 210 },
         { id: 2, name: 'Rohit Gupta', party: 'Students Voice', votes: 180 }
@@ -189,7 +203,7 @@ export default function App() {
   const handleApproveUni = (id) => {
     setRegisteredApplications(registeredApplications.map(app => {
       if (app.id === id) {
-        const approvedItem = { ...app, status: 'Approved', id: 'uni-' + Date.now(), image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', desc: 'Newly approved university through regulatory pathway.', candidates: [] };
+        const approvedItem = { ...app, status: 'Approved', id: 'uni-' + Date.now(), image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', gallery: [], desc: 'Newly approved university through regulatory pathway.', candidates: [] };
         setUniversities([...universities, approvedItem]);
         return { ...app, status: 'Approved' };
       }
@@ -199,7 +213,6 @@ export default function App() {
   };
 
   const handleVote = (uniId, candidateId) => {
-    // Fallback auth check: checking state and direct auth.currentUser
     const activeUser = user || auth.currentUser;
     if (!activeUser) {
       const guestName = prompt("Please enter your name to cast your vote (or sign in with Google):");
@@ -296,6 +309,28 @@ export default function App() {
     alert(`Document status updated to: ${statusAction}`);
   };
 
+  // Handlers for Uni Admin Image Updates
+  const handleUpdateBanner = (e) => {
+    e.preventDefault();
+    if (!newBannerImage.trim()) return;
+    const updatedUni = { ...selectedUni, image: newBannerImage };
+    setSelectedUni(updatedUni);
+    setUniversities(universities.map(u => u.id === updatedUni.id ? updatedUni : u));
+    setNewBannerImage('');
+    alert("University banner image updated successfully!");
+  };
+
+  const handleAddGalleryImage = (e) => {
+    e.preventDefault();
+    if (!newGalleryImage.trim()) return;
+    const updatedGallery = [...(selectedUni.gallery || []), newGalleryImage];
+    const updatedUni = { ...selectedUni, gallery: updatedGallery };
+    setSelectedUni(updatedUni);
+    setUniversities(universities.map(u => u.id === updatedUni.id ? updatedUni : u));
+    setNewGalleryImage('');
+    alert("Gallery image added successfully to university portal!");
+  };
+
   const isDark = theme === 'dark';
 
   return (
@@ -339,7 +374,7 @@ export default function App() {
       {/* Main Container */}
       <main className="p-6 max-w-7xl mx-auto">
 
-        {/* 1. Enhanced Landing Page */}
+        {/* 1. Landing Page */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-12 space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -529,6 +564,7 @@ export default function App() {
           <div className="space-y-6">
             <button onClick={() => setSelectedUni(null)} className="text-xs text-blue-400 hover:underline">← Back to Universities</button>
             
+            {/* University Header with Dynamic Banner Image */}
             <div className="relative h-56 rounded-3xl overflow-hidden shadow-2xl border border-gray-800 flex items-end p-6">
               <div className="absolute inset-0 bg-cover bg-center filter brightness-50" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-[#05070c] via-transparent to-transparent"></div>
@@ -568,21 +604,37 @@ export default function App() {
               {/* Main Content Area */}
               <div className="md:col-span-3 space-y-6">
 
-                {/* Overview Tab */}
+                {/* Overview Tab with Dynamic Gallery Display */}
                 {activeTab === 'portal' && (
-                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl space-y-4 shadow-xl">
-                    <h3 className="text-xl font-bold text-white">Welcome to {selectedUni.name} Portal</h3>
-                    <p className="text-xs text-gray-300 leading-relaxed">{selectedUni.desc}</p>
-                    <div className="grid grid-cols-2 gap-4 pt-4">
-                      <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
-                        <p className="text-[10px] text-gray-400 font-semibold uppercase">Total Registered Candidates</p>
-                        <p className="text-2xl font-extrabold text-blue-400 mt-1">{selectedUni.candidates.length}</p>
-                      </div>
-                      <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
-                        <p className="text-[10px] text-gray-400 font-semibold uppercase">Verification Status</p>
-                        <p className="text-2xl font-extrabold text-emerald-400 mt-1">Verified</p>
+                  <div className="space-y-6">
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl space-y-4 shadow-xl">
+                      <h3 className="text-xl font-bold text-white">Welcome to {selectedUni.name} Portal</h3>
+                      <p className="text-xs text-gray-300 leading-relaxed">{selectedUni.desc}</p>
+                      <div className="grid grid-cols-2 gap-4 pt-4">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase">Total Registered Candidates</p>
+                          <p className="text-2xl font-extrabold text-blue-400 mt-1">{selectedUni.candidates.length}</p>
+                        </div>
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase">Verification Status</p>
+                          <p className="text-2xl font-extrabold text-emerald-400 mt-1">Verified</p>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Campus Gallery Section */}
+                    {selectedUni.gallery && selectedUni.gallery.length > 0 && (
+                      <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl space-y-4 shadow-xl">
+                        <h4 className="text-lg font-bold text-white">📷 Campus Gallery & Events</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {selectedUni.gallery.map((imgUrl, idx) => (
+                            <div key={idx} className="h-48 rounded-xl overflow-hidden border border-gray-800 shadow">
+                              <img src={imgUrl} alt={`Campus Gallery ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -680,13 +732,13 @@ export default function App() {
                   </div>
                 )}
 
-                {/* University Admin Panel - View Student Documents & Take Action */}
+                {/* University Admin Panel - View Documents & Upload Images */}
                 {activeTab === 'uni-admin' && (
                   <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
                     <div className="flex justify-between items-center border-b border-gray-800 pb-3">
                       <div>
                         <h3 className="text-xl font-bold text-white">University Admin Panel ({selectedUni.name})</h3>
-                        <p className="text-xs text-gray-400">Review and verify documents submitted by students.</p>
+                        <p className="text-xs text-gray-400">Review student documents and manage campus portal images.</p>
                       </div>
                       {isUniAdminLoggedIn && (
                         <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold border border-red-500/30">Logout Uni Admin</button>
@@ -706,43 +758,69 @@ export default function App() {
                         </form>
                       </div>
                     ) : (
-                      <div className="space-y-4">
-                        <h4 className="font-bold text-white text-sm">Student Document Submissions</h4>
+                      <div className="space-y-6">
+                        {/* Image Upload & Management Section */}
+                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-4">
+                          <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
+                          
+                          {/* Banner Image Form */}
+                          <form onSubmit={handleUpdateBanner} className="space-y-2">
+                            <label className="block text-xs font-semibold text-gray-300">Update Header Banner Image URL</label>
+                            <div className="flex gap-2">
+                              <input type="url" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white">Update Banner</button>
+                            </div>
+                          </form>
+
+                          {/* Gallery Image Form */}
+                          <form onSubmit={handleAddGalleryImage} className="space-y-2 pt-2">
+                            <label className="block text-xs font-semibold text-gray-300">Add Campus / Event Photo to Gallery</label>
+                            <div className="flex gap-2">
+                              <input type="url" value={newGalleryImage} onChange={(e) => setNewGalleryImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white">Add Photo</button>
+                            </div>
+                          </form>
+                        </div>
+
+                        {/* Student Document Submissions */}
                         <div className="space-y-4">
-                          {submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).length === 0 ? (
-                            <p className="text-xs text-gray-400">No student documents submitted for this university yet.</p>
-                          ) : (
-                            submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
-                              <div key={sub.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3">
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <h5 className="font-bold text-white text-sm">{sub.studentName}</h5>
-                                    <p className="text-xs text-blue-400">{sub.studentEmail}</p>
+                          <h4 className="font-bold text-white text-sm">Student Document Submissions</h4>
+                          <div className="space-y-4">
+                            {submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).length === 0 ? (
+                              <p className="text-xs text-gray-400">No student documents submitted for this university yet.</p>
+                            ) : (
+                              submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
+                                <div key={sub.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h5 className="font-bold text-white text-sm">{sub.studentName}</h5>
+                                      <p className="text-xs text-blue-400">{sub.studentEmail}</p>
+                                    </div>
+                                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${sub.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : sub.status === 'Rejected' ? 'bg-red-950 text-red-400 border-red-800' : 'bg-amber-950 text-amber-400 border-amber-800'}`}>
+                                      {sub.status}
+                                    </span>
                                   </div>
-                                  <span className={`text-xs font-bold px-3 py-1 rounded-full border ${sub.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : sub.status === 'Rejected' ? 'bg-red-950 text-red-400 border-red-800' : 'bg-amber-950 text-amber-400 border-amber-800'}`}>
-                                    {sub.status}
-                                  </span>
-                                </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-300 bg-gray-900 p-3 rounded-lg border border-gray-800/80">
-                                  <div>📌 Aadhaar: <span className="text-blue-400 font-medium">{sub.aadhaar}</span></div>
-                                  <div>💳 PAN: <span className="text-blue-400 font-medium">{sub.pan}</span></div>
-                                  <div>🎓 10th: <span className="text-blue-400 font-medium">{sub.tenth}</span></div>
-                                  <div>🎓 12th: <span className="text-blue-400 font-medium">{sub.twelfth}</span></div>
-                                  <div>📜 Character: <span className="text-blue-400 font-medium">{sub.charCert}</span></div>
-                                </div>
+                                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-300 bg-gray-900 p-3 rounded-lg border border-gray-800/80">
+                                    <div>📌 Aadhaar: <span className="text-blue-400 font-medium">{sub.aadhaar}</span></div>
+                                    <div>💳 PAN: <span className="text-blue-400 font-medium">{sub.pan}</span></div>
+                                    <div>🎓 10th: <span className="text-blue-400 font-medium">{sub.tenth}</span></div>
+                                    <div>🎓 12th: <span className="text-blue-400 font-medium">{sub.twelfth}</span></div>
+                                    <div>📜 Character: <span className="text-blue-400 font-medium">{sub.charCert}</span></div>
+                                  </div>
 
-                                <div className="flex gap-2 pt-1">
-                                  <button onClick={() => handleDocAction(sub.id, 'Approved')} className="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
-                                    Approve Documents
-                                  </button>
-                                  <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
-                                    Reject
-                                  </button>
+                                  <div className="flex gap-2 pt-1">
+                                    <button onClick={() => handleDocAction(sub.id, 'Approved')} className="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
+                                      Approve Documents
+                                    </button>
+                                    <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
+                                      Reject
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                            ))
-                          )}
+                              ))
+                            )}
+                          </div>
                         </div>
                       </div>
                     )}
