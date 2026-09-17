@@ -44,9 +44,14 @@ export default function App() {
   const [charCertFile, setCharCertFile] = useState('');
   const [docSubmitted, setDocSubmitted] = useState(false);
 
-  // University Admin Image Upload States
+  // University Admin Image Upload States (Supports both URL and Local File)
+  const [bannerInputType, setBannerInputType] = useState('url'); // 'url' or 'file'
   const [newBannerImage, setNewBannerImage] = useState('');
+  const [bannerFileObj, setBannerFileObj] = useState(null);
+
+  const [galleryInputType, setGalleryInputType] = useState('url'); // 'url' or 'file'
   const [newGalleryImage, setNewGalleryImage] = useState('');
+  const [galleryFileObj, setGalleryFileObj] = useState(null);
 
   // Centralized storage for student document submissions per university
   const [submittedSubmissions, setSubmittedSubmissions] = useState([
@@ -309,31 +314,62 @@ export default function App() {
     alert(`Document status updated to: ${statusAction}`);
   };
 
-  // Handlers for Uni Admin Image Updates with manual validation check
+  // Helper to convert uploaded local file into preview URL
+  const getFileUrl = (fileObj) => {
+    if (!fileObj) return '';
+    return URL.createObjectURL(fileObj);
+  };
+
+  // Banner Update Handler supporting both URL and File upload
   const handleUpdateBanner = (e) => {
     e.preventDefault();
-    if (!newBannerImage.trim()) {
-      alert("Please enter a valid banner image URL.");
-      return;
+    let imageSrc = '';
+    if (bannerInputType === 'url') {
+      if (!newBannerImage.trim()) {
+        alert("Please enter a valid banner image URL.");
+        return;
+      }
+      imageSrc = newBannerImage;
+    } else {
+      if (!bannerFileObj) {
+        alert("Please select an image file from your gallery.");
+        return;
+      }
+      imageSrc = getFileUrl(bannerFileObj);
     }
-    const updatedUni = { ...selectedUni, image: newBannerImage };
+
+    const updatedUni = { ...selectedUni, image: imageSrc };
     setSelectedUni(updatedUni);
     setUniversities(universities.map(u => u.id === updatedUni.id ? updatedUni : u));
     setNewBannerImage('');
+    setBannerFileObj(null);
     alert("University banner image updated successfully!");
   };
 
+  // Gallery Add Handler supporting both URL and File upload
   const handleAddGalleryImage = (e) => {
     e.preventDefault();
-    if (!newGalleryImage.trim()) {
-      alert("Please enter a valid gallery image URL.");
-      return;
+    let imageSrc = '';
+    if (galleryInputType === 'url') {
+      if (!newGalleryImage.trim()) {
+        alert("Please enter a valid gallery image URL.");
+        return;
+      }
+      imageSrc = newGalleryImage;
+    } else {
+      if (!galleryFileObj) {
+        alert("Please select an image file from your gallery.");
+        return;
+      }
+      imageSrc = getFileUrl(galleryFileObj);
     }
-    const updatedGallery = [...(selectedUni.gallery || []), newGalleryImage];
+
+    const updatedGallery = [...(selectedUni.gallery || []), imageSrc];
     const updatedUni = { ...selectedUni, gallery: updatedGallery };
     setSelectedUni(updatedUni);
     setUniversities(universities.map(u => u.id === updatedUni.id ? updatedUni : u));
     setNewGalleryImage('');
+    setGalleryFileObj(null);
     alert("Gallery image added successfully to university portal!");
   };
 
@@ -737,7 +773,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* University Admin Panel - View Documents & Upload Images */}
+                {/* University Admin Panel - View Documents & Upload Images (URL or Gallery File) */}
                 {activeTab === 'uni-admin' && (
                   <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
                     <div className="flex justify-between items-center border-b border-gray-800 pb-3">
@@ -764,27 +800,51 @@ export default function App() {
                       </div>
                     ) : (
                       <div className="space-y-6">
-                        {/* Image Upload & Management Section */}
-                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-4">
+                        
+                        {/* Image Upload & Management Section with Toggle (URL / Device File) */}
+                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
                           <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
                           
-                          {/* Banner Image Form (type text) */}
-                          <form onSubmit={handleUpdateBanner} className="space-y-2">
-                            <label className="block text-xs font-semibold text-gray-300">Update Header Banner Image URL</label>
-                            <div className="flex gap-2">
-                              <input type="text" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
-                              <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white">Update Banner</button>
+                          {/* 1. Header Banner Image Section */}
+                          <div className="space-y-2 border-b border-gray-800 pb-4">
+                            <div className="flex justify-between items-center">
+                              <label className="text-xs font-semibold text-gray-300">Update Header Banner Image</label>
+                              <div className="flex gap-1 bg-gray-900 p-1 rounded-lg border border-gray-800 text-[10px]">
+                                <button type="button" onClick={() => setBannerInputType('url')} className={`px-2 py-0.5 rounded ${bannerInputType === 'url' ? 'bg-blue-600 text-white font-bold' : 'text-gray-400'}`}>Paste URL</button>
+                                <button type="button" onClick={() => setBannerInputType('file')} className={`px-2 py-0.5 rounded ${bannerInputType === 'file' ? 'bg-blue-600 text-white font-bold' : 'text-gray-400'}`}>Choose File</button>
+                              </div>
                             </div>
-                          </form>
 
-                          {/* Gallery Image Form (type text) */}
-                          <form onSubmit={handleAddGalleryImage} className="space-y-2 pt-2">
-                            <label className="block text-xs font-semibold text-gray-300">Add Campus / Event Photo to Gallery</label>
-                            <div className="flex gap-2">
-                              <input type="text" value={newGalleryImage} onChange={(e) => setNewGalleryImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
-                              <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white">Add Photo</button>
+                            <form onSubmit={handleUpdateBanner} className="flex gap-2 pt-1">
+                              {bannerInputType === 'url' ? (
+                                <input type="text" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
+                              ) : (
+                                <input type="file" accept="image/*" onChange={(e) => setBannerFileObj(e.target.files[0])} className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-1.5 text-xs text-gray-300 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-blue-600 file:text-white cursor-pointer" />
+                              )}
+                              <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white whitespace-nowrap">Update Banner</button>
+                            </form>
+                          </div>
+
+                          {/* 2. Campus Gallery Image Section */}
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <label className="text-xs font-semibold text-gray-300">Add Campus / Event Photo to Gallery</label>
+                              <div className="flex gap-1 bg-gray-900 p-1 rounded-lg border border-gray-800 text-[10px]">
+                                <button type="button" onClick={() => setGalleryInputType('url')} className={`px-2 py-0.5 rounded ${galleryInputType === 'url' ? 'bg-emerald-600 text-white font-bold' : 'text-gray-400'}`}>Paste URL</button>
+                                <button type="button" onClick={() => setGalleryInputType('file')} className={`px-2 py-0.5 rounded ${galleryInputType === 'file' ? 'bg-emerald-600 text-white font-bold' : 'text-gray-400'}`}>Choose File</button>
+                              </div>
                             </div>
-                          </form>
+
+                            <form onSubmit={handleAddGalleryImage} className="flex gap-2 pt-1">
+                              {galleryInputType === 'url' ? (
+                                <input type="text" value={newGalleryImage} onChange={(e) => setNewGalleryImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
+                              ) : (
+                                <input type="file" accept="image/*" onChange={(e) => setGalleryFileObj(e.target.files[0])} className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-1.5 text-xs text-gray-300 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-emerald-600 file:text-white cursor-pointer" />
+                              )}
+                              <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white whitespace-nowrap">Add Photo</button>
+                            </form>
+                          </div>
+
                         </div>
 
                         {/* Student Document Submissions */}
