@@ -6,15 +6,20 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'register-uni', 'admin-login', 'admin-panel'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents'
+  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents', 'uni-admin'
 
   // Theme State ('dark' or 'light')
   const [theme, setTheme] = useState('dark');
 
-  // Admin Login States (Email & Password)
+  // Global Admin Login States (Email & Password)
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  // University-Specific Internal Admin Login States
+  const [uniAdminUser, setUniAdminUser] = useState('');
+  const [uniAdminPass, setUniAdminPass] = useState('');
+  const [isUniAdminLoggedIn, setIsUniAdminLoggedIn] = useState(false);
 
   // University Registration Form States (Sponsoring Body -> State Govt -> UGC)
   const [regUniName, setRegUniName] = useState('');
@@ -31,13 +36,29 @@ export default function App() {
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
-  // Student Document Verification Upload States (File upload support)
+  // Student Document Verification Upload States (File upload support & submissions list)
   const [aadhaarFile, setAadhaarFile] = useState('');
   const [panFile, setPanFile] = useState('');
   const [tenthFile, setTenthFile] = useState('');
   const [twelfthFile, setTwelfthFile] = useState('');
   const [charCertFile, setCharCertFile] = useState('');
   const [docSubmitted, setDocSubmitted] = useState(false);
+
+  // Centralized storage for student document submissions per university
+  const [submittedSubmissions, setSubmittedSubmissions] = useState([
+    {
+      id: 101,
+      uniId: 'graphic-era',
+      studentName: 'Aarav Sharma',
+      studentEmail: 'aarav@student.com',
+      aadhaar: 'Aadhaar_Verified.pdf',
+      pan: 'PAN_Card.pdf',
+      tenth: '10th_Marksheet.pdf',
+      twelfth: '12th_Marksheet.pdf',
+      charCert: 'Character_Certificate.pdf',
+      status: 'Pending Verification'
+    }
+  ]);
 
   // Student Marks Management States
   const [studentMarks, setStudentMarks] = useState([
@@ -128,7 +149,17 @@ export default function App() {
       setCurrentView('admin-panel');
       alert("Admin logged in successfully!");
     } else {
-      alert("Invalid Admin Credentials! (Hint: admin@univote.com / Admin@1234)");
+      alert("Invalid Admin Credentials!");
+    }
+  };
+
+  const handleUniAdminLogin = (e) => {
+    e.preventDefault();
+    if (uniAdminUser === 'uniorg@univote.com' && uniAdminPass === 'Uni@1234') {
+      setIsUniAdminLoggedIn(true);
+      alert("University Admin Logged In Successfully!");
+    } else {
+      alert("Invalid credentials! Use: uniorg@univote.com / Uni@1234");
     }
   };
 
@@ -242,8 +273,26 @@ export default function App() {
       alert("Please sign in with Google first to upload documents!");
       return;
     }
+    const newSub = {
+      id: Date.now(),
+      uniId: selectedUni.id,
+      studentName: user.displayName || 'Student',
+      studentEmail: user.email || 'student@univote.com',
+      aadhaar: aadhaarFile || 'Aadhaar.pdf',
+      pan: panFile || 'PAN.pdf',
+      tenth: tenthFile || '10th_Marksheet.pdf',
+      twelfth: twelfthFile || '12th_Marksheet.pdf',
+      charCert: charCertFile || 'Character_Cert.pdf',
+      status: 'Pending Verification'
+    };
+    setSubmittedSubmissions([...submittedSubmissions, newSub]);
     setDocSubmitted(true);
-    alert("All verification documents uploaded successfully!");
+    alert("All verification documents uploaded and sent to University Admin successfully!");
+  };
+
+  const handleDocAction = (subId, statusAction) => {
+    setSubmittedSubmissions(submittedSubmissions.map(sub => sub.id === subId ? { ...sub, status: statusAction } : sub));
+    alert(`Document status updated to: ${statusAction}`);
   };
 
   const isDark = theme === 'dark';
@@ -263,7 +312,7 @@ export default function App() {
           </div>
           
           <div className="flex items-center gap-3">
-            <button onClick={() => setCurrentView('register-uni')} className="hidden md:block bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-3 py-1.5 rounded-xl text-xs font-semibold text-white shadow-md transition transform hover:-translate-y-0.5">
+            <button onClick={() => setCurrentView('register-uni')} className="hidden md:block bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 px-3 py-1.5 rounded-xl text-xs font-semibold text-white shadow-md transition">
               🏛️ Register as University
             </button>
             <button onClick={() => setCurrentView('admin-login')} className="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 border border-gray-700 transition">
@@ -278,7 +327,7 @@ export default function App() {
                 <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 px-2 py-1 rounded-lg text-[10px] text-white font-bold">Logout</button>
               </div>
             ) : (
-              <button onClick={handleGoogleLogin} className="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-lg transition transform hover:-translate-y-0.5">
+              <button onClick={handleGoogleLogin} className="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-lg transition">
                 Sign in with Google
               </button>
             )}
@@ -289,7 +338,7 @@ export default function App() {
       {/* Main Container */}
       <main className="p-6 max-w-7xl mx-auto">
 
-        {/* 1. Enhanced Landing Page / Home View */}
+        {/* 1. Enhanced Landing Page */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-12 space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -303,29 +352,28 @@ export default function App() {
                 A secure unified platform for university registration via Sponsoring Body, State Govt & UGC route, document verification, student record management, and digital campus elections.
               </p>
               <div className="flex justify-center gap-4 pt-4">
-                <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-blue-600/20 transition transform hover:-translate-y-1">
+                <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition">
                   Explore Universities & Portals →
                 </button>
-                <button onClick={() => setCurrentView('register-uni')} className="bg-gray-900 hover:bg-gray-800 border border-gray-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition transform hover:-translate-y-1">
+                <button onClick={() => setCurrentView('register-uni')} className="bg-gray-900 hover:bg-gray-800 border border-gray-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition">
                   🏛️ Register New University
                 </button>
               </div>
             </div>
 
-            {/* Quick Feature Cards with 3D Effect */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
-                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">🏛️</div>
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4">🏛️</div>
                 <h3 className="text-lg font-bold text-white mb-2">University Setup Route</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">Sponsoring Body (Trust/Society) → State Govt → UGC Compliance workflow with automated document verification.</p>
               </div>
-              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">🗳️</div>
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4">🗳️</div>
                 <h3 className="text-lg font-bold text-white mb-2">Campus Voting Booth</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">Secure, authenticated student voting booths for annual student union elections with live vote tracking.</p>
               </div>
-              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10 hover:border-blue-500/40 group">
-                <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">📊</div>
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xl mb-4">📊</div>
                 <h3 className="text-lg font-bold text-white mb-2">Student Portal & Records</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, academic results, and verification credentials.</p>
               </div>
@@ -339,20 +387,18 @@ export default function App() {
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold tracking-tight">Approved Universities & Campuses</h2>
-                <p className="text-xs text-gray-400 mt-1">Select an institution to access its dedicated portal, voting booth, and management tools.</p>
+                <p className="text-xs text-gray-400 mt-1">Select an institution to access its dedicated portal and voting booth.</p>
               </div>
               <button onClick={() => setCurrentView('home')} className="text-xs text-blue-400 hover:underline">← Back to Home</button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {universities.map(uni => (
-                <div key={uni.id} className="bg-gray-900/90 border border-gray-800 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/50 flex flex-col justify-between group">
+                <div key={uni.id} className="bg-gray-900/90 border border-gray-800 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group">
                   <div>
                     <div className="h-44 overflow-hidden relative">
                       <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-                      <div className="absolute top-3 right-3 bg-emerald-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
-                        {uni.status}
-                      </div>
+                      <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">{uni.status}</span>
                     </div>
                     <div className="p-5">
                       <h3 className="font-bold text-lg text-white mb-1">{uni.name}</h3>
@@ -371,7 +417,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 3. University Registration Form (Sponsoring Body Route) */}
+        {/* 3. University Registration Form */}
         {currentView === 'register-uni' && (
           <div className="max-w-3xl mx-auto bg-gray-900/90 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6">
             <div className="flex justify-between items-center border-b border-gray-800 pb-4">
@@ -386,15 +432,14 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">University Name</label>
-                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" required />
+                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white outline-none" required />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">Location (State / City)</label>
-                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" required />
+                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white outline-none" required />
                 </div>
               </div>
 
-              {/* Document Sections */}
               <div className="space-y-4 pt-2">
                 <h3 className="text-sm font-bold text-blue-400 uppercase tracking-wider">A. Sponsoring Body Documents</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -409,19 +454,19 @@ export default function App() {
                 <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
               </div>
 
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
+              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
                 Submit Application for State & UGC Review
               </button>
             </form>
           </div>
         )}
 
-        {/* 4. Admin Login Portal (Email & Password) */}
+        {/* 4. Admin Login Portal */}
         {currentView === 'admin-login' && !isAdminLoggedIn && (
           <div className="max-w-md mx-auto bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 my-12">
             <div className="text-center space-y-2">
               <div className="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl">🔐</div>
-              <h2 className="text-xl font-bold text-white">Admin Secure Login</h2>
+              <h2 className="text-xl font-bold text-white">Global Admin Secure Login</h2>
               <p className="text-xs text-gray-400">Enter admin credentials to manage university approvals.</p>
             </div>
             <form onSubmit={handleAdminLogin} className="space-y-4">
@@ -434,7 +479,7 @@ export default function App() {
                 <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
               </div>
               <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md transition">
-                Login as Admin
+                Login as Global Admin
               </button>
               <div className="text-center pt-2">
                 <button type="button" onClick={() => setCurrentView('home')} className="text-xs text-gray-400 hover:text-white">← Return to Home</button>
@@ -443,12 +488,12 @@ export default function App() {
           </div>
         )}
 
-        {/* 5. Admin Dashboard (View & Approve University Registrations) */}
-        {currentView === 'admin' && isAdminLoggedIn && (
+        {/* 5. Admin Dashboard */}
+        {currentView === 'admin-panel' && isAdminLoggedIn && (
           <div className="space-y-6">
             <div className="flex justify-between items-center border-b border-gray-800 pb-4">
               <div>
-                <h2 className="text-2xl font-bold text-white">Admin Control Panel</h2>
+                <h2 className="text-2xl font-bold text-white">Global Admin Control Panel</h2>
                 <p className="text-xs text-gray-400">Review sponsoring body documents and approve university applications.</p>
               </div>
               <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-600/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-red-500/30">Logout Admin</button>
@@ -483,7 +528,6 @@ export default function App() {
           <div className="space-y-6">
             <button onClick={() => setSelectedUni(null)} className="text-xs text-blue-400 hover:underline">← Back to Universities</button>
             
-            {/* University Header with Dynamic Random Image Banner */}
             <div className="relative h-56 rounded-3xl overflow-hidden shadow-2xl border border-gray-800 flex items-end p-6">
               <div className="absolute inset-0 bg-cover bg-center filter brightness-50" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-[#05070c] via-transparent to-transparent"></div>
@@ -511,6 +555,9 @@ export default function App() {
                 </button>
                 <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'documents' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
                   📄 Document Verification
+                </button>
+                <button onClick={() => setActiveTab('uni-admin')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'uni-admin' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  🛡️ Uni Admin Panel (View Docs)
                 </button>
                 <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'manager' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
                   🏛️ Organisation Panel
@@ -581,7 +628,6 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Add New Marks Interface */}
                     <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
                       <h3 className="text-lg font-bold text-white">Update / Add Subject Marks</h3>
                       <form onSubmit={handleAddMark} className="space-y-3">
@@ -598,7 +644,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Document Verification Tab with File Upload Inputs */}
+                {/* Document Verification Tab */}
                 {activeTab === 'documents' && (
                   <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
                     <h3 className="text-xl font-bold text-white">Student Verification Document Portal</h3>
@@ -626,10 +672,79 @@ export default function App() {
                         <input type="file" onChange={(e) => setCharCertFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
                       <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md transition">
-                        Submit All Documents for Verification
+                        Submit All Documents to University Admin
                       </button>
-                      {docSubmitted && <p className="text-xs text-emerald-400 text-center font-bold">✓ All verification documents uploaded successfully!</p>}
+                      {docSubmitted && <p className="text-xs text-emerald-400 text-center font-bold">✓ Documents submitted successfully for review!</p>}
                     </form>
+                  </div>
+                )}
+
+                {/* University Admin Panel - View Student Documents & Take Action */}
+                {activeTab === 'uni-admin' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
+                    <div className="flex justify-between items-center border-b border-gray-800 pb-3">
+                      <div>
+                        <h3 className="text-xl font-bold text-white">University Admin Panel ({selectedUni.name})</h3>
+                        <p className="text-xs text-gray-400">Review and verify documents submitted by students.</p>
+                      </div>
+                      {isUniAdminLoggedIn && (
+                        <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold border border-red-500/30">Logout Uni Admin</button>
+                      )}
+                    </div>
+
+                    {!isUniAdminLoggedIn ? (
+                      <div className="max-w-md mx-auto bg-gray-950 border border-gray-800 p-6 rounded-2xl space-y-4 my-4">
+                        <div className="text-center">
+                          <h4 className="font-bold text-white text-sm">University Admin Login Required</h4>
+                          <p className="text-[11px] text-gray-400">Use: uniorg@univote.com / Uni@1234</p>
+                        </div>
+                        <form onSubmit={handleUniAdminLogin} className="space-y-3">
+                          <input type="email" value={uniAdminUser} onChange={(e) => setUniAdminUser(e.target.value)} placeholder="uniorg@univote.com" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-sm text-white" required />
+                          <input type="password" value={uniAdminPass} onChange={(e) => setUniAdminPass(e.target.value)} placeholder="••••••••" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-sm text-white" required />
+                          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm text-white">Login as Uni Admin</button>
+                        </form>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <h4 className="font-bold text-white text-sm">Student Document Submissions</h4>
+                        <div className="space-y-4">
+                          {submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).length === 0 ? (
+                            <p className="text-xs text-gray-400">No student documents submitted for this university yet.</p>
+                          ) : (
+                            submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
+                              <div key={sub.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <h5 className="font-bold text-white text-sm">{sub.studentName}</h5>
+                                    <p className="text-xs text-blue-400">{sub.studentEmail}</p>
+                                  </div>
+                                  <span className={`text-xs font-bold px-3 py-1 rounded-full border ${sub.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : sub.status === 'Rejected' ? 'bg-red-950 text-red-400 border-red-800' : 'bg-amber-950 text-amber-400 border-amber-800'}`}>
+                                    {sub.status}
+                                  </span>
+                                </div>
+
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-300 bg-gray-900 p-3 rounded-lg border border-gray-800/80">
+                                  <div>📌 Aadhaar: <span className="text-blue-400 font-medium">{sub.aadhaar}</span></div>
+                                  <div>💳 PAN: <span className="text-blue-400 font-medium">{sub.pan}</span></div>
+                                  <div>🎓 10th: <span className="text-blue-400 font-medium">{sub.tenth}</span></div>
+                                  <div>🎓 12th: <span className="text-blue-400 font-medium">{sub.twelfth}</span></div>
+                                  <div>📜 Character: <span className="text-blue-400 font-medium">{sub.charCert}</span></div>
+                                </div>
+
+                                <div className="flex gap-2 pt-1">
+                                  <button onClick={() => handleDocAction(sub.id, 'Approved')} className="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
+                                    Approve Documents
+                                  </button>
+                                  <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
+                                    Reject
+                                  </button>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
