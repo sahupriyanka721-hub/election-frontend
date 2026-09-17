@@ -309,7 +309,7 @@ export default function App() {
     alert(`Document status updated to: ${statusAction}`);
   };
 
-  // Handlers for Uni Admin Image Updates (No required validation block)
+  // Handlers for Uni Admin Image Updates with manual validation check
   const handleUpdateBanner = (e) => {
     e.preventDefault();
     if (!newBannerImage.trim()) {
@@ -768,20 +768,20 @@ export default function App() {
                         <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-4">
                           <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
                           
-                          {/* Banner Image Form without required error */}
+                          {/* Banner Image Form (type text) */}
                           <form onSubmit={handleUpdateBanner} className="space-y-2">
                             <label className="block text-xs font-semibold text-gray-300">Update Header Banner Image URL</label>
                             <div className="flex gap-2">
-                              <input type="url" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
+                              <input type="text" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
                               <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white">Update Banner</button>
                             </div>
                           </form>
 
-                          {/* Gallery Image Form without required error */}
+                          {/* Gallery Image Form (type text) */}
                           <form onSubmit={handleAddGalleryImage} className="space-y-2 pt-2">
                             <label className="block text-xs font-semibold text-gray-300">Add Campus / Event Photo to Gallery</label>
                             <div className="flex gap-2">
-                              <input type="url" value={newGalleryImage} onChange={(e) => setNewGalleryImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
+                              <input type="text" value={newGalleryImage} onChange={(e) => setNewGalleryImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
                               <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl text-xs font-bold text-white">Add Photo</button>
                             </div>
                           </form>
