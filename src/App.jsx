@@ -69,15 +69,30 @@ export default function App() {
     }
   ]);
 
-  // Student Marks Management States
+  // Student Marks Management States (Based on Different Examinations)
   const [studentMarks, setStudentMarks] = useState([
-    { id: 1, subject: 'Data Structures & Algorithms', marks: '88/100', grade: 'A+' },
-    { id: 2, subject: 'Database Management Systems', marks: '82/100', grade: 'A' },
-    { id: 3, subject: 'Software Engineering', marks: '90/100', grade: 'O' }
+    { id: 1, exam: 'Mid-Term Exam', subject: 'Data Structures & Algorithms', marks: '42/50', grade: 'A+' },
+    { id: 2, exam: 'Mid-Term Exam', subject: 'Database Management Systems', marks: '38/50', grade: 'A' },
+    { id: 3, exam: 'End-Term Exam', subject: 'Software Engineering', marks: '85/100', grade: 'O' },
+    { id: 4, exam: 'Quiz 1', subject: 'Computer Networks', marks: '18/20', grade: 'A+' }
   ]);
+  const [newExamType, setNewExamType] = useState('Mid-Term Exam');
   const [newSubject, setNewSubject] = useState('');
   const [newMarks, setNewMarks] = useState('');
   const [newGrade, setNewGrade] = useState('');
+
+  // Student Fees States
+  const [studentFees, setStudentFees] = useState([
+    { id: 1, semester: 'Semester 1 (2025-26)', amount: '₹45,000', status: 'Paid', dueDate: '15 Aug 2025' },
+    { id: 2, semester: 'Semester 2 (2025-26)', amount: '₹45,000', status: 'Pending', dueDate: '15 Jan 2026' }
+  ]);
+
+  // Upcoming Events States
+  const [upcomingEvents, setUpcomingEvents] = useState([
+    { id: 1, title: 'Annual Tech Hackathon 2026', date: '25 Mar 2026', venue: 'Main Auditorium', desc: 'Showcase your coding skills and win prizes.' },
+    { id: 2, title: 'Mid-Term Examinations', date: '10 Apr 2026', venue: 'Examination Hall', desc: 'Semester mid-term examinations begin.' },
+    { id: 3, title: 'Cultural Fest - Crescendo', date: '05 May 2026', venue: 'Open Air Theatre', desc: 'Music, dance, and drama competitions.' }
+  ]);
 
   // Unique Universities Data (No Duplicates) with Gallery Support
   const [universities, setUniversities] = useState([
@@ -279,12 +294,17 @@ export default function App() {
   const handleAddMark = (e) => {
     e.preventDefault();
     if (!newSubject || !newMarks || !newGrade) return;
-    const item = { id: Date.now(), subject: newSubject, marks: newMarks, grade: newGrade };
+    const item = { id: Date.now(), exam: newExamType, subject: newSubject, marks: newMarks, grade: newGrade };
     setStudentMarks([...studentMarks, item]);
     setNewSubject('');
     setNewMarks('');
     setNewGrade('');
     alert("Student marks updated successfully!");
+  };
+
+  const handlePayFee = (feeId) => {
+    setStudentFees(studentFees.map(f => f.id === feeId ? { ...f, status: 'Paid' } : f));
+    alert("Fee payment successful and updated!");
   };
 
   const handleDocumentSubmit = (e) => {
@@ -314,13 +334,11 @@ export default function App() {
     alert(`Document status updated to: ${statusAction}`);
   };
 
-  // Helper to convert uploaded local file into preview URL
   const getFileUrl = (fileObj) => {
     if (!fileObj) return '';
     return URL.createObjectURL(fileObj);
   };
 
-  // Banner Update Handler supporting both URL and File upload
   const handleUpdateBanner = (e) => {
     e.preventDefault();
     let imageSrc = '';
@@ -346,7 +364,6 @@ export default function App() {
     alert("University banner image updated successfully!");
   };
 
-  // Gallery Add Handler supporting both URL and File upload
   const handleAddGalleryImage = (e) => {
     e.preventDefault();
     let imageSrc = '';
@@ -453,7 +470,7 @@ export default function App() {
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                 <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xl mb-4">📊</div>
                 <h3 className="text-lg font-bold text-white mb-2">Student Portal & Records</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, academic results, and verification credentials.</p>
+                <p className="text-xs text-gray-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, exam results, fee updates, and events.</p>
               </div>
             </div>
           </div>
@@ -629,7 +646,7 @@ export default function App() {
                   🗳️ Voting Booth
                 </button>
                 <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'student-portal' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
-                  🎓 Student Portal & Marks
+                  🎓 Student Portal & Dashboard
                 </button>
                 <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'documents' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
                   📄 Document Verification
@@ -700,41 +717,136 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Student Portal & Marks Update Interface */}
+                {/* Student Portal & Dashboard Tab */}
                 {activeTab === 'student-portal' && (
                   <div className="space-y-6">
+                    
+                    {/* 1. Student Dashboard Overview */}
                     <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
-                      <h3 className="text-xl font-bold text-white">Student Academic Results & Marks</h3>
-                      <p className="text-xs text-gray-400">View and update latest subject-wise grades and marks.</p>
+                      <h3 className="text-xl font-bold text-white">🎓 Student Dashboard Overview</h3>
+                      <p className="text-xs text-gray-400">Welcome back! Here is your quick academic summary and stats.</p>
                       
-                      <div className="space-y-2 pt-2">
-                        {studentMarks.map(m => (
-                          <div key={m.id} className="bg-gray-950 border border-gray-800 p-3.5 rounded-xl flex justify-between items-center">
-                            <div>
-                              <h4 className="font-semibold text-white text-sm">{m.subject}</h4>
-                              <p className="text-xs text-gray-400">Marks: {m.marks}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase">Current CGPA</p>
+                          <p className="text-2xl font-extrabold text-blue-400 mt-1">8.92 / 10</p>
+                        </div>
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase">Attendance</p>
+                          <p className="text-2xl font-extrabold text-emerald-400 mt-1">92.4%</p>
+                        </div>
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase">Fee Status</p>
+                          <p className="text-2xl font-extrabold text-amber-400 mt-1">1 Pending</p>
+                        </div>
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase">Registered Exams</p>
+                          <p className="text-2xl font-extrabold text-purple-400 mt-1">6 Subjects</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. Student Marks based on Different Examinations */}
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="text-xl font-bold text-white">📝 Examination Marks & Grades</h3>
+                          <p className="text-xs text-gray-400">View marks separated by Mid-Term, End-Term, and Quizzes.</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 pt-2">
+                        {['Mid-Term Exam', 'End-Term Exam', 'Quiz 1'].map((examName) => (
+                          <div key={examName} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-2">
+                            <h4 className="font-bold text-blue-400 text-sm border-b border-gray-800 pb-2">{examName}</h4>
+                            <div className="space-y-2 pt-1">
+                              {studentMarks.filter(m => m.exam === examName).length === 0 ? (
+                                <p className="text-[11px] text-gray-500">No records found for {examName}.</p>
+                              ) : (
+                                studentMarks.filter(m => m.exam === examName).map(m => (
+                                  <div key={m.id} className="flex justify-between items-center bg-gray-900/60 p-2.5 rounded-lg border border-gray-800">
+                                    <div>
+                                      <h5 className="font-semibold text-white text-xs">{m.subject}</h5>
+                                      <p className="text-[11px] text-gray-400">Marks Obtained: <span className="text-white font-bold">{m.marks}</span></p>
+                                    </div>
+                                    <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-lg text-xs font-bold">
+                                      Grade: {m.grade}
+                                    </span>
+                                  </div>
+                                ))
+                              )}
                             </div>
-                            <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-lg text-xs font-bold">
-                              Grade: {m.grade}
-                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Add Marks Form */}
+                      <div className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3 mt-4">
+                        <h4 className="font-bold text-white text-xs">Add / Update Subject Exam Marks</h4>
+                        <form onSubmit={handleAddMark} className="space-y-3">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white">
+                              <option value="Mid-Term Exam">Mid-Term Exam</option>
+                              <option value="End-Term Exam">End-Term Exam</option>
+                              <option value="Quiz 1">Quiz 1</option>
+                            </select>
+                            <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="Subject Name" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="Marks (e.g. 45/50)" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                            <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="Grade (e.g. A+)" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                          </div>
+                          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-xs text-white shadow-md">
+                            Submit Marks Record
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+
+                    {/* 3. Student Fees Update & Status */}
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                      <h3 className="text-xl font-bold text-white">💳 Student Fee Dues & Status</h3>
+                      <p className="text-xs text-gray-400">Check tuition fee status and clear pending semester payments.</p>
+                      
+                      <div className="space-y-3">
+                        {studentFees.map(fee => (
+                          <div key={fee.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                            <div>
+                              <h4 className="font-bold text-white text-sm">{fee.semester}</h4>
+                              <p className="text-xs text-gray-400">Amount: <span className="text-white font-semibold">{fee.amount}</span> | Due Date: {fee.dueDate}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className={`text-xs font-bold px-3 py-1 rounded-full border ${fee.status === 'Paid' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : 'bg-amber-950 text-amber-400 border-amber-800'}`}>
+                                {fee.status}
+                              </span>
+                              {fee.status === 'Pending' && (
+                                <button onClick={() => handlePayFee(fee.id)} className="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow">
+                                  Pay Now
+                                </button>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
 
+                    {/* 4. Upcoming Events */}
                     <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
-                      <h3 className="text-lg font-bold text-white">Update / Add Subject Marks</h3>
-                      <form onSubmit={handleAddMark} className="space-y-3">
-                        <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="Subject Name (e.g. Operating Systems)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
-                        <div className="grid grid-cols-2 gap-3">
-                          <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="Marks (e.g. 85/100)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
-                          <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="Grade (e.g. A+)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
-                        </div>
-                        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm text-white shadow-md">
-                          Add / Update Marks
-                        </button>
-                      </form>
+                      <h3 className="text-xl font-bold text-white">📅 Upcoming Campus Events</h3>
+                      <p className="text-xs text-gray-400">Stay updated with upcoming academic and extracurricular schedules.</p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {upcomingEvents.map(evt => (
+                          <div key={evt.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-2">
+                            <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-0.5 rounded text-[10px] font-bold">{evt.date}</span>
+                            <h4 className="font-bold text-white text-sm mt-1">{evt.title}</h4>
+                            <p className="text-xs text-gray-400">{evt.desc}</p>
+                            <p className="text-[11px] text-emerald-400 font-medium">📍 {evt.venue}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+
                   </div>
                 )}
 
@@ -773,7 +885,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* University Admin Panel - View Documents & Upload Images (URL or Gallery File) */}
+                {/* University Admin Panel - View Documents & Upload Images */}
                 {activeTab === 'uni-admin' && (
                   <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
                     <div className="flex justify-between items-center border-b border-gray-800 pb-3">
@@ -801,11 +913,10 @@ export default function App() {
                     ) : (
                       <div className="space-y-6">
                         
-                        {/* Image Upload & Management Section with Toggle (URL / Device File) */}
+                        {/* Image Upload & Management Section */}
                         <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
                           <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
                           
-                          {/* 1. Header Banner Image Section */}
                           <div className="space-y-2 border-b border-gray-800 pb-4">
                             <div className="flex justify-between items-center">
                               <label className="text-xs font-semibold text-gray-300">Update Header Banner Image</label>
@@ -825,7 +936,6 @@ export default function App() {
                             </form>
                           </div>
 
-                          {/* 2. Campus Gallery Image Section */}
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
                               <label className="text-xs font-semibold text-gray-300">Add Campus / Event Photo to Gallery</label>
