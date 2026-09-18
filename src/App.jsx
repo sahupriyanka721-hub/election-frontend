@@ -36,7 +36,7 @@ export default function App() {
   const [candidateName, setCandidateName] = useState('');
   const [candidateParty, setCandidateParty] = useState('');
 
-  // Student Document Verification Upload States (File upload support & submissions list)
+  // Student Document Verification Upload States
   const [aadhaarFile, setAadhaarFile] = useState('');
   const [panFile, setPanFile] = useState('');
   const [tenthFile, setTenthFile] = useState('');
@@ -44,7 +44,7 @@ export default function App() {
   const [charCertFile, setCharCertFile] = useState('');
   const [docSubmitted, setDocSubmitted] = useState(false);
 
-  // University Admin Image Upload States (Supports both URL and Local File)
+  // University Admin Image Upload States
   const [bannerInputType, setBannerInputType] = useState('url'); // 'url' or 'file'
   const [newBannerImage, setNewBannerImage] = useState('');
   const [bannerFileObj, setBannerFileObj] = useState(null);
@@ -69,7 +69,7 @@ export default function App() {
     }
   ]);
 
-  // Student Marks Management States (Based on Different Examinations)
+  // Student Marks Management States
   const [studentMarks, setStudentMarks] = useState([
     { id: 1, exam: 'Mid-Term Exam', subject: 'Data Structures & Algorithms', marks: '42/50', grade: 'A+' },
     { id: 2, exam: 'Mid-Term Exam', subject: 'Database Management Systems', marks: '38/50', grade: 'A' },
@@ -94,7 +94,7 @@ export default function App() {
     { id: 3, title: 'Cultural Fest - Crescendo', date: '05 May 2026', venue: 'Open Air Theatre', desc: 'Music, dance, and drama competitions.' }
   ]);
 
-  // Unique Universities Data (No Duplicates) with Gallery Support
+  // Unique Universities Data
   const [universities, setUniversities] = useState([
     { 
       id: 'graphic-era', 
@@ -148,9 +148,7 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      }
+      setUser(currentUser || null);
     });
     return () => unsubscribe();
   }, []);
@@ -210,9 +208,10 @@ export default function App() {
       status: 'Pending Approval',
       trust: regTrustDeed
     };
-    setRegisteredApplications([...registeredApplications, newApp]);
+    setRegisteredApplications(prev => [...prev, newApp]);
     alert("University registration submitted successfully through Sponsoring Body → State Govt → UGC route!");
     setRegUniName('');
+    setRegLocation('');
     setRegTrustDeed('');
     setRegPan('');
     setRegLandDoc('');
@@ -221,14 +220,25 @@ export default function App() {
   };
 
   const handleApproveUni = (id) => {
-    setRegisteredApplications(registeredApplications.map(app => {
-      if (app.id === id) {
-        const approvedItem = { ...app, status: 'Approved', id: 'uni-' + Date.now(), image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80', gallery: [], desc: 'Newly approved university through regulatory pathway.', candidates: [] };
-        setUniversities([...universities, approvedItem]);
-        return { ...app, status: 'Approved' };
-      }
-      return app;
-    }));
+    const targetApp = registeredApplications.find(app => app.id === id);
+    if (!targetApp) return;
+
+    setRegisteredApplications(prev =>
+      prev.map(app => (app.id === id ? { ...app, status: 'Approved' } : app))
+    );
+
+    const approvedItem = {
+      id: 'uni-' + Date.now(),
+      name: targetApp.name,
+      location: targetApp.location,
+      status: 'Approved',
+      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80',
+      gallery: [],
+      desc: 'Newly approved university through regulatory pathway.',
+      candidates: []
+    };
+
+    setUniversities(prev => [...prev, approvedItem]);
     alert("University approved and added to active network!");
   };
 
@@ -239,18 +249,17 @@ export default function App() {
       if (!guestName) return;
     }
 
-    setUniversities(universities.map(uni => {
-      if (uni.id === uniId) {
-        const updatedCandidates = uni.candidates.map(cand => {
-          if (cand.id === candidateId) {
-            return { ...cand, votes: cand.votes + 1 };
-          }
-          return cand;
-        });
-        return { ...uni, candidates: updatedCandidates };
-      }
-      return uni;
-    }));
+    setUniversities(prevUniversities =>
+      prevUniversities.map(uni => {
+        if (uni.id === uniId) {
+          const updatedCandidates = uni.candidates.map(cand =>
+            cand.id === candidateId ? { ...cand, votes: cand.votes + 1 } : cand
+          );
+          return { ...uni, candidates: updatedCandidates };
+        }
+        return uni;
+      })
+    );
 
     setSelectedUni(prev => {
       if (!prev) return prev;
@@ -274,12 +283,14 @@ export default function App() {
       votes: 0
     };
 
-    setUniversities(universities.map(uni => {
-      if (uni.id === selectedUni.id) {
-        return { ...uni, candidates: [...uni.candidates, newCandidate] };
-      }
-      return uni;
-    }));
+    setUniversities(prevUniversities =>
+      prevUniversities.map(uni => {
+        if (uni.id === selectedUni.id) {
+          return { ...uni, candidates: [...uni.candidates, newCandidate] };
+        }
+        return uni;
+      })
+    );
 
     setSelectedUni(prev => ({
       ...prev,
@@ -295,7 +306,7 @@ export default function App() {
     e.preventDefault();
     if (!newSubject || !newMarks || !newGrade) return;
     const item = { id: Date.now(), exam: newExamType, subject: newSubject, marks: newMarks, grade: newGrade };
-    setStudentMarks([...studentMarks, item]);
+    setStudentMarks(prev => [...prev, item]);
     setNewSubject('');
     setNewMarks('');
     setNewGrade('');
@@ -303,7 +314,7 @@ export default function App() {
   };
 
   const handlePayFee = (feeId) => {
-    setStudentFees(studentFees.map(f => f.id === feeId ? { ...f, status: 'Paid' } : f));
+    setStudentFees(prev => prev.map(f => f.id === feeId ? { ...f, status: 'Paid' } : f));
     alert("Fee payment successful and updated!");
   };
 
@@ -324,13 +335,13 @@ export default function App() {
       charCert: charCertFile || 'Character_Cert.pdf',
       status: 'Pending Verification'
     };
-    setSubmittedSubmissions([...submittedSubmissions, newSub]);
+    setSubmittedSubmissions(prev => [...prev, newSub]);
     setDocSubmitted(true);
     alert("All verification documents uploaded and sent to University Admin successfully!");
   };
 
   const handleDocAction = (subId, statusAction) => {
-    setSubmittedSubmissions(submittedSubmissions.map(sub => sub.id === subId ? { ...sub, status: statusAction } : sub));
+    setSubmittedSubmissions(prev => prev.map(sub => sub.id === subId ? { ...sub, status: statusAction } : sub));
     alert(`Document status updated to: ${statusAction}`);
   };
 
@@ -358,7 +369,7 @@ export default function App() {
 
     const updatedUni = { ...selectedUni, image: imageSrc };
     setSelectedUni(updatedUni);
-    setUniversities(universities.map(u => u.id === updatedUni.id ? updatedUni : u));
+    setUniversities(prev => prev.map(u => u.id === updatedUni.id ? updatedUni : u));
     setNewBannerImage('');
     setBannerFileObj(null);
     alert("University banner image updated successfully!");
@@ -384,7 +395,7 @@ export default function App() {
     const updatedGallery = [...(selectedUni.gallery || []), imageSrc];
     const updatedUni = { ...selectedUni, gallery: updatedGallery };
     setSelectedUni(updatedUni);
-    setUniversities(universities.map(u => u.id === updatedUni.id ? updatedUni : u));
+    setUniversities(prev => prev.map(u => u.id === updatedUni.id ? updatedUni : u));
     setNewGalleryImage('');
     setGalleryFileObj(null);
     alert("Gallery image added successfully to university portal!");
@@ -418,7 +429,7 @@ export default function App() {
             </button>
             {user ? (
               <div className="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1 rounded-xl">
-                <span className="text-xs text-gray-300 font-medium">{user.displayName}</span>
+                <span className="text-xs text-gray-300 font-medium">{user.displayName || user.email}</span>
                 <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 px-2 py-1 rounded-lg text-[10px] text-white font-bold">Logout</button>
               </div>
             ) : (
@@ -858,7 +869,7 @@ export default function App() {
                     
                     <form onSubmit={handleDocumentSubmit} className="space-y-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-300 mb-1">Aadhaar Card Document / PDF</label>
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Identity Card Document / PDF</label>
                         <input type="file" onChange={(e) => setAadhaarFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
                       </div>
                       <div>
@@ -977,7 +988,7 @@ export default function App() {
                                   </div>
 
                                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-300 bg-gray-900 p-3 rounded-lg border border-gray-800/80">
-                                    <div>📌 Aadhaar: <span className="text-blue-400 font-medium">{sub.aadhaar}</span></div>
+                                    <div>📌 ID Doc: <span className="text-blue-400 font-medium">{sub.aadhaar}</span></div>
                                     <div>💳 PAN: <span className="text-blue-400 font-medium">{sub.pan}</span></div>
                                     <div>🎓 10th: <span className="text-blue-400 font-medium">{sub.tenth}</span></div>
                                     <div>🎓 12th: <span className="text-blue-400 font-medium">{sub.twelfth}</span></div>
