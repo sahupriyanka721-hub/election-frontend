@@ -69,13 +69,8 @@ export default function App() {
     }
   ]);
 
-  // Student Marks Management States
-  const [studentMarks, setStudentMarks] = useState([
-    { id: 1, exam: 'Mid-Term Exam', subject: 'Data Structures & Algorithms', marks: '42/50', grade: 'A+' },
-    { id: 2, exam: 'Mid-Term Exam', subject: 'Database Management Systems', marks: '38/50', grade: 'A' },
-    { id: 3, exam: 'End-Term Exam', subject: 'Software Engineering', marks: '85/100', grade: 'O' },
-    { id: 4, exam: 'Quiz 1', subject: 'Computer Networks', marks: '18/20', grade: 'A+' }
-  ]);
+  // Student Marks Management States (Initialized as empty to remove mock data)
+  const [studentMarks, setStudentMarks] = useState([]);
   const [newExamType, setNewExamType] = useState('Mid-Term Exam');
   const [newSubject, setNewSubject] = useState('');
   const [newMarks, setNewMarks] = useState('');
@@ -310,7 +305,7 @@ export default function App() {
     setNewSubject('');
     setNewMarks('');
     setNewGrade('');
-    alert("Student marks updated successfully!");
+    alert("Student marks updated successfully in real time!");
   };
 
   const handlePayFee = (feeId) => {
@@ -762,7 +757,7 @@ export default function App() {
                       <div className="flex justify-between items-center">
                         <div>
                           <h3 className="text-xl font-bold text-white">📝 Examination Marks & Grades</h3>
-                          <p className="text-xs text-gray-400">View marks separated by Mid-Term, End-Term, and Quizzes.</p>
+                          <p className="text-xs text-gray-400">View marks entered manually in real time.</p>
                         </div>
                       </div>
 
@@ -772,7 +767,7 @@ export default function App() {
                             <h4 className="font-bold text-blue-400 text-sm border-b border-gray-800 pb-2">{examName}</h4>
                             <div className="space-y-2 pt-1">
                               {studentMarks.filter(m => m.exam === examName).length === 0 ? (
-                                <p className="text-[11px] text-gray-500">No records found for {examName}.</p>
+                                <p className="text-[11px] text-gray-500">No marks entered yet for {examName}.</p>
                               ) : (
                                 studentMarks.filter(m => m.exam === examName).map(m => (
                                   <div key={m.id} className="flex justify-between items-center bg-gray-900/60 p-2.5 rounded-lg border border-gray-800">
@@ -793,7 +788,7 @@ export default function App() {
 
                       {/* Add Marks Form */}
                       <div className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3 mt-4">
-                        <h4 className="font-bold text-white text-xs">Add / Update Subject Exam Marks</h4>
+                        <h4 className="font-bold text-white text-xs">Enter / Update Subject Exam Marks (Real-Time Update)</h4>
                         <form onSubmit={handleAddMark} className="space-y-3">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white">
