@@ -6,7 +6,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'register-uni', 'admin-login', 'admin-panel'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents', 'uni-admin'
+  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents', 'uni-admin', 'faculty-portal'
 
   // Theme State ('dark' or 'light')
   const [theme, setTheme] = useState('dark');
@@ -20,6 +20,11 @@ export default function App() {
   const [uniAdminUser, setUniAdminUser] = useState('');
   const [uniAdminPass, setUniAdminPass] = useState('');
   const [isUniAdminLoggedIn, setIsUniAdminLoggedIn] = useState(false);
+
+  // Faculty Login States
+  const [facultyEmail, setFacultyEmail] = useState('');
+  const [facultyPassword, setFacultyPassword] = useState('');
+  const [isFacultyLoggedIn, setIsFacultyLoggedIn] = useState(false);
 
   // University Registration Form States (Sponsoring Body -> State Govt -> UGC)
   const [regUniName, setRegUniName] = useState('');
@@ -69,7 +74,7 @@ export default function App() {
     }
   ]);
 
-  // Student Marks Management States (Real-time dynamic tracking)
+  // Student Marks Management States (Real-time dynamic tracking controlled by Faculty)
   const [studentMarks, setStudentMarks] = useState([
     { id: 1, exam: 'Mid-Term Exam', subject: 'Data Structures & Algorithms', marks: '42/50', grade: 'A+' },
     { id: 2, exam: 'Mid-Term Exam', subject: 'Database Management Systems', marks: '38/50', grade: 'A' },
@@ -195,6 +200,16 @@ export default function App() {
     }
   };
 
+  const handleFacultyLogin = (e) => {
+    e.preventDefault();
+    if (facultyEmail === 'faculty@univote.com' && facultyPassword === 'Faculty@1234') {
+      setIsFacultyLoggedIn(true);
+      alert("Faculty Logged In Successfully!");
+    } else {
+      alert("Invalid credentials! Use: faculty@univote.com / Faculty@1234");
+    }
+  };
+
   const handleUniversityRegistration = (e) => {
     e.preventDefault();
     if (!regUniName || !regTrustDeed || !regPan) {
@@ -310,7 +325,12 @@ export default function App() {
     setNewSubject('');
     setNewMarks('');
     setNewGrade('');
-    alert("Student marks updated in real-time!");
+    alert("Student marks updated by faculty in real-time!");
+  };
+
+  const handleDeleteMark = (markId) => {
+    setStudentMarks(prev => prev.filter(m => m.id !== markId));
+    alert("Mark record deleted successfully!");
   };
 
   const handlePayFee = (feeId) => {
@@ -449,13 +469,13 @@ export default function App() {
           <div className="py-12 space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
               <span className="bg-blue-500/10 text-blue-400 text-[11px] font-bold px-3 py-1 rounded-full border border-blue-500/20">
-                Official Campus & Regulatory Framework
+                Official Campus, Faculty & Regulatory Framework
               </span>
               <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-                Empowering Higher Education & Democratic Elections
+                Empowering Higher Education & Faculty Management
               </h2>
               <p className="text-gray-400 text-sm leading-relaxed">
-                A secure unified platform for university registration via Sponsoring Body, State Govt & UGC route, document verification, student record management, and digital campus elections.
+                A secure unified platform for university registration, faculty mark control, document verification, student record management, and digital campus elections.
               </p>
               <div className="flex justify-center gap-4 pt-4">
                 <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition">
@@ -469,9 +489,9 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4">🏛️</div>
-                <h3 className="text-lg font-bold text-white mb-2">University Setup Route</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Sponsoring Body (Trust/Society) → State Govt → UGC Compliance workflow with automated document verification.</p>
+                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4">👨‍🏫</div>
+                <h3 className="text-lg font-bold text-white mb-2">Faculty Management</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Secure faculty control panels to evaluate, add, and update student marks and grades instantly.</p>
               </div>
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4">🗳️</div>
@@ -659,6 +679,9 @@ export default function App() {
                 <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'student-portal' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
                   🎓 Student Portal & Dashboard
                 </button>
+                <button onClick={() => setActiveTab('faculty-portal')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'faculty-portal' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
+                  👨‍🏫 Faculty Marks Management
+                </button>
                 <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'documents' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
                   📄 Document Verification
                 </button>
@@ -761,8 +784,8 @@ export default function App() {
                     <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <h3 className="text-xl font-bold text-white">📝 Examination Marks & Grades (Real-Time)</h3>
-                          <p className="text-xs text-gray-400">View live marks manually entered by the admin for Mid-Term, End-Term, and Quizzes.</p>
+                          <h3 className="text-xl font-bold text-white">📝 Examination Marks & Grades (Live View)</h3>
+                          <p className="text-xs text-gray-400">View live marks entered by the faculty members for Mid-Term, End-Term, and Quizzes.</p>
                         </div>
                       </div>
 
@@ -789,28 +812,6 @@ export default function App() {
                             </div>
                           </div>
                         ))}
-                      </div>
-
-                      {/* Manual Entry Form for Admin */}
-                      <div className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3 mt-4">
-                        <h4 className="font-bold text-white text-xs">Admin Manual Entry: Add Subject Exam Marks</h4>
-                        <form onSubmit={handleAddMark} className="space-y-3">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white">
-                              <option value="Mid-Term Exam">Mid-Term Exam</option>
-                              <option value="End-Term Exam">End-Term Exam</option>
-                              <option value="Quiz 1">Quiz 1</option>
-                            </select>
-                            <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="Subject Name" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="Marks (e.g. 45/50)" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
-                            <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="Grade (e.g. A+)" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
-                          </div>
-                          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-xs text-white shadow-md">
-                            Publish Real-Time Marks Record
-                          </button>
-                        </form>
                       </div>
                     </div>
 
@@ -858,6 +859,92 @@ export default function App() {
                       </div>
                     </div>
 
+                  </div>
+                )}
+
+                {/* Faculty Portal / Marks Management Tab */}
+                {activeTab === 'faculty-portal' && (
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
+                    <div className="flex justify-between items-center border-b border-gray-800 pb-3">
+                      <div>
+                        <h3 className="text-xl font-bold text-white">👨‍🏫 Faculty Marks Management Portal</h3>
+                        <p className="text-xs text-gray-400">Faculty members can add, evaluate, and manage student grades and exam scores.</p>
+                      </div>
+                      {isFacultyLoggedIn && (
+                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold border border-red-500/35">Logout Faculty</button>
+                      )}
+                    </div>
+
+                    {!isFacultyLoggedIn ? (
+                      <div className="max-w-md mx-auto bg-gray-950 border border-gray-800 p-6 rounded-2xl space-y-4 my-4">
+                        <div className="text-center space-y-1">
+                          <h4 className="font-bold text-white text-sm">Faculty Secure Login</h4>
+                          <p className="text-[11px] text-gray-400">Use default credentials: <span className="text-blue-400 font-medium">faculty@univote.com / Faculty@1234</span></p>
+                        </div>
+                        <form onSubmit={handleFacultyLogin} className="space-y-3">
+                          <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-sm text-white" required />
+                          <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-sm text-white" required />
+                          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm text-white shadow">Login as Faculty</button>
+                        </form>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        
+                        {/* Add Marks Form */}
+                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-3">
+                          <h4 className="font-bold text-white text-sm">➕ Add / Evaluate Student Exam Marks</h4>
+                          <form onSubmit={handleAddMark} className="space-y-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-[11px] text-gray-400 mb-1">Select Examination</label>
+                                <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white">
+                                  <option value="Mid-Term Exam">Mid-Term Exam</option>
+                                  <option value="End-Term Exam">End-Term Exam</option>
+                                  <option value="Quiz 1">Quiz 1</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label className="block text-[11px] text-gray-400 mb-1">Subject Name</label>
+                                <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. Artificial Intelligence" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-[11px] text-gray-400 mb-1">Marks Obtained</label>
+                                <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="e.g. 45/50" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              </div>
+                              <div>
+                                <label className="block text-[11px] text-gray-400 mb-1">Grade Awarded</label>
+                                <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              </div>
+                            </div>
+                            <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-xs text-white shadow-md">
+                              Publish Marks to Student Portal
+                            </button>
+                          </form>
+                        </div>
+
+                        {/* Current Marks Table / List with Delete Option */}
+                        <div className="space-y-3">
+                          <h4 className="font-bold text-white text-sm">📋 All Active Student Marks Records</h4>
+                          <div className="space-y-2">
+                            {studentMarks.map(m => (
+                              <div key={m.id} className="bg-gray-950 border border-gray-800 p-3.5 rounded-xl flex justify-between items-center">
+                                <div>
+                                  <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded text-[10px] font-bold">{m.exam}</span>
+                                  <h5 className="font-semibold text-white text-xs mt-1">{m.subject}</h5>
+                                  <p className="text-[11px] text-gray-400">Marks: <span className="text-white font-bold">{m.marks}</span> | Grade: <span className="text-emerald-400 font-bold">{m.grade}</span></p>
+                                </div>
+                                <button onClick={() => handleDeleteMark(m.id)} className="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                  Delete Record
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                      </div>
+                    )}
                   </div>
                 )}
 
