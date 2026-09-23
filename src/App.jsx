@@ -58,6 +58,16 @@ export default function App() {
   const [newGalleryImage, setNewGalleryImage] = useState('');
   const [galleryFileObj, setGalleryFileObj] = useState(null);
 
+  // Faculty Salary Management States (Controlled by University Admin)
+  const [facultySalaries, setFacultySalaries] = useState([
+    { id: 1, name: 'Dr. Rajesh Kumar', dept: 'Computer Science & Engg', salary: '₹95,000', status: 'Active' },
+    { id: 2, name: 'Dr. Sneha Sharma', dept: 'Electronics & Comm.', salary: '₹88,000', status: 'Active' },
+    { id: 3, name: 'Prof. Amit Verma', dept: 'Mechanical Engg', salary: '₹82,000', status: 'Active' }
+  ]);
+  const [newFacultyName, setNewFacultyName] = useState('');
+  const [newFacultyDept, setNewFacultyDept] = useState('');
+  const [newFacultySalary, setNewFacultySalary] = useState('');
+
   // Centralized storage for student document submissions per university
   const [submittedSubmissions, setSubmittedSubmissions] = useState([
     {
@@ -365,6 +375,34 @@ export default function App() {
     alert(`Document status updated to: ${statusAction}`);
   };
 
+  // Faculty Salary Control Handlers
+  const handleUpdateSalary = (facultyId, updatedSalary) => {
+    setFacultySalaries(prev => prev.map(f => f.id === facultyId ? { ...f, salary: updatedSalary } : f));
+    alert("Faculty salary updated successfully!");
+  };
+
+  const handleAddFaculty = (e) => {
+    e.preventDefault();
+    if (!newFacultyName || !newFacultyDept || !newFacultySalary) return;
+    const newFac = {
+      id: Date.now(),
+      name: newFacultyName,
+      dept: newFacultyDept,
+      salary: newFacultySalary,
+      status: 'Active'
+    };
+    setFacultySalaries(prev => [...prev, newFac]);
+    setNewFacultyName('');
+    setNewFacultyDept('');
+    setNewFacultySalary('');
+    alert("New faculty added to payroll successfully!");
+  };
+
+  const handleDeleteFaculty = (facultyId) => {
+    setFacultySalaries(prev => prev.filter(f => f.id !== facultyId));
+    alert("Faculty removed from active payroll!");
+  };
+
   const getFileUrl = (fileObj) => {
     if (!fileObj) return '';
     return URL.createObjectURL(fileObj);
@@ -475,7 +513,7 @@ export default function App() {
                 Empowering Higher Education & Faculty Management
               </h2>
               <p className="text-gray-400 text-sm leading-relaxed">
-                A secure unified platform for university registration, faculty mark control, document verification, student record management, and digital campus elections.
+                A secure unified platform for university registration, faculty salary control, document verification, student record management, and digital campus elections.
               </p>
               <div className="flex justify-center gap-4 pt-4">
                 <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition">
@@ -490,8 +528,8 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                 <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4">👨‍🏫</div>
-                <h3 className="text-lg font-bold text-white mb-2">Faculty Management</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Secure faculty control panels to evaluate, add, and update student marks and grades instantly.</p>
+                <h3 className="text-lg font-bold text-white mb-2">Faculty & Salary Management</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">Admin controls for managing faculty rosters, payrolls, and updating monthly compensation packages.</p>
               </div>
               <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4">🗳️</div>
@@ -686,7 +724,7 @@ export default function App() {
                   📄 Document Verification
                 </button>
                 <button onClick={() => setActiveTab('uni-admin')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'uni-admin' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
-                  🛡️ Uni Admin Panel (View Docs)
+                  🛡️ Uni Admin Panel (Salary & Docs)
                 </button>
                 <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition ${activeTab === 'manager' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800'}`}>
                   🏛️ Organisation Panel
@@ -983,13 +1021,13 @@ export default function App() {
                   </div>
                 )}
 
-                {/* University Admin Panel - View Documents & Upload Images */}
+                {/* University Admin Panel - View Documents, Upload Images & Control Faculty Salaries */}
                 {activeTab === 'uni-admin' && (
                   <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
                     <div className="flex justify-between items-center border-b border-gray-800 pb-3">
                       <div>
                         <h3 className="text-xl font-bold text-white">University Admin Panel ({selectedUni.name})</h3>
-                        <p className="text-xs text-gray-400">Review student documents and manage campus portal images.</p>
+                        <p className="text-xs text-gray-400">Review student documents, manage campus portal images, and control faculty salaries.</p>
                       </div>
                       {isUniAdminLoggedIn && (
                         <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold border border-red-500/30">Logout Uni Admin</button>
@@ -1011,6 +1049,53 @@ export default function App() {
                     ) : (
                       <div className="space-y-6">
                         
+                        {/* NEW: Faculty Salary Control & Payroll Section */}
+                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
+                          <h4 className="font-bold text-white text-sm">💵 Faculty Salary & Payroll Control</h4>
+                          <p className="text-xs text-gray-400">Manage faculty members' monthly salary compensation packages and add new faculty members.</p>
+                          
+                          {/* Add New Faculty Form */}
+                          <form onSubmit={handleAddFaculty} className="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-3">
+                            <h5 className="font-semibold text-blue-400 text-xs">➕ Add New Faculty Member to Payroll</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                              <input type="text" value={newFacultyName} onChange={(e) => setNewFacultyName(e.target.value)} placeholder="Faculty Full Name" className="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              <input type="text" value={newFacultyDept} onChange={(e) => setNewFacultyDept(e.target.value)} placeholder="Department Name" className="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              <input type="text" value={newFacultySalary} onChange={(e) => setNewFacultySalary(e.target.value)} placeholder="Monthly Salary (e.g. ₹90,000)" className="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                            </div>
+                            <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl text-xs font-bold text-white shadow">
+                              Add Faculty & Set Salary
+                            </button>
+                          </form>
+
+                          {/* Existing Faculty Salaries List & Editor */}
+                          <div className="space-y-3 pt-2">
+                            <h5 className="font-semibold text-white text-xs">📋 Current Faculty Salary List</h5>
+                            <div className="space-y-2">
+                              {facultySalaries.map(fac => (
+                                <div key={fac.id} className="bg-gray-900 border border-gray-800 p-3.5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                                  <div>
+                                    <h6 className="font-bold text-white text-xs">{fac.name}</h6>
+                                    <p className="text-[11px] text-gray-400">Dept: <span className="text-blue-400 font-medium">{fac.dept}</span></p>
+                                  </div>
+                                  <div className="flex items-center gap-2 w-full md:w-auto">
+                                    <input 
+                                      type="text" 
+                                      defaultValue={fac.salary} 
+                                      onBlur={(e) => handleUpdateSalary(fac.id, e.target.value)}
+                                      className="bg-gray-950 border border-gray-800 rounded-lg p-1.5 text-xs text-emerald-400 font-bold w-28 text-center" 
+                                      title="Click outside to save updated salary"
+                                    />
+                                    <span className="text-[10px] text-gray-500">(Edit & click outside)</span>
+                                    <button onClick={() => handleDeleteFaculty(fac.id)} className="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition ml-auto">
+                                      Remove
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Image Upload & Management Section */}
                         <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
                           <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
