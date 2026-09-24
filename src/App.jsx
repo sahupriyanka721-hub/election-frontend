@@ -900,82 +900,127 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Faculty Portal / Marks Management Tab */}
+                {/* 🌟 ENHANCED Faculty Portal / Marks Management Tab */}
                 {activeTab === 'faculty-portal' && (
-                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-6">
-                    <div className="flex justify-between items-center border-b border-gray-800 pb-3">
-                      <div>
-                        <h3 className="text-xl font-bold text-white">👨‍🏫 Faculty Marks Management Portal</h3>
-                        <p className="text-xs text-gray-400">Faculty members can add, evaluate, and manage student grades and exam scores.</p>
+                  <div className="bg-gradient-to-b from-gray-900 via-gray-900 to-[#0b0e17] border border-blue-500/30 p-8 rounded-3xl shadow-2xl space-y-8 backdrop-blur-xl">
+                    
+                    {/* Header Banner */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800/80 pb-5 gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></span>
+                          <span className="text-[11px] font-bold tracking-wider text-blue-400 uppercase">Faculty Assessment Dashboard</span>
+                        </div>
+                        <h3 className="text-2xl font-extrabold text-white tracking-tight">Marks & Evaluation Portal</h3>
+                        <p className="text-xs text-gray-400">Manage, evaluate, and publish verified student marks and academic grades in real-time.</p>
                       </div>
                       {isFacultyLoggedIn && (
-                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold border border-red-500/35">Logout Faculty</button>
+                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/30 transition shadow-lg flex items-center gap-1.5">
+                          🔒 Logout Faculty Session
+                        </button>
                       )}
                     </div>
 
                     {!isFacultyLoggedIn ? (
-                      <div className="max-w-md mx-auto bg-gray-950 border border-gray-800 p-6 rounded-2xl space-y-4 my-4">
-                        <div className="text-center space-y-1">
-                          <h4 className="font-bold text-white text-sm">Faculty Secure Login</h4>
-                          <p className="text-[11px] text-gray-400">Use default credentials: <span className="text-blue-400 font-medium">faculty@univote.com / Faculty@1234</span></p>
+                      <div className="max-w-md mx-auto bg-gradient-to-b from-gray-950 to-gray-900 border border-gray-800/80 p-8 rounded-3xl shadow-2xl space-y-6 my-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="text-center space-y-2">
+                          <div className="w-14 h-14 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-2xl shadow-inner">👨‍🏫</div>
+                          <h4 className="font-bold text-white text-lg">Faculty Secure Portal</h4>
+                          <p className="text-xs text-gray-400">Please authenticate with your faculty credentials to manage student grades.</p>
+                          <div className="bg-blue-950/40 border border-blue-500/20 p-2.5 rounded-xl text-[11px] text-blue-300 font-mono mt-2">
+                            🔑 Demo: faculty@univote.com / Faculty@1234
+                          </div>
                         </div>
-                        <form onSubmit={handleFacultyLogin} className="space-y-3">
-                          <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-sm text-white" required />
-                          <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-sm text-white" required />
-                          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm text-white shadow">Login as Faculty</button>
+                        <form onSubmit={handleFacultyLogin} className="space-y-4 pt-2">
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Faculty Email</label>
+                            <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-sm text-white outline-none transition" required />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
+                            <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-sm text-white outline-none transition" required />
+                          </div>
+                          <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-xl transition transform active:scale-[0.99]">
+                            Authenticate Faculty Login →
+                          </button>
                         </form>
                       </div>
                     ) : (
-                      <div className="space-y-6">
+                      <div className="space-y-8">
                         
-                        {/* Add Marks Form */}
-                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-3">
-                          <h4 className="font-bold text-white text-sm">➕ Add / Evaluate Student Exam Marks</h4>
-                          <form onSubmit={handleAddMark} className="space-y-3">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {/* Add Marks Form Box */}
+                        <div className="bg-gray-950/80 border border-gray-800/80 p-6 rounded-3xl shadow-xl space-y-4">
+                          <div className="flex items-center gap-2 border-b border-gray-800/80 pb-3">
+                            <span className="text-lg">✍️</span>
+                            <h4 className="font-bold text-white text-sm uppercase tracking-wider">Publish New Student Examination Marks</h4>
+                          </div>
+                          <form onSubmit={handleAddMark} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <label className="block text-[11px] text-gray-400 mb-1">Select Examination</label>
-                                <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white">
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Select Examination Type</label>
+                                <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-xs text-white outline-none transition">
                                   <option value="Mid-Term Exam">Mid-Term Exam</option>
                                   <option value="End-Term Exam">End-Term Exam</option>
                                   <option value="Quiz 1">Quiz 1</option>
                                 </select>
                               </div>
                               <div>
-                                <label className="block text-[11px] text-gray-400 mb-1">Subject Name</label>
-                                <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. Artificial Intelligence" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Subject Title</label>
+                                <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. Artificial Intelligence & ML" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-xs text-white outline-none transition" required />
                               </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <label className="block text-[11px] text-gray-400 mb-1">Marks Obtained</label>
-                                <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="e.g. 45/50" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Marks Obtained</label>
+                                <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="e.g. 45/50 or 92/100" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-xs text-white outline-none transition" required />
                               </div>
                               <div>
-                                <label className="block text-[11px] text-gray-400 mb-1">Grade Awarded</label>
-                                <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Grade Awarded</label>
+                                <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+ or O" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-xs text-white outline-none transition" required />
                               </div>
                             </div>
-                            <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-xs text-white shadow-md">
-                              Publish Marks to Student Portal
+                            <button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 py-3 rounded-xl font-bold text-xs text-white shadow-lg transition">
+                              ✓ Publish Marks Instantly to Student Portal
                             </button>
                           </form>
                         </div>
 
-                        {/* Current Marks Table / List with Delete Option */}
-                        <div className="space-y-3">
-                          <h4 className="font-bold text-white text-sm">📋 All Active Student Marks Records</h4>
-                          <div className="space-y-2">
+                        {/* Current Marks Table / List with Enhanced UI */}
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-bold text-white text-sm uppercase tracking-wider flex items-center gap-2">
+                              <span>📋</span> Active Student Grade Records ({studentMarks.length})
+                            </h4>
+                            <span className="text-xs text-gray-400">Synced live with student accounts</span>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-3">
                             {studentMarks.map(m => (
-                              <div key={m.id} className="bg-gray-950 border border-gray-800 p-3.5 rounded-xl flex justify-between items-center">
-                                <div>
-                                  <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded text-[10px] font-bold">{m.exam}</span>
-                                  <h5 className="font-semibold text-white text-xs mt-1">{m.subject}</h5>
-                                  <p className="text-[11px] text-gray-400">Marks: <span className="text-white font-bold">{m.marks}</span> | Grade: <span className="text-emerald-400 font-bold">{m.grade}</span></p>
+                              <div key={m.id} className="bg-gray-950/90 border border-gray-800/80 hover:border-blue-500/40 p-4 rounded-2xl flex justify-between items-center transition shadow-md group">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-0.5 rounded-md text-[10px] font-bold">
+                                      {m.exam}
+                                    </span>
+                                  </div>
+                                  <h5 className="font-bold text-white text-sm group-hover:text-blue-300 transition">{m.subject}</h5>
+                                  <p className="text-xs text-gray-400">
+                                    Marks Scored: <span className="text-white font-semibold">{m.marks}</span>
+                                  </p>
                                 </div>
-                                <button onClick={() => handleDeleteMark(m.id)} className="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
-                                  Delete Record
-                                </button>
+                                
+                                <div className="flex items-center gap-4">
+                                  <div className="text-right">
+                                    <span className="text-[10px] text-gray-500 uppercase block">Grade</span>
+                                    <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-xl text-xs font-black">
+                                      {m.grade}
+                                    </span>
+                                  </div>
+                                  <button onClick={() => handleDeleteMark(m.id)} className="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/20 px-3 py-2 rounded-xl text-xs font-semibold transition shadow">
+                                    🗑️ Delete
+                                  </button>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -1049,7 +1094,7 @@ export default function App() {
                     ) : (
                       <div className="space-y-6">
                         
-                        {/* NEW: Faculty Salary Control & Payroll Section */}
+                        {/* Faculty Salary Control & Payroll Section */}
                         <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
                           <h4 className="font-bold text-white text-sm">💵 Faculty Salary & Payroll Control</h4>
                           <p className="text-xs text-gray-400">Manage faculty members' monthly salary compensation packages and add new faculty members.</p>
