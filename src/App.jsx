@@ -375,7 +375,6 @@ export default function App() {
     alert(`Document status updated to: ${statusAction}`);
   };
 
-  // Faculty Salary Control Handlers
   const handleUpdateSalary = (facultyId, updatedSalary) => {
     setFacultySalaries(prev => prev.map(f => f.id === facultyId ? { ...f, salary: updatedSalary } : f));
     alert("Faculty salary updated successfully!");
@@ -464,25 +463,53 @@ export default function App() {
   return (
     <div className={`min-h-screen font-sans relative transition-all duration-300 ${isDark ? 'bg-[#05070c] text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       
+      {/* 3D & 4D Custom CSS Animations & Shaders Injection */}
+      <style>{`
+        @keyframes floatOrb1 {
+          0%, 100% { transform: translate(0px, 0px) scale(1); }
+          50% { transform: translate(30px, -40px) scale(1.15); }
+        }
+        @keyframes floatOrb2 {
+          0%, 100% { transform: translate(0px, 0px) scale(1); }
+          50% { transform: translate(-40px, 30px) scale(1.2); }
+        }
+        .animate-orb1 { animation: floatOrb1 9s ease-in-out infinite; }
+        .animate-orb2 { animation: floatOrb2 12s ease-in-out infinite; }
+        
+        .card-3d-tilt {
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+          transform-style: preserve-3d;
+          perspective: 1000px;
+        }
+        .card-3d-tilt:hover {
+          transform: translateY(-8px) rotateX(3deg) rotateY(-3deg);
+          box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
+        }
+      `}</style>
+
+      {/* 4D Dynamic Background Glow Orbs */}
+      <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-orb1 z-0"></div>
+      <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none animate-orb2 z-0"></div>
+
       {/* Navbar */}
       <nav className={`p-4 border-b sticky top-0 z-50 backdrop-blur-md ${isDark ? 'border-gray-800/80 bg-[#05070c]/80' : 'border-gray-200 bg-white/80'}`}>
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="cursor-pointer flex items-center gap-2" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-md">U</div>
+        <div className="max-w-7xl mx-auto flex justify-between items-center relative z-10">
+          <div className="cursor-pointer flex items-center gap-2 group" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:rotate-12 transition transform duration-300">U</div>
             <div>
               <h1 className="text-base font-extrabold tracking-tight">UniVote Pro</h1>
-              <p className="text-[9px] text-gray-400">National University & Election Portal</p>
+              <p className="text-[9px] text-gray-400">3D/4D National Campus Framework</p>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <button onClick={() => setCurrentView('register-uni')} className="hidden md:block bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 px-3 py-1.5 rounded-xl text-xs font-semibold text-white shadow-md transition">
+            <button onClick={() => setCurrentView('register-uni')} className="hidden md:block bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 px-3 py-1.5 rounded-xl text-xs font-semibold text-white shadow-md transition transform hover:scale-105">
               🏛️ Register as University
             </button>
             <button onClick={() => setCurrentView('admin-login')} className="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 border border-gray-700 transition">
               🔐 Admin Portal
             </button>
-            <button onClick={toggleTheme} className="p-2 rounded-xl border border-gray-700 bg-gray-900/50 text-yellow-400 text-xs transition">
+            <button onClick={toggleTheme} className="p-2 rounded-xl border border-gray-700 bg-gray-900/50 text-yellow-400 text-xs transition transform hover:rotate-45">
               {isDark ? '☀️' : '🌙'}
             </button>
             {user ? (
@@ -491,7 +518,7 @@ export default function App() {
                 <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 px-2 py-1 rounded-lg text-[10px] text-white font-bold">Logout</button>
               </div>
             ) : (
-              <button onClick={handleGoogleLogin} className="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-lg transition">
+              <button onClick={handleGoogleLogin} className="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-lg transition transform hover:scale-105">
                 Sign in with Google
               </button>
             )}
@@ -500,44 +527,44 @@ export default function App() {
       </nav>
 
       {/* Main Container */}
-      <main className="p-6 max-w-7xl mx-auto">
+      <main className="p-6 max-w-7xl mx-auto relative z-10">
 
         {/* 1. Landing Page */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-12 space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <span className="bg-blue-500/10 text-blue-400 text-[11px] font-bold px-3 py-1 rounded-full border border-blue-500/20">
-                Official Campus, Faculty & Regulatory Framework
+              <span className="bg-blue-500/10 text-blue-400 text-[11px] font-bold px-3 py-1 rounded-full border border-blue-500/20 shadow-lg inline-block">
+                ✨ Next-Gen 3D Interactive Campus & Faculty Ecosystem
               </span>
               <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-                Empowering Higher Education & Faculty Management
+                Empowering Higher Education with 3D/4D Motion
               </h2>
               <p className="text-gray-400 text-sm leading-relaxed">
-                A secure unified platform for university registration, faculty salary control, document verification, student record management, and digital campus elections.
+                A secure unified platform featuring 3D animated cards for university registration, faculty salary control, document verification, student records, and digital elections.
               </p>
               <div className="flex justify-center gap-4 pt-4">
-                <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition">
+                <button onClick={() => setCurrentView('universities')} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition transform hover:scale-105">
                   Explore Universities & Portals →
                 </button>
-                <button onClick={() => setCurrentView('register-uni')} className="bg-gray-900 hover:bg-gray-800 border border-gray-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition">
+                <button onClick={() => setCurrentView('register-uni')} className="bg-gray-900 hover:bg-gray-800 border border-gray-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl transition transform hover:scale-105">
                   🏛️ Register New University
                 </button>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4">👨‍🏫</div>
+              <div className="card-3d-tilt bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl group">
+                <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">👨‍🏫</div>
                 <h3 className="text-lg font-bold text-white mb-2">Faculty & Salary Management</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">Admin controls for managing faculty rosters, payrolls, and updating monthly compensation packages.</p>
               </div>
-              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4">🗳️</div>
+              <div className="card-3d-tilt bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl group">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">🗳️</div>
                 <h3 className="text-lg font-bold text-white mb-2">Campus Voting Booth</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">Secure, authenticated student voting booths for annual student union elections with live vote tracking.</p>
               </div>
-              <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xl mb-4">📊</div>
+              <div className="card-3d-tilt bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800/80 p-6 rounded-3xl shadow-xl group">
+                <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition">📊</div>
                 <h3 className="text-lg font-bold text-white mb-2">Student Portal & Records</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, exam results, fee updates, and events.</p>
               </div>
@@ -558,11 +585,11 @@ export default function App() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {universities.map(uni => (
-                <div key={uni.id} className="bg-gray-900/90 border border-gray-800 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group">
+                <div key={uni.id} className="card-3d-tilt bg-gray-900/90 border border-gray-800 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between group">
                   <div>
                     <div className="h-44 overflow-hidden relative">
-                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-                      <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">{uni.status}</span>
+                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                      <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">{uni.status}</span>
                     </div>
                     <div className="p-5">
                       <h3 className="font-bold text-lg text-white mb-1">{uni.name}</h3>
@@ -571,7 +598,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="p-5 pt-0">
-                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-xl text-xs font-bold shadow-md transition">
+                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-xl text-xs font-bold shadow-md transition transform active:scale-95">
                       Open University Portal →
                     </button>
                   </div>
@@ -583,7 +610,7 @@ export default function App() {
 
         {/* 3. University Registration Form */}
         {currentView === 'register-uni' && (
-          <div className="max-w-3xl mx-auto bg-gray-900/90 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6">
+          <div className="max-w-3xl mx-auto bg-gray-900/90 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 card-3d-tilt">
             <div className="flex justify-between items-center border-b border-gray-800 pb-4">
               <div>
                 <h2 className="text-2xl font-bold text-white">University Registration Portal</h2>
@@ -618,7 +645,7 @@ export default function App() {
                 <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
               </div>
 
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
+              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition transform hover:scale-[1.01]">
                 Submit Application for State & UGC Review
               </button>
             </form>
@@ -627,7 +654,7 @@ export default function App() {
 
         {/* 4. Admin Login Portal */}
         {currentView === 'admin-login' && !isAdminLoggedIn && (
-          <div className="max-w-md mx-auto bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 my-12">
+          <div className="max-w-md mx-auto bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 my-12 card-3d-tilt">
             <div className="text-center space-y-2">
               <div className="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl">🔐</div>
               <h2 className="text-xl font-bold text-white">Global Admin Secure Login</h2>
@@ -663,11 +690,11 @@ export default function App() {
               <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-600/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-red-500/30">Logout Admin</button>
             </div>
 
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4 shadow-xl">
               <h3 className="text-lg font-bold text-white">Pending University Applications</h3>
               <div className="space-y-3">
                 {registeredApplications.map(app => (
-                  <div key={app.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                  <div key={app.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center hover:border-blue-500/50 transition">
                     <div>
                       <h4 className="font-bold text-white text-sm">{app.name}</h4>
                       <p className="text-xs text-blue-400">📍 {app.location} | Trust: {app.trust}</p>
@@ -692,11 +719,11 @@ export default function App() {
           <div className="space-y-6">
             <button onClick={() => setSelectedUni(null)} className="text-xs text-blue-400 hover:underline">← Back to Universities</button>
             
-            <div className="relative h-56 rounded-3xl overflow-hidden shadow-2xl border border-gray-800 flex items-end p-6">
-              <div className="absolute inset-0 bg-cover bg-center filter brightness-50" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
+            <div className="relative h-56 rounded-3xl overflow-hidden shadow-2xl border border-gray-800 flex items-end p-6 card-3d-tilt">
+              <div className="absolute inset-0 bg-cover bg-center filter brightness-50 transition transform hover:scale-105 duration-700" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-[#05070c] via-transparent to-transparent"></div>
               <div className="relative z-10">
-                <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Active Campus</span>
+                <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">Active Campus</span>
                 <h2 className="text-3xl font-extrabold text-white mt-2">{selectedUni.name}</h2>
                 <p className="text-xs text-gray-300">📍 {selectedUni.location} • Eligible Voters: {selectedUni.eligible}</p>
               </div>
@@ -737,15 +764,15 @@ export default function App() {
                 {/* Overview Tab with Gallery */}
                 {activeTab === 'portal' && (
                   <div className="space-y-6">
-                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl space-y-4 shadow-xl">
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl space-y-4 shadow-xl card-3d-tilt">
                       <h3 className="text-xl font-bold text-white">Welcome to {selectedUni.name} Portal</h3>
                       <p className="text-xs text-gray-300 leading-relaxed">{selectedUni.desc}</p>
                       <div className="grid grid-cols-2 gap-4 pt-4">
-                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800 shadow">
                           <p className="text-[10px] text-gray-400 font-semibold uppercase">Total Registered Candidates</p>
                           <p className="text-2xl font-extrabold text-blue-400 mt-1">{selectedUni.candidates.length}</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800 shadow">
                           <p className="text-[10px] text-gray-400 font-semibold uppercase">Verification Status</p>
                           <p className="text-2xl font-extrabold text-emerald-400 mt-1">Verified</p>
                         </div>
@@ -758,8 +785,8 @@ export default function App() {
                         <h4 className="text-lg font-bold text-white">📷 Campus Gallery & Events</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {selectedUni.gallery.map((imgUrl, idx) => (
-                            <div key={idx} className="h-48 rounded-xl overflow-hidden border border-gray-800 shadow">
-                              <img src={imgUrl} alt={`Campus Gallery ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                            <div key={idx} className="h-48 rounded-xl overflow-hidden border border-gray-800 shadow card-3d-tilt">
+                              <img src={imgUrl} alt={`Campus Gallery ${idx + 1}`} className="w-full h-full object-cover hover:scale-110 transition duration-500" />
                             </div>
                           ))}
                         </div>
@@ -774,13 +801,13 @@ export default function App() {
                     <h3 className="text-xl font-bold text-white">Active Election Candidates</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {selectedUni.candidates.map(cand => (
-                        <div key={cand.id} className="bg-gray-900 border border-gray-800 p-5 rounded-2xl flex justify-between items-center shadow-lg">
+                        <div key={cand.id} className="card-3d-tilt bg-gray-900 border border-gray-800 p-5 rounded-2xl flex justify-between items-center shadow-lg">
                           <div>
                             <h4 className="font-bold text-white text-base">{cand.name}</h4>
                             <p className="text-xs text-blue-400 font-medium">Party: {cand.party}</p>
                             <p className="text-xs text-gray-400 mt-1">Current Votes: <span className="font-bold text-white">{cand.votes}</span></p>
                           </div>
-                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md transition">
+                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md transition transform active:scale-95">
                             Vote Now
                           </button>
                         </div>
@@ -794,24 +821,24 @@ export default function App() {
                   <div className="space-y-6">
                     
                     {/* 1. Student Dashboard Overview */}
-                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                    <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4 card-3d-tilt">
                       <h3 className="text-xl font-bold text-white">🎓 Student Dashboard Overview</h3>
                       <p className="text-xs text-gray-400">Welcome back! Here is your quick academic summary and stats.</p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800 shadow">
                           <p className="text-[10px] text-gray-400 font-semibold uppercase">Current CGPA</p>
                           <p className="text-2xl font-extrabold text-blue-400 mt-1">8.92 / 10</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800 shadow">
                           <p className="text-[10px] text-gray-400 font-semibold uppercase">Attendance</p>
                           <p className="text-2xl font-extrabold text-emerald-400 mt-1">92.4%</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800 shadow">
                           <p className="text-[10px] text-gray-400 font-semibold uppercase">Fee Status</p>
                           <p className="text-2xl font-extrabold text-amber-400 mt-1">1 Pending</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <div className="bg-gray-950 p-4 rounded-xl border border-gray-800 shadow">
                           <p className="text-[10px] text-gray-400 font-semibold uppercase">Registered Exams</p>
                           <p className="text-2xl font-extrabold text-purple-400 mt-1">6 Subjects</p>
                         </div>
@@ -829,7 +856,7 @@ export default function App() {
 
                       <div className="space-y-3 pt-2">
                         {['Mid-Term Exam', 'End-Term Exam', 'Quiz 1'].map((examName) => (
-                          <div key={examName} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-2">
+                          <div key={examName} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-2 shadow">
                             <h4 className="font-bold text-blue-400 text-sm border-b border-gray-800 pb-2">{examName}</h4>
                             <div className="space-y-2 pt-1">
                               {studentMarks.filter(m => m.exam === examName).length === 0 ? (
@@ -860,7 +887,7 @@ export default function App() {
                       
                       <div className="space-y-3">
                         {studentFees.map(fee => (
-                          <div key={fee.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                          <div key={fee.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center shadow">
                             <div>
                               <h4 className="font-bold text-white text-sm">{fee.semester}</h4>
                               <p className="text-xs text-gray-400">Amount: <span className="text-white font-semibold">{fee.amount}</span> | Due Date: {fee.dueDate}</p>
@@ -887,7 +914,7 @@ export default function App() {
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {upcomingEvents.map(evt => (
-                          <div key={evt.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-2">
+                          <div key={evt.id} className="card-3d-tilt bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-2 shadow">
                             <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-0.5 rounded text-[10px] font-bold">{evt.date}</span>
                             <h4 className="font-bold text-white text-sm mt-1">{evt.title}</h4>
                             <p className="text-xs text-gray-400">{evt.desc}</p>
@@ -900,9 +927,9 @@ export default function App() {
                   </div>
                 )}
 
-                {/* 🌟 ENHANCED Faculty Portal / Marks Management Tab */}
+                {/* Faculty Portal / Marks Management Tab */}
                 {activeTab === 'faculty-portal' && (
-                  <div className="bg-gradient-to-b from-gray-900 via-gray-900 to-[#0b0e17] border border-blue-500/30 p-8 rounded-3xl shadow-2xl space-y-8 backdrop-blur-xl">
+                  <div className="bg-gradient-to-b from-gray-900 via-gray-900 to-[#0b0e17] border border-blue-500/30 p-8 rounded-3xl shadow-2xl space-y-8 backdrop-blur-xl card-3d-tilt">
                     
                     {/* Header Banner */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800/80 pb-5 gap-4">
@@ -1033,7 +1060,7 @@ export default function App() {
 
                 {/* Document Verification Tab */}
                 {activeTab === 'documents' && (
-                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4 card-3d-tilt">
                     <h3 className="text-xl font-bold text-white">Student Verification Document Portal</h3>
                     <p className="text-xs text-gray-400">Upload your identity and academic certificates for {selectedUni.name}.</p>
                     
@@ -1080,7 +1107,7 @@ export default function App() {
                     </div>
 
                     {!isUniAdminLoggedIn ? (
-                      <div className="max-w-md mx-auto bg-gray-950 border border-gray-800 p-6 rounded-2xl space-y-4 my-4">
+                      <div className="max-w-md mx-auto bg-gray-950 border border-gray-800 p-6 rounded-2xl space-y-4 my-4 shadow">
                         <div className="text-center">
                           <h4 className="font-bold text-white text-sm">University Admin Login Required</h4>
                           <p className="text-[11px] text-gray-400">Use: uniorg@univote.com / Uni@1234</p>
@@ -1095,7 +1122,7 @@ export default function App() {
                       <div className="space-y-6">
                         
                         {/* Faculty Salary Control & Payroll Section */}
-                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
+                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5 shadow">
                           <h4 className="font-bold text-white text-sm">💵 Faculty Salary & Payroll Control</h4>
                           <p className="text-xs text-gray-400">Manage faculty members' monthly salary compensation packages and add new faculty members.</p>
                           
@@ -1142,7 +1169,7 @@ export default function App() {
                         </div>
 
                         {/* Image Upload & Management Section */}
-                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
+                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5 shadow">
                           <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
                           
                           <div className="space-y-2 border-b border-gray-800 pb-4">
@@ -1193,7 +1220,7 @@ export default function App() {
                               <p className="text-xs text-gray-400">No student documents submitted for this university yet.</p>
                             ) : (
                               submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
-                                <div key={sub.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3">
+                                <div key={sub.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3 shadow">
                                   <div className="flex justify-between items-start">
                                     <div>
                                       <h5 className="font-bold text-white text-sm">{sub.studentName}</h5>
@@ -1232,7 +1259,7 @@ export default function App() {
 
                 {/* Organisation Panel / Candidate Manager Tab */}
                 {activeTab === 'manager' && (
-                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+                  <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4 card-3d-tilt">
                     <h3 className="text-xl font-bold text-white">Organisation & Candidate Panel</h3>
                     <p className="text-xs text-gray-400">Register new election candidates for {selectedUni.name}.</p>
                     <form onSubmit={handleAddCandidate} className="space-y-4">
