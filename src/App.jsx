@@ -461,40 +461,36 @@ export default function App() {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen font-sans relative overflow-x-hidden transition-all duration-500 ${isDark ? 'bg-[#030508] text-gray-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`min-h-screen font-sans relative overflow-x-hidden transition-all duration-300 ${isDark ? 'bg-[#09090b] text-zinc-100' : 'bg-slate-50 text-slate-900'}`}>
       
-      {/* Ambient Glow Background Effects */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute top-1/3 right-10 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none"></div>
-
       {/* Navbar */}
-      <nav className={`p-4 border-b sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isDark ? 'border-gray-800/80 bg-[#030508]/80 shadow-[0_4px_20px_rgba(0,0,0,0.5)]' : 'border-slate-200 bg-white/80 shadow-sm'}`}>
+      <nav className={`p-4 border-b sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isDark ? 'border-zinc-800 bg-[#09090b]/90 shadow-sm' : 'border-slate-200 bg-white/90 shadow-sm'}`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="cursor-pointer flex items-center gap-3 group" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-500 flex items-center justify-center text-white font-extrabold text-base shadow-[0_0_20px_rgba(37,99,235,0.4)] group-hover:scale-105 transition-transform duration-300">U</div>
+            <div className="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white font-bold text-sm tracking-tight group-hover:bg-zinc-700 transition-colors">U</div>
             <div>
-              <h1 className="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">UniVote Pro</h1>
-              <p className="text-[9px] text-blue-400 font-medium tracking-wider uppercase">National University Portal</p>
+              <h1 className="text-sm font-bold tracking-tight text-zinc-100">UniVote Pro</h1>
+              <p className="text-[10px] text-zinc-400 font-medium tracking-wide">National Campus Framework</p>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <button onClick={() => setCurrentView('register-uni')} className="hidden md:flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:scale-105 transition-all duration-300">
+            <button onClick={() => setCurrentView('register-uni')} className="hidden md:flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-200 transition-all">
               🏛️ Register University
             </button>
-            <button onClick={() => setCurrentView('admin-login')} className="flex items-center gap-1.5 bg-gray-900/90 hover:bg-gray-800 px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-300 border border-gray-700/60 hover:border-blue-500/50 transition-all duration-300">
+            <button onClick={() => setCurrentView('admin-login')} className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-200 transition-all">
               🔐 Admin Portal
             </button>
-            <button onClick={toggleTheme} className="p-2.5 rounded-xl border border-gray-700/60 bg-gray-900/50 hover:bg-gray-800 text-yellow-400 text-xs transition-all duration-300 shadow-inner">
+            <button onClick={toggleTheme} className="p-2 rounded-lg border border-zinc-700/80 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs transition-all">
               {isDark ? '☀️' : '🌙'}
             </button>
             {user ? (
-              <div className="flex items-center gap-2 bg-gray-900/90 border border-gray-800 px-3.5 py-1.5 rounded-xl shadow-lg">
-                <span className="text-xs text-gray-200 font-semibold">{user.displayName || user.email}</span>
-                <button onClick={handleLogout} className="bg-red-600 hover:bg-red-500 px-2.5 py-1 rounded-lg text-[10px] text-white font-bold transition shadow">Logout</button>
+              <div className="flex items-center gap-2 bg-zinc-800/80 border border-zinc-700 px-3 py-1 rounded-lg">
+                <span className="text-xs text-zinc-200 font-medium">{user.displayName || user.email}</span>
+                <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-[10px] font-semibold transition">Logout</button>
               </div>
             ) : (
-              <button onClick={handleGoogleLogin} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-105 transition-all duration-300">
+              <button onClick={handleGoogleLogin} className="bg-zinc-100 hover:bg-white text-zinc-900 px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all">
                 Sign in with Google
               </button>
             )}
@@ -508,42 +504,42 @@ export default function App() {
         {/* 1. Landing Page */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-12 space-y-16">
-            <div className="text-center space-y-6 max-w-3xl mx-auto animate-fade-in">
-              <span className="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-400 text-[11px] font-extrabold px-4 py-1.5 rounded-full border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
-                Official Campus, Faculty & Regulatory Framework
+            <div className="text-center space-y-6 max-w-3xl mx-auto">
+              <span className="inline-flex items-center gap-1.5 bg-zinc-800/80 text-zinc-300 text-[11px] font-medium px-3 py-1 rounded-full border border-zinc-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                Next-Gen 3D Interactive Campus & Faculty Ecosystem
               </span>
-              <h2 className="text-5xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent leading-tight">
-                Empowering Higher Education & Faculty Management
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-100 leading-tight">
+                Empowering Higher Education with 3D/4D Motion
               </h2>
-              <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-                A secure unified platform for university registration, faculty salary control, document verification, student record management, and digital campus elections.
+              <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+                A secure unified platform featuring 3D animated cards for university registration, faculty salary control, document verification, student records, and digital elections.
               </p>
-              <div className="flex flex-wrap justify-center gap-4 pt-2">
-                <button onClick={() => setCurrentView('universities')} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:scale-105 transition-all duration-300">
+              <div className="flex flex-wrap justify-center gap-3 pt-2">
+                <button onClick={() => setCurrentView('universities')} className="bg-zinc-100 hover:bg-white text-zinc-900 px-6 py-3 rounded-xl font-semibold text-xs shadow-sm transition-all">
                   Explore Universities & Portals →
                 </button>
-                <button onClick={() => setCurrentView('register-uni')} className="bg-gray-900/90 hover:bg-gray-800 border border-gray-700/80 hover:border-blue-500/50 text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm shadow-xl hover:scale-105 transition-all duration-300">
+                <button onClick={() => setCurrentView('register-uni')} className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-xl font-semibold text-xs transition-all">
                   🏛️ Register New University
                 </button>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              <div className="bg-gradient-to-b from-gray-900/90 via-gray-900/50 to-gray-950 border border-gray-800/80 hover:border-blue-500/40 p-7 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group backdrop-blur-md">
-                <div className="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center font-bold text-2xl mb-5 group-hover:scale-110 transition-transform shadow-inner">👨‍🏫</div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">Faculty & Salary Management</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Admin controls for managing faculty rosters, payrolls, and updating monthly compensation packages seamlessly.</p>
+              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-6 rounded-2xl transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4">👨‍🏫</div>
+                <h3 className="text-base font-bold text-zinc-100 mb-1">Faculty & Salary Management</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">Admin controls for managing faculty rosters, payrolls, and updating monthly compensation packages.</p>
               </div>
-              <div className="bg-gradient-to-b from-gray-900/90 via-gray-900/50 to-gray-950 border border-gray-800/80 hover:border-emerald-500/40 p-7 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group backdrop-blur-md">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold text-2xl mb-5 group-hover:scale-110 transition-transform shadow-inner">🗳️</div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">Campus Voting Booth</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Secure, authenticated student voting booths for annual student union elections with live vote tracking & transparency.</p>
+              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-6 rounded-2xl transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4">🗳️</div>
+                <h3 className="text-base font-bold text-zinc-100 mb-1">Campus Voting Booth</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">Secure, authenticated student voting booths for annual student union elections with live vote tracking.</p>
               </div>
-              <div className="bg-gradient-to-b from-gray-900/90 via-gray-900/50 to-gray-950 border border-gray-800/80 hover:border-purple-500/40 p-7 rounded-3xl shadow-xl transition-all duration-300 hover:-translate-y-2 group backdrop-blur-md">
-                <div className="w-14 h-14 rounded-2xl bg-purple-600/20 border border-purple-500/30 text-purple-400 flex items-center justify-center font-bold text-2xl mb-5 group-hover:scale-110 transition-transform shadow-inner">📊</div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">Student Portal & Records</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, exam results, fee status updates, and campus events.</p>
+              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-6 rounded-2xl transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4">📊</div>
+                <h3 className="text-base font-bold text-zinc-100 mb-1">Student Portal & Records</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, exam results, fee updates, and events.</p>
               </div>
             </div>
           </div>
@@ -552,31 +548,31 @@ export default function App() {
         {/* 2. Universities List View */}
         {currentView === 'universities' && !selectedUni && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-gray-900/50 border border-gray-800/80 p-6 rounded-3xl backdrop-blur-md">
+            <div className="flex justify-between items-center bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl">
               <div>
-                <h2 className="text-2xl font-extrabold tracking-tight text-white">Approved Universities & Campuses</h2>
-                <p className="text-xs text-gray-400 mt-1">Select an institution to access its dedicated portal and voting booth.</p>
+                <h2 className="text-xl font-bold text-zinc-100">Approved Universities & Campuses</h2>
+                <p className="text-xs text-zinc-400 mt-1">Select an institution to access its dedicated portal and voting booth.</p>
               </div>
-              <button onClick={() => setCurrentView('home')} className="text-xs font-semibold text-blue-400 hover:text-blue-300 bg-blue-600/10 px-4 py-2 rounded-xl border border-blue-500/20 transition">← Back to Home</button>
+              <button onClick={() => setCurrentView('home')} className="text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800 px-3.5 py-1.5 rounded-lg border border-zinc-700 transition">← Back to Home</button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {universities.map(uni => (
-                <div key={uni.id} className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 hover:border-blue-500/50 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group">
+                <div key={uni.id} className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl overflow-hidden shadow-sm transition-all flex flex-col justify-between group">
                   <div>
-                    <div className="h-48 overflow-hidden relative">
-                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-80"></div>
-                      <span className="absolute top-3 right-3 bg-emerald-500/90 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg backdrop-blur-md">✓ {uni.status}</span>
+                    <div className="h-44 overflow-hidden relative">
+                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-60"></div>
+                      <span className="absolute top-3 right-3 bg-zinc-900/90 text-zinc-200 border border-zinc-700 text-[10px] font-semibold px-2.5 py-0.5 rounded-full">✓ {uni.status}</span>
                     </div>
-                    <div className="p-6 space-y-2">
-                      <h3 className="font-extrabold text-lg text-white group-hover:text-blue-400 transition-colors">{uni.name}</h3>
-                      <p className="text-xs text-blue-400 font-semibold flex items-center gap-1">📍 {uni.location}</p>
-                      <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{uni.desc}</p>
+                    <div className="p-5 space-y-2">
+                      <h3 className="font-bold text-base text-zinc-100">{uni.name}</h3>
+                      <p className="text-xs text-zinc-400 font-medium">📍 {uni.location}</p>
+                      <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">{uni.desc}</p>
                     </div>
                   </div>
-                  <div className="p-6 pt-0">
-                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 text-white py-3 rounded-2xl text-xs font-extrabold shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all duration-300">
+                  <div className="p-5 pt-0">
+                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 py-2.5 rounded-xl text-xs font-semibold transition-all">
                       Open University Portal →
                     </button>
                   </div>
@@ -588,42 +584,42 @@ export default function App() {
 
         {/* 3. University Registration Form */}
         {currentView === 'register-uni' && (
-          <div className="max-w-3xl mx-auto bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-8 md:p-10 rounded-3xl shadow-2xl space-y-8 backdrop-blur-xl">
-            <div className="flex justify-between items-center border-b border-gray-800/80 pb-5">
+          <div className="max-w-3xl mx-auto bg-zinc-900/60 border border-zinc-800 p-8 rounded-2xl shadow-sm space-y-6">
+            <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
               <div>
-                <h2 className="text-2xl font-extrabold text-white">University Registration Portal</h2>
-                <p className="text-xs text-gray-400 mt-1">Sponsoring Body → State Govt → UGC Setup Route Application Form</p>
+                <h2 className="text-xl font-bold text-zinc-100">University Registration Portal</h2>
+                <p className="text-xs text-zinc-400 mt-0.5">Sponsoring Body → State Govt → UGC Setup Route Application Form</p>
               </div>
-              <button onClick={() => setCurrentView('home')} className="text-xs text-blue-400 hover:underline">Cancel</button>
+              <button onClick={() => setCurrentView('home')} className="text-xs text-zinc-400 hover:text-white">Cancel</button>
             </div>
 
-            <form onSubmit={handleUniversityRegistration} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <form onSubmit={handleUniversityRegistration} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">University Name</label>
-                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-2xl p-3.5 text-sm text-white outline-none transition" required />
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">University Name</label>
+                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none transition" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">Location (State / City)</label>
-                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-2xl p-3.5 text-sm text-white outline-none transition" required />
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">Location (State / City)</label>
+                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none transition" required />
                 </div>
               </div>
 
-              <div className="space-y-4 pt-2">
-                <h3 className="text-xs font-extrabold text-blue-400 uppercase tracking-widest">A. Sponsoring Body Documents</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" value={regTrustDeed} onChange={(e) => setRegTrustDeed(e.target.value)} placeholder="Trust Deed / Society Reg. Number" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl p-3.5 text-sm text-white outline-none" required />
-                  <input type="text" value={regPan} onChange={(e) => setRegPan(e.target.value)} placeholder="Trust PAN Number" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl p-3.5 text-sm text-white outline-none" required />
+              <div className="space-y-3 pt-1">
+                <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">A. Sponsoring Body Documents</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input type="text" value={regTrustDeed} onChange={(e) => setRegTrustDeed(e.target.value)} placeholder="Trust Deed / Society Reg. Number" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                  <input type="text" value={regPan} onChange={(e) => setRegPan(e.target.value)} placeholder="Trust PAN Number" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                 </div>
 
-                <h3 className="text-xs font-extrabold text-blue-400 uppercase tracking-widest pt-2">B. Land & Infrastructure (Min 50 Acres)</h3>
-                <input type="text" value={regLandDoc} onChange={(e) => setRegLandDoc(e.target.value)} placeholder="Sale Deed / CLU Certificate Link or Ref" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl p-3.5 text-sm text-white outline-none" required />
+                <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider pt-1">B. Land & Infrastructure (Min 50 Acres)</h3>
+                <input type="text" value={regLandDoc} onChange={(e) => setRegLandDoc(e.target.value)} placeholder="Sale Deed / CLU Certificate Link or Ref" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
 
-                <h3 className="text-xs font-extrabold text-blue-400 uppercase tracking-widest pt-2">C. Financial Documents</h3>
-                <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl p-3.5 text-sm text-white outline-none" required />
+                <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider pt-1">C. Financial Documents</h3>
+                <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
               </div>
 
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-4 rounded-2xl font-extrabold text-sm text-white shadow-[0_0_25px_rgba(37,99,235,0.4)] transition-all duration-300">
+              <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition-all">
                 Submit Application for State & UGC Review →
               </button>
             </form>
@@ -632,26 +628,26 @@ export default function App() {
 
         {/* 4. Admin Login Portal */}
         {currentView === 'admin-login' && !isAdminLoggedIn && (
-          <div className="max-w-md mx-auto bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 my-12 backdrop-blur-xl">
+          <div className="max-w-md mx-auto bg-zinc-900/60 border border-zinc-800 p-8 rounded-2xl shadow-sm space-y-6 my-12">
             <div className="text-center space-y-2">
-              <div className="w-14 h-14 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-2xl shadow-inner">🔐</div>
-              <h2 className="text-xl font-extrabold text-white">Global Admin Secure Login</h2>
-              <p className="text-xs text-gray-400">Enter admin credentials to manage university approvals.</p>
+              <div className="w-12 h-12 bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-xl mx-auto flex items-center justify-center font-bold text-lg">🔐</div>
+              <h2 className="text-lg font-bold text-zinc-100">Global Admin Secure Login</h2>
+              <p className="text-xs text-zinc-400">Enter admin credentials to manage university approvals.</p>
             </div>
             <form onSubmit={handleAdminLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1">Admin Email ID</label>
-                <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="admin@univote.com" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl p-3.5 text-sm text-white outline-none" required />
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">Admin Email ID</label>
+                <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="admin@univote.com" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1">Password</label>
-                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl p-3.5 text-sm text-white outline-none" required />
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">Password</label>
+                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
+              <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
                 Login as Global Admin
               </button>
-              <div className="text-center pt-2">
-                <button type="button" onClick={() => setCurrentView('home')} className="text-xs text-gray-400 hover:text-white">← Return to Home</button>
+              <div className="text-center pt-1">
+                <button type="button" onClick={() => setCurrentView('home')} className="text-xs text-zinc-400 hover:text-white">← Return to Home</button>
               </div>
             </form>
           </div>
@@ -660,30 +656,30 @@ export default function App() {
         {/* 5. Admin Dashboard */}
         {currentView === 'admin-panel' && isAdminLoggedIn && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-gray-900/80 border border-gray-800 p-6 rounded-3xl backdrop-blur-md">
+            <div className="flex justify-between items-center bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl">
               <div>
-                <h2 className="text-2xl font-extrabold text-white">Global Admin Control Panel</h2>
-                <p className="text-xs text-gray-400 mt-1">Review sponsoring body documents and approve university applications.</p>
+                <h2 className="text-xl font-bold text-zinc-100">Global Admin Control Panel</h2>
+                <p className="text-xs text-zinc-400 mt-0.5">Review sponsoring body documents and approve university applications.</p>
               </div>
-              <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/30 transition">Logout Admin</button>
+              <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-red-500/20 transition">Logout Admin</button>
             </div>
 
-            <div className="bg-gray-900/90 border border-gray-800 rounded-3xl p-6 space-y-4 shadow-xl backdrop-blur-md">
-              <h3 className="text-lg font-bold text-white">Pending University Applications</h3>
+            <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
+              <h3 className="text-base font-bold text-zinc-100">Pending University Applications</h3>
               <div className="space-y-3">
                 {registeredApplications.map(app => (
-                  <div key={app.id} className="bg-gray-950 border border-gray-800 hover:border-blue-500/40 p-5 rounded-2xl flex justify-between items-center transition shadow">
+                  <div key={app.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
                     <div>
-                      <h4 className="font-extrabold text-white text-sm">{app.name}</h4>
-                      <p className="text-xs text-blue-400 mt-0.5">📍 {app.location} | Trust: {app.trust}</p>
-                      <p className="text-[11px] text-gray-400 mt-1">Status: <span className="text-amber-400 font-semibold">{app.status}</span></p>
+                      <h4 className="font-bold text-zinc-100 text-xs">{app.name}</h4>
+                      <p className="text-xs text-zinc-400 mt-0.5">📍 {app.location} | Trust: {app.trust}</p>
+                      <p className="text-[11px] text-zinc-400 mt-1">Status: <span className="text-amber-400 font-semibold">{app.status}</span></p>
                     </div>
                     {app.status === 'Pending Approval' ? (
-                      <button onClick={() => handleApproveUni(app.id)} className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg transition">
+                      <button onClick={() => handleApproveUni(app.id)} className="bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-lg text-xs font-semibold transition">
                         Approve & Publish
                       </button>
                     ) : (
-                      <span className="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20">✓ Approved</span>
+                      <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">✓ Approved</span>
                     )}
                   </div>
                 ))}
@@ -695,15 +691,15 @@ export default function App() {
         {/* 6. University Interface & Dashboard with Sidebar */}
         {selectedUni && (
           <div className="space-y-6">
-            <button onClick={() => setSelectedUni(null)} className="text-xs font-semibold text-blue-400 hover:underline">← Back to Universities</button>
+            <button onClick={() => setSelectedUni(null)} className="text-xs font-medium text-zinc-400 hover:text-white">← Back to Universities</button>
             
-            <div className="relative h-64 rounded-3xl overflow-hidden shadow-2xl border border-gray-800/80 flex items-end p-8">
-              <div className="absolute inset-0 bg-cover bg-center filter brightness-50 scale-105" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030508] via-[#030508]/50 to-transparent"></div>
-              <div className="relative z-10 space-y-2">
-                <span className="bg-blue-600 text-white text-[10px] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-lg">Active Campus</span>
-                <h2 className="text-3xl md:text-4xl font-black text-white">{selectedUni.name}</h2>
-                <p className="text-xs text-gray-300 font-medium">📍 {selectedUni.location} • Eligible Voters: <span className="text-blue-400 font-bold">{selectedUni.eligible}</span></p>
+            <div className="relative h-56 rounded-2xl overflow-hidden border border-zinc-800 flex items-end p-6">
+              <div className="absolute inset-0 bg-cover bg-center filter brightness-40" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent"></div>
+              <div className="relative z-10 space-y-1.5">
+                <span className="bg-zinc-800 border border-zinc-700 text-zinc-200 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider">Active Campus</span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">{selectedUni.name}</h2>
+                <p className="text-xs text-zinc-300">📍 {selectedUni.location} • Eligible Voters: <span className="text-white font-semibold">{selectedUni.eligible}</span></p>
               </div>
             </div>
 
@@ -711,27 +707,27 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               
               {/* Sidebar Options */}
-              <div className="bg-gray-900/90 border border-gray-800/80 p-4 rounded-3xl space-y-2 h-fit shadow-2xl backdrop-blur-md">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3 pb-2">University Menu</p>
-                <button onClick={() => setActiveTab('portal')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'portal' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+              <div className="bg-zinc-900/60 border border-zinc-800 p-3 rounded-2xl space-y-1 h-fit">
+                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 py-2">University Menu</p>
+                <button onClick={() => setActiveTab('portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'portal' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🏠 University Overview
                 </button>
-                <button onClick={() => setActiveTab('voting')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'voting' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+                <button onClick={() => setActiveTab('voting')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'voting' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🗳️ Voting Booth
                 </button>
-                <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'student-portal' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+                <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'student-portal' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🎓 Student Portal & Dashboard
                 </button>
-                <button onClick={() => setActiveTab('faculty-portal')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'faculty-portal' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+                <button onClick={() => setActiveTab('faculty-portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'faculty-portal' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   👨‍🏫 Faculty Marks Management
                 </button>
-                <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'documents' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+                <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'documents' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   📄 Document Verification
                 </button>
-                <button onClick={() => setActiveTab('uni-admin')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'uni-admin' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+                <button onClick={() => setActiveTab('uni-admin')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'uni-admin' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🛡️ Uni Admin Panel
                 </button>
-                <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'manager' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-300 hover:bg-gray-800/60'}`}>
+                <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'manager' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🏛️ Organisation Panel
                 </button>
               </div>
@@ -742,29 +738,29 @@ export default function App() {
                 {/* Overview Tab with Gallery */}
                 {activeTab === 'portal' && (
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl space-y-4 shadow-2xl backdrop-blur-md">
-                      <h3 className="text-xl font-extrabold text-white">Welcome to {selectedUni.name} Portal</h3>
-                      <p className="text-xs text-gray-300 leading-relaxed">{selectedUni.desc}</p>
-                      <div className="grid grid-cols-2 gap-4 pt-2">
-                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800/80 shadow-inner">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Registered Candidates</p>
-                          <p className="text-3xl font-black text-blue-400 mt-1">{selectedUni.candidates.length}</p>
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                      <h3 className="text-lg font-bold text-zinc-100">Welcome to {selectedUni.name} Portal</h3>
+                      <p className="text-xs text-zinc-300 leading-relaxed">{selectedUni.desc}</p>
+                      <div className="grid grid-cols-2 gap-4 pt-1">
+                        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase">Total Candidates</p>
+                          <p className="text-2xl font-bold text-zinc-100 mt-0.5">{selectedUni.candidates.length}</p>
                         </div>
-                        <div className="bg-gray-950 p-5 rounded-2xl border border-gray-800/80 shadow-inner">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Verification Status</p>
-                          <p className="text-3xl font-black text-emerald-400 mt-1">Verified</p>
+                        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase">Verification Status</p>
+                          <p className="text-2xl font-bold text-emerald-400 mt-0.5">Verified</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Campus Gallery Section */}
                     {selectedUni.gallery && selectedUni.gallery.length > 0 && (
-                      <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl space-y-4 shadow-2xl backdrop-blur-md">
-                        <h4 className="text-lg font-bold text-white">📷 Campus Gallery & Events</h4>
+                      <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                        <h4 className="text-base font-bold text-zinc-100">📷 Campus Gallery & Events</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {selectedUni.gallery.map((imgUrl, idx) => (
-                            <div key={idx} className="h-52 rounded-2xl overflow-hidden border border-gray-800 shadow-xl group">
-                              <img src={imgUrl} alt={`Campus Gallery ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                            <div key={idx} className="h-48 rounded-xl overflow-hidden border border-zinc-800 group">
+                              <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
                             </div>
                           ))}
                         </div>
@@ -776,16 +772,16 @@ export default function App() {
                 {/* Voting Booth Tab */}
                 {activeTab === 'voting' && (
                   <div className="space-y-4">
-                    <h3 className="text-xl font-extrabold text-white">Active Election Candidates</h3>
+                    <h3 className="text-lg font-bold text-zinc-100">Active Election Candidates</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {selectedUni.candidates.map(cand => (
-                        <div key={cand.id} className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 hover:border-emerald-500/40 p-6 rounded-3xl flex justify-between items-center shadow-xl transition-all duration-300">
+                        <div key={cand.id} className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-5 rounded-2xl flex justify-between items-center transition-all">
                           <div>
-                            <h4 className="font-extrabold text-white text-base">{cand.name}</h4>
-                            <p className="text-xs text-blue-400 font-bold mt-0.5">Party: {cand.party}</p>
-                            <p className="text-xs text-gray-400 mt-1">Current Votes: <span className="font-extrabold text-white">{cand.votes}</span></p>
+                            <h4 className="font-bold text-zinc-100 text-sm">{cand.name}</h4>
+                            <p className="text-xs text-zinc-400 mt-0.5">Party: <span className="text-zinc-200 font-medium">{cand.party}</span></p>
+                            <p className="text-xs text-zinc-400 mt-1">Current Votes: <span className="font-bold text-zinc-100">{cand.votes}</span></p>
                           </div>
-                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-2xl text-xs font-extrabold text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:scale-105 transition">
+                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition">
                             Vote Now
                           </button>
                         </div>
@@ -798,51 +794,49 @@ export default function App() {
                 {activeTab === 'student-portal' && (
                   <div className="space-y-6">
                     
-                    {/* 1. Student Dashboard Overview */}
-                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                      <h3 className="text-xl font-extrabold text-white">🎓 Student Dashboard Overview</h3>
-                      <p className="text-xs text-gray-400">Welcome back! Here is your quick academic summary and stats.</p>
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                      <h3 className="text-lg font-bold text-zinc-100">🎓 Student Dashboard Overview</h3>
+                      <p className="text-xs text-zinc-400">Welcome back! Here is your quick academic summary and stats.</p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-                        <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">Current CGPA</p>
-                          <p className="text-2xl font-black text-blue-400 mt-1">8.92 / 10</p>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-1">
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase">Current CGPA</p>
+                          <p className="text-xl font-bold text-zinc-100 mt-1">8.92 / 10</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">Attendance</p>
-                          <p className="text-2xl font-black text-emerald-400 mt-1">92.4%</p>
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase">Attendance</p>
+                          <p className="text-xl font-bold text-emerald-400 mt-1">92.4%</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">Fee Status</p>
-                          <p className="text-2xl font-black text-amber-400 mt-1">1 Pending</p>
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase">Fee Status</p>
+                          <p className="text-xl font-bold text-amber-400 mt-1">1 Pending</p>
                         </div>
-                        <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">Registered Exams</p>
-                          <p className="text-2xl font-black text-purple-400 mt-1">6 Subjects</p>
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase">Registered Exams</p>
+                          <p className="text-xl font-bold text-zinc-100 mt-1">6 Subjects</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* 2. Student Marks */}
-                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                      <h3 className="text-xl font-extrabold text-white">📝 Examination Marks & Grades (Live View)</h3>
-                      <p className="text-xs text-gray-400">View live marks entered by the faculty members for Mid-Term, End-Term, and Quizzes.</p>
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                      <h3 className="text-lg font-bold text-zinc-100">📝 Examination Marks & Grades</h3>
+                      <p className="text-xs text-zinc-400">View live marks entered by faculty members.</p>
 
-                      <div className="space-y-3 pt-2">
+                      <div className="space-y-3 pt-1">
                         {['Mid-Term Exam', 'End-Term Exam', 'Quiz 1'].map((examName) => (
-                          <div key={examName} className="bg-gray-950 border border-gray-800/80 p-4 rounded-2xl space-y-2">
-                            <h4 className="font-bold text-blue-400 text-xs uppercase tracking-wider border-b border-gray-800 pb-2">{examName}</h4>
+                          <div key={examName} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-2">
+                            <h4 className="font-semibold text-zinc-300 text-xs uppercase tracking-wider border-b border-zinc-800/80 pb-2">{examName}</h4>
                             <div className="space-y-2 pt-1">
                               {studentMarks.filter(m => m.exam === examName).length === 0 ? (
-                                <p className="text-[11px] text-gray-500">No records found for {examName}.</p>
+                                <p className="text-[11px] text-zinc-500">No records found for {examName}.</p>
                               ) : (
                                 studentMarks.filter(m => m.exam === examName).map(m => (
-                                  <div key={m.id} className="flex justify-between items-center bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                                  <div key={m.id} className="flex justify-between items-center bg-zinc-900/40 p-3 rounded-lg border border-zinc-800">
                                     <div>
-                                      <h5 className="font-bold text-white text-xs">{m.subject}</h5>
-                                      <p className="text-[11px] text-gray-400">Marks: <span className="text-white font-bold">{m.marks}</span></p>
+                                      <h5 className="font-semibold text-zinc-100 text-xs">{m.subject}</h5>
+                                      <p className="text-[11px] text-zinc-400">Marks: <span className="text-zinc-200 font-semibold">{m.marks}</span></p>
                                     </div>
-                                    <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-xl text-xs font-extrabold">
+                                    <span className="bg-zinc-800 text-zinc-200 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-semibold">
                                       Grade: {m.grade}
                                     </span>
                                   </div>
@@ -854,24 +848,23 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* 3. Student Fees */}
-                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                      <h3 className="text-xl font-extrabold text-white">💳 Student Fee Dues & Status</h3>
-                      <p className="text-xs text-gray-400">Check tuition fee status and clear pending semester payments.</p>
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                      <h3 className="text-lg font-bold text-zinc-100">💳 Student Fee Dues & Status</h3>
+                      <p className="text-xs text-zinc-400">Check tuition fee status and clear pending semester payments.</p>
                       
                       <div className="space-y-3">
                         {studentFees.map(fee => (
-                          <div key={fee.id} className="bg-gray-950 border border-gray-800 p-4 rounded-2xl flex justify-between items-center">
+                          <div key={fee.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
                             <div>
-                              <h4 className="font-extrabold text-white text-sm">{fee.semester}</h4>
-                              <p className="text-xs text-gray-400 mt-0.5">Amount: <span className="text-white font-bold">{fee.amount}</span> | Due: {fee.dueDate}</p>
+                              <h4 className="font-bold text-zinc-100 text-xs">{fee.semester}</h4>
+                              <p className="text-xs text-zinc-400 mt-0.5">Amount: <span className="text-zinc-200 font-semibold">{fee.amount}</span> | Due: {fee.dueDate}</p>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className={`text-xs font-bold px-3 py-1 rounded-xl border ${fee.status === 'Paid' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' : 'bg-amber-950/80 text-amber-400 border-amber-800'}`}>
+                              <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${fee.status === 'Paid' ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/50' : 'bg-amber-950/40 text-amber-400 border-amber-900/50'}`}>
                                 {fee.status}
                               </span>
                               {fee.status === 'Pending' && (
-                                <button onClick={() => handlePayFee(fee.id)} className="bg-emerald-600 hover:bg-emerald-500 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow">
+                                <button onClick={() => handlePayFee(fee.id)} className="bg-zinc-100 hover:bg-white text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
                                   Pay Now
                                 </button>
                               )}
@@ -881,18 +874,17 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* 4. Upcoming Events */}
-                    <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                      <h3 className="text-xl font-extrabold text-white">📅 Upcoming Campus Events</h3>
-                      <p className="text-xs text-gray-400">Stay updated with upcoming academic and extracurricular schedules.</p>
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                      <h3 className="text-lg font-bold text-zinc-100">📅 Upcoming Campus Events</h3>
+                      <p className="text-xs text-zinc-400">Stay updated with upcoming academic and extracurricular schedules.</p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {upcomingEvents.map(evt => (
-                          <div key={evt.id} className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-2">
-                            <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-lg text-[10px] font-bold">{evt.date}</span>
-                            <h4 className="font-bold text-white text-sm mt-1">{evt.title}</h4>
-                            <p className="text-xs text-gray-400 leading-relaxed">{evt.desc}</p>
-                            <p className="text-[11px] text-emerald-400 font-semibold">📍 {evt.venue}</p>
+                          <div key={evt.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-2">
+                            <span className="bg-zinc-800 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-[10px] font-medium">{evt.date}</span>
+                            <h4 className="font-bold text-zinc-100 text-xs mt-1">{evt.title}</h4>
+                            <p className="text-xs text-zinc-400 leading-relaxed">{evt.desc}</p>
+                            <p className="text-[11px] text-zinc-300 font-medium">📍 {evt.venue}</p>
                           </div>
                         ))}
                       </div>
@@ -903,103 +895,102 @@ export default function App() {
 
                 {/* Faculty Portal Tab */}
                 {activeTab === 'faculty-portal' && (
-                  <div className="bg-gradient-to-b from-gray-900/90 via-gray-900/95 to-[#05080f] border border-blue-500/30 p-8 rounded-3xl shadow-2xl space-y-8 backdrop-blur-xl">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-6">
                     
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800/80 pb-5 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-4 gap-3">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
-                          <span className="text-[11px] font-extrabold tracking-widest text-blue-400 uppercase">Faculty Assessment Dashboard</span>
+                          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                          <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">Faculty Assessment Dashboard</span>
                         </div>
-                        <h3 className="text-2xl font-extrabold text-white tracking-tight">Marks & Evaluation Portal</h3>
-                        <p className="text-xs text-gray-400">Manage, evaluate, and publish verified student marks and academic grades in real-time.</p>
+                        <h3 className="text-xl font-bold text-zinc-100">Marks & Evaluation Portal</h3>
+                        <p className="text-xs text-zinc-400">Manage and publish verified student marks and academic grades in real-time.</p>
                       </div>
                       {isFacultyLoggedIn && (
-                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/30 transition shadow-lg">
+                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-red-500/20 transition">
                           🔒 Logout Faculty
                         </button>
                       )}
                     </div>
 
                     {!isFacultyLoggedIn ? (
-                      <div className="max-w-md mx-auto bg-gradient-to-b from-gray-950 to-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl space-y-6 my-6 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                        <div className="text-center space-y-2">
-                          <div className="w-14 h-14 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl mx-auto flex items-center justify-center font-bold text-2xl shadow-inner">👨‍🏫</div>
-                          <h4 className="font-bold text-white text-lg">Faculty Secure Portal</h4>
-                          <p className="text-xs text-gray-400">Authenticate with your faculty credentials.</p>
-                          <div className="bg-blue-950/60 border border-blue-500/20 p-2.5 rounded-xl text-[11px] text-blue-300 font-mono mt-2">
-                            🔑 Demo: faculty@univote.com / Faculty@1234
+                      <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 p-6 rounded-2xl space-y-4 my-4">
+                        <div className="text-center space-y-1.5">
+                          <div className="w-12 h-12 bg-zinc-900 border border-zinc-700 text-zinc-200 rounded-xl mx-auto flex items-center justify-center font-bold text-lg">👨‍🏫</div>
+                          <h4 className="font-bold text-zinc-100 text-sm">Faculty Secure Portal</h4>
+                          <p className="text-xs text-zinc-400">Authenticate with your faculty credentials.</p>
+                          <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-lg text-[11px] text-zinc-300 font-mono mt-2">
+                            🔑 faculty@univote.com / Faculty@1234
                           </div>
                         </div>
-                        <form onSubmit={handleFacultyLogin} className="space-y-4 pt-2">
+                        <form onSubmit={handleFacultyLogin} className="space-y-3 pt-1">
                           <div>
-                            <label className="block text-xs font-bold text-gray-300 mb-1">Faculty Email</label>
-                            <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-sm text-white outline-none" required />
+                            <label className="block text-xs font-semibold text-zinc-300 mb-1">Faculty Email</label>
+                            <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-zinc-900 border border-zinc-800 focus:border-zinc-700 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-gray-300 mb-1">Password</label>
-                            <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-gray-900 border border-gray-800 focus:border-blue-500 rounded-xl p-3 text-sm text-white outline-none" required />
+                            <label className="block text-xs font-semibold text-zinc-300 mb-1">Password</label>
+                            <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-900 border border-zinc-800 focus:border-zinc-700 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                           </div>
-                          <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-xl transition">
+                          <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
                             Authenticate Faculty →
                           </button>
                         </form>
                       </div>
                     ) : (
-                      <div className="space-y-8">
+                      <div className="space-y-6">
                         
-                        <div className="bg-gray-950 border border-gray-800 p-6 rounded-3xl shadow-xl space-y-4">
-                          <h4 className="font-extrabold text-white text-sm uppercase tracking-wider">✍️ Publish New Student Examination Marks</h4>
-                          <form onSubmit={handleAddMark} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-zinc-950 border border-zinc-800 p-5 rounded-xl space-y-3">
+                          <h4 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">✍️ Publish New Student Examination Marks</h4>
+                          <form onSubmit={handleAddMark} className="space-y-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div>
-                                <label className="block text-xs font-bold text-gray-300 mb-1">Examination Type</label>
-                                <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white outline-none">
+                                <label className="block text-xs font-semibold text-zinc-300 mb-1">Examination Type</label>
+                                <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200 outline-none">
                                   <option value="Mid-Term Exam">Mid-Term Exam</option>
                                   <option value="End-Term Exam">End-Term Exam</option>
                                   <option value="Quiz 1">Quiz 1</option>
                                 </select>
                               </div>
                               <div>
-                                <label className="block text-xs font-bold text-gray-300 mb-1">Subject Title</label>
-                                <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. AI & ML" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white outline-none" required />
+                                <label className="block text-xs font-semibold text-zinc-300 mb-1">Subject Title</label>
+                                <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. AI & ML" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200 outline-none" required />
                               </div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div>
-                                <label className="block text-xs font-bold text-gray-300 mb-1">Marks Obtained</label>
-                                <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="e.g. 45/50" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white outline-none" required />
+                                <label className="block text-xs font-semibold text-zinc-300 mb-1">Marks Obtained</label>
+                                <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="e.g. 45/50" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200 outline-none" required />
                               </div>
                               <div>
-                                <label className="block text-xs font-bold text-gray-300 mb-1">Grade Awarded</label>
-                                <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white outline-none" required />
+                                <label className="block text-xs font-semibold text-zinc-300 mb-1">Grade Awarded</label>
+                                <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200 outline-none" required />
                               </div>
                             </div>
-                            <button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 py-3 rounded-xl font-bold text-xs text-white shadow-lg transition">
+                            <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-2.5 rounded-xl font-semibold text-xs transition">
                               ✓ Publish Marks Instantly
                             </button>
                           </form>
                         </div>
 
-                        <div className="space-y-4">
-                          <h4 className="font-extrabold text-white text-sm uppercase tracking-wider">📋 Active Student Grade Records ({studentMarks.length})</h4>
-                          <div className="grid grid-cols-1 gap-3">
+                        <div className="space-y-3">
+                          <h4 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">📋 Active Student Grade Records ({studentMarks.length})</h4>
+                          <div className="space-y-2">
                             {studentMarks.map(m => (
-                              <div key={m.id} className="bg-gray-950 border border-gray-800 hover:border-blue-500/40 p-4 rounded-2xl flex justify-between items-center transition shadow-md">
+                              <div key={m.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
                                 <div className="space-y-1">
-                                  <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-0.5 rounded-md text-[10px] font-bold">
+                                  <span className="bg-zinc-800 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-[10px] font-medium">
                                     {m.exam}
                                   </span>
-                                  <h5 className="font-bold text-white text-sm">{m.subject}</h5>
-                                  <p className="text-xs text-gray-400">Marks: <span className="text-white font-bold">{m.marks}</span></p>
+                                  <h5 className="font-bold text-zinc-100 text-xs mt-1">{m.subject}</h5>
+                                  <p className="text-xs text-zinc-400">Marks: <span className="text-zinc-200 font-semibold">{m.marks}</span></p>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                  <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-xl text-xs font-black">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg text-xs font-bold">
                                     {m.grade}
                                   </span>
-                                  <button onClick={() => handleDeleteMark(m.id)} className="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition">
-                                    🗑️ Delete
+                                  <button onClick={() => handleDeleteMark(m.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                    Delete
                                   </button>
                                 </div>
                               </div>
@@ -1014,100 +1005,100 @@ export default function App() {
 
                 {/* Document Verification Tab */}
                 {activeTab === 'documents' && (
-                  <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                    <h3 className="text-xl font-extrabold text-white">Student Verification Document Portal</h3>
-                    <p className="text-xs text-gray-400">Upload your identity and academic certificates for {selectedUni.name}.</p>
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4">
+                    <h3 className="text-lg font-bold text-zinc-100">Student Verification Document Portal</h3>
+                    <p className="text-xs text-zinc-400">Upload your identity and academic certificates for {selectedUni.name}.</p>
                     
-                    <form onSubmit={handleDocumentSubmit} className="space-y-4">
+                    <form onSubmit={handleDocumentSubmit} className="space-y-3">
                       <div>
-                        <label className="block text-xs font-bold text-gray-300 mb-1">Identity Card Document / PDF</label>
-                        <input type="file" onChange={(e) => setAadhaarFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
+                        <label className="block text-xs font-semibold text-zinc-300 mb-1">Identity Card Document / PDF</label>
+                        <input type="file" onChange={(e) => setAadhaarFile(e.target.files[0]?.name || '')} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-zinc-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-300 mb-1">PAN Card Document / PDF</label>
-                        <input type="file" onChange={(e) => setPanFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
+                        <label className="block text-xs font-semibold text-zinc-300 mb-1">PAN Card Document / PDF</label>
+                        <input type="file" onChange={(e) => setPanFile(e.target.files[0]?.name || '')} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-zinc-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-300 mb-1">10th Marksheet (PDF/Image)</label>
-                        <input type="file" onChange={(e) => setTenthFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
+                        <label className="block text-xs font-semibold text-zinc-300 mb-1">10th Marksheet (PDF/Image)</label>
+                        <input type="file" onChange={(e) => setTenthFile(e.target.files[0]?.name || '')} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-zinc-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-300 mb-1">12th Marksheet (PDF/Image)</label>
-                        <input type="file" onChange={(e) => setTwelfthFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
+                        <label className="block text-xs font-semibold text-zinc-300 mb-1">12th Marksheet (PDF/Image)</label>
+                        <input type="file" onChange={(e) => setTwelfthFile(e.target.files[0]?.name || '')} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-zinc-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer" required />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-300 mb-1">Character Certificate (PDF/Image)</label>
-                        <input type="file" onChange={(e) => setCharCertFile(e.target.files[0]?.name || '')} className="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer" required />
+                        <label className="block text-xs font-semibold text-zinc-300 mb-1">Character Certificate (PDF/Image)</label>
+                        <input type="file" onChange={(e) => setCharCertFile(e.target.files[0]?.name || '')} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-zinc-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer" required />
                       </div>
-                      <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition">
+                      <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
                         Submit All Documents to University Admin
                       </button>
-                      {docSubmitted && <p className="text-xs text-emerald-400 text-center font-bold">✓ Documents submitted successfully for review!</p>}
+                      {docSubmitted && <p className="text-xs text-emerald-400 text-center font-medium">✓ Documents submitted successfully for review!</p>}
                     </form>
                   </div>
                 )}
 
                 {/* University Admin Panel */}
                 {activeTab === 'uni-admin' && (
-                  <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-6 backdrop-blur-md">
-                    <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-6">
+                    <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
                       <div>
-                        <h3 className="text-xl font-extrabold text-white">University Admin Panel ({selectedUni.name})</h3>
-                        <p className="text-xs text-gray-400 mt-0.5">Review student documents, manage portal images, and control faculty salaries.</p>
+                        <h3 className="text-lg font-bold text-zinc-100">University Admin Panel ({selectedUni.name})</h3>
+                        <p className="text-xs text-zinc-400 mt-0.5">Review student documents, manage portal images, and control faculty salaries.</p>
                       </div>
                       {isUniAdminLoggedIn && (
-                        <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-red-500/30">Logout</button>
+                        <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-500/10 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold border border-red-500/20">Logout</button>
                       )}
                     </div>
 
                     {!isUniAdminLoggedIn ? (
-                      <div className="max-w-md mx-auto bg-gray-950 border border-gray-800 p-6 rounded-2xl space-y-4 my-4">
+                      <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 p-5 rounded-xl space-y-3 my-2">
                         <div className="text-center">
-                          <h4 className="font-bold text-white text-sm">University Admin Login Required</h4>
-                          <p className="text-[11px] text-gray-400">Use: uniorg@univote.com / Uni@1234</p>
+                          <h4 className="font-bold text-zinc-100 text-xs">University Admin Login Required</h4>
+                          <p className="text-[11px] text-zinc-400">Use: uniorg@univote.com / Uni@1234</p>
                         </div>
                         <form onSubmit={handleUniAdminLogin} className="space-y-3">
-                          <input type="email" value={uniAdminUser} onChange={(e) => setUniAdminUser(e.target.value)} placeholder="uniorg@univote.com" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
-                          <input type="password" value={uniAdminPass} onChange={(e) => setUniAdminPass(e.target.value)} placeholder="••••••••" className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-sm text-white" required />
-                          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white">Login as Uni Admin</button>
+                          <input type="email" value={uniAdminUser} onChange={(e) => setUniAdminUser(e.target.value)} placeholder="uniorg@univote.com" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200" required />
+                          <input type="password" value={uniAdminPass} onChange={(e) => setUniAdminPass(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200" required />
+                          <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-2.5 rounded-xl font-semibold text-xs">Login as Uni Admin</button>
                         </form>
                       </div>
                     ) : (
-                      <div className="space-y-6">
+                      <div className="space-y-5">
                         
                         {/* Faculty Salary Control */}
-                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
-                          <h4 className="font-bold text-white text-sm">💵 Faculty Salary & Payroll Control</h4>
+                        <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-4">
+                          <h4 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">💵 Faculty Salary & Payroll Control</h4>
                           
-                          <form onSubmit={handleAddFaculty} className="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-3">
-                            <h5 className="font-semibold text-blue-400 text-xs">➕ Add New Faculty Member</h5>
+                          <form onSubmit={handleAddFaculty} className="bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl space-y-2.5">
+                            <h5 className="font-semibold text-zinc-300 text-xs">➕ Add New Faculty Member</h5>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                              <input type="text" value={newFacultyName} onChange={(e) => setNewFacultyName(e.target.value)} placeholder="Faculty Name" className="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
-                              <input type="text" value={newFacultyDept} onChange={(e) => setNewFacultyDept(e.target.value)} placeholder="Department" className="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
-                              <input type="text" value={newFacultySalary} onChange={(e) => setNewFacultySalary(e.target.value)} placeholder="Salary (₹90,000)" className="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white" required />
+                              <input type="text" value={newFacultyName} onChange={(e) => setNewFacultyName(e.target.value)} placeholder="Faculty Name" className="bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200" required />
+                              <input type="text" value={newFacultyDept} onChange={(e) => setNewFacultyDept(e.target.value)} placeholder="Department" className="bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200" required />
+                              <input type="text" value={newFacultySalary} onChange={(e) => setNewFacultySalary(e.target.value)} placeholder="Salary (₹90,000)" className="bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200" required />
                             </div>
-                            <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl text-xs font-bold text-white shadow">
+                            <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-2 rounded-lg text-xs font-semibold transition">
                               Add Faculty & Set Salary
                             </button>
                           </form>
 
-                          <div className="space-y-3 pt-2">
-                            <h5 className="font-semibold text-white text-xs">📋 Current Faculty Salary List</h5>
+                          <div className="space-y-2 pt-1">
+                            <h5 className="font-semibold text-zinc-300 text-xs">📋 Current Faculty Salary List</h5>
                             <div className="space-y-2">
                               {facultySalaries.map(fac => (
-                                <div key={fac.id} className="bg-gray-900 border border-gray-800 p-3.5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                                <div key={fac.id} className="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                                   <div>
-                                    <h6 className="font-bold text-white text-xs">{fac.name}</h6>
-                                    <p className="text-[11px] text-gray-400">Dept: <span className="text-blue-400 font-medium">{fac.dept}</span></p>
+                                    <h6 className="font-bold text-zinc-100 text-xs">{fac.name}</h6>
+                                    <p className="text-[11px] text-zinc-400">Dept: <span className="text-zinc-200 font-medium">{fac.dept}</span></p>
                                   </div>
                                   <div className="flex items-center gap-2 w-full md:w-auto">
                                     <input 
                                       type="text" 
                                       defaultValue={fac.salary} 
                                       onBlur={(e) => handleUpdateSalary(fac.id, e.target.value)}
-                                      className="bg-gray-950 border border-gray-800 rounded-lg p-1.5 text-xs text-emerald-400 font-bold w-28 text-center" 
+                                      className="bg-zinc-950 border border-zinc-800 rounded-lg p-1.5 text-xs text-emerald-400 font-semibold w-28 text-center" 
                                     />
-                                    <button onClick={() => handleDeleteFaculty(fac.id)} className="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition ml-auto">
+                                    <button onClick={() => handleDeleteFaculty(fac.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition ml-auto">
                                       Remove
                                     </button>
                                   </div>
@@ -1118,46 +1109,45 @@ export default function App() {
                         </div>
 
                         {/* Image Upload Section */}
-                        <div className="bg-gray-950 border border-gray-800 p-5 rounded-2xl space-y-5">
-                          <h4 className="font-bold text-white text-sm">🖼️ Manage University Portal Images</h4>
-                          
-                          <div className="space-y-2 border-b border-gray-800 pb-4">
-                            <label className="text-xs font-semibold text-gray-300 block">Update Header Banner Image</label>
-                            <form onSubmit={handleUpdateBanner} className="flex gap-2 pt-1">
+                        <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-3">
+                          <h4 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">🖼️ Manage University Portal Images</h4>
+                          <div className="space-y-2">
+                            <label className="text-xs font-semibold text-zinc-300 block">Update Header Banner Image</label>
+                            <form onSubmit={handleUpdateBanner} className="flex gap-2">
                               {bannerInputType === 'url' ? (
-                                <input type="text" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-xs text-white" />
+                                <input type="text" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200" />
                               ) : (
-                                <input type="file" accept="image/*" onChange={(e) => setBannerFileObj(e.target.files[0])} className="flex-1 bg-gray-900 border border-gray-800 rounded-xl p-1.5 text-xs text-gray-300" />
+                                <input type="file" accept="image/*" onChange={(e) => setBannerFileObj(e.target.files[0])} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1 text-xs text-zinc-300" />
                               )}
-                              <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl text-xs font-bold text-white whitespace-nowrap">Update Banner</button>
+                              <button type="submit" className="bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap">Update Banner</button>
                             </form>
                           </div>
                         </div>
 
                         {/* Student Document Submissions */}
-                        <div className="space-y-4">
-                          <h4 className="font-bold text-white text-sm">Student Document Submissions</h4>
-                          <div className="space-y-4">
+                        <div className="space-y-3">
+                          <h4 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">Student Document Submissions</h4>
+                          <div className="space-y-3">
                             {submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).length === 0 ? (
-                              <p className="text-xs text-gray-400">No student documents submitted for this university yet.</p>
+                              <p className="text-xs text-zinc-400">No student documents submitted for this university yet.</p>
                             ) : (
                               submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
-                                <div key={sub.id} className="bg-gray-950 border border-gray-800 p-4 rounded-xl space-y-3">
+                                <div key={sub.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-3">
                                   <div className="flex justify-between items-start">
                                     <div>
-                                      <h5 className="font-bold text-white text-sm">{sub.studentName}</h5>
-                                      <p className="text-xs text-blue-400">{sub.studentEmail}</p>
+                                      <h5 className="font-bold text-zinc-100 text-xs">{sub.studentName}</h5>
+                                      <p className="text-xs text-zinc-400">{sub.studentEmail}</p>
                                     </div>
-                                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${sub.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : sub.status === 'Rejected' ? 'bg-red-950 text-red-400 border-red-800' : 'bg-amber-950 text-amber-400 border-amber-800'}`}>
+                                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-md border ${sub.status === 'Approved' ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/50' : sub.status === 'Rejected' ? 'bg-red-950/40 text-red-400 border-red-900/50' : 'bg-amber-950/40 text-amber-400 border-amber-900/50'}`}>
                                       {sub.status}
                                     </span>
                                   </div>
 
                                   <div className="flex gap-2 pt-1">
-                                    <button onClick={() => handleDocAction(sub.id, 'Approved')} className="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
+                                    <button onClick={() => handleDocAction(sub.id, 'Approved')} className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
                                       Approve
                                     </button>
-                                    <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow">
+                                    <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
                                       Reject
                                     </button>
                                   </div>
@@ -1174,13 +1164,13 @@ export default function App() {
 
                 {/* Organisation Panel */}
                 {activeTab === 'manager' && (
-                  <div className="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/90 p-7 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                    <h3 className="text-xl font-extrabold text-white">Organisation & Candidate Panel</h3>
-                    <p className="text-xs text-gray-400">Register new election candidates for {selectedUni.name}.</p>
-                    <form onSubmit={handleAddCandidate} className="space-y-4">
-                      <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="Candidate Full Name" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white outline-none" required />
-                      <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="Party Name" className="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white outline-none" required />
-                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white shadow-md">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4">
+                    <h3 className="text-lg font-bold text-zinc-100">Organisation & Candidate Panel</h3>
+                    <p className="text-xs text-zinc-400">Register new election candidates for {selectedUni.name}.</p>
+                    <form onSubmit={handleAddCandidate} className="space-y-3">
+                      <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="Candidate Full Name" className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                      <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="Party Name" className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                      <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
                         Register Candidate
                       </button>
                     </form>
