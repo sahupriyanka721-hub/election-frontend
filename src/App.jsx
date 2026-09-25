@@ -463,25 +463,49 @@ export default function App() {
   return (
     <div className={`min-h-screen font-sans relative overflow-x-hidden transition-all duration-300 ${isDark ? 'bg-[#09090b] text-zinc-100' : 'bg-slate-50 text-slate-900'}`}>
       
+      {/* Custom 3D & 4D Animation Stylesheet Injections */}
+      <style>{`
+        @keyframes float3D {
+          0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+          50% { transform: translateY(-8px) rotateX(2deg) rotateY(-2deg); }
+        }
+        @keyframes pulseGlow4D {
+          0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05); }
+          50% { box-shadow: 0 0 35px rgba(168, 85, 247, 0.3), inset 0 0 25px rgba(255, 255, 255, 0.1); }
+        }
+        .animate-3d-float {
+          animation: float3D 6s ease-in-out infinite;
+        }
+        .card-4d-interactive {
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+          transform-style: preserve-3d;
+          perspective: 1000px;
+        }
+        .card-4d-interactive:hover {
+          transform: translateY(-6px) rotateX(4deg) rotateY(-4deg) scale(1.02);
+          box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+      `}</style>
+
       {/* Navbar */}
       <nav className={`p-4 border-b sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isDark ? 'border-zinc-800 bg-[#09090b]/90 shadow-sm' : 'border-slate-200 bg-white/90 shadow-sm'}`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="cursor-pointer flex items-center gap-3 group" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
-            <div className="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white font-bold text-sm tracking-tight group-hover:bg-zinc-700 transition-colors">U</div>
+          <div className="cursor-pointer flex items-center gap-3 group animate-3d-float" onClick={() => { setCurrentView('home'); setSelectedUni(null); }}>
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 border border-zinc-700 flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-lg shadow-purple-500/30">U</div>
             <div>
               <h1 className="text-sm font-bold tracking-tight text-zinc-100">UniVote Pro</h1>
-              <p className="text-[10px] text-zinc-400 font-medium tracking-wide">National Campus Framework</p>
+              <p className="text-[10px] text-zinc-400 font-medium tracking-wide">3D/4D Motion Campus Framework</p>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <button onClick={() => setCurrentView('register-uni')} className="hidden md:flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-200 transition-all">
+            <button onClick={() => setCurrentView('register-uni')} className="hidden md:flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-200 transition-all card-4d-interactive">
               🏛️ Register University
             </button>
-            <button onClick={() => setCurrentView('admin-login')} className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-200 transition-all">
+            <button onClick={() => setCurrentView('admin-login')} className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-200 transition-all card-4d-interactive">
               🔐 Admin Portal
             </button>
-            <button onClick={toggleTheme} className="p-2 rounded-lg border border-zinc-700/80 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs transition-all">
+            <button onClick={toggleTheme} className="p-2 rounded-lg border border-zinc-700/80 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs transition-all card-4d-interactive">
               {isDark ? '☀️' : '🌙'}
             </button>
             {user ? (
@@ -490,7 +514,7 @@ export default function App() {
                 <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-[10px] font-semibold transition">Logout</button>
               </div>
             ) : (
-              <button onClick={handleGoogleLogin} className="bg-zinc-100 hover:bg-white text-zinc-900 px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all">
+              <button onClick={handleGoogleLogin} className="bg-zinc-100 hover:bg-white text-zinc-900 px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all card-4d-interactive">
                 Sign in with Google
               </button>
             )}
@@ -504,40 +528,40 @@ export default function App() {
         {/* 1. Landing Page */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-12 space-y-16">
-            <div className="text-center space-y-6 max-w-3xl mx-auto">
-              <span className="inline-flex items-center gap-1.5 bg-zinc-800/80 text-zinc-300 text-[11px] font-medium px-3 py-1 rounded-full border border-zinc-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                Next-Gen 3D Interactive Campus & Faculty Ecosystem
+            <div className="text-center space-y-6 max-w-3xl mx-auto animate-3d-float">
+              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-500/15 via-indigo-500/15 to-pink-500/15 text-zinc-200 text-[11px] font-medium px-3 py-1 rounded-full border border-purple-500/35 shadow-lg">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                Next-Gen 3D/4D Interactive Campus & Faculty Ecosystem
               </span>
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-100 leading-tight">
-                Empowering Higher Education with 3D/4D Motion
+                Empowering Higher Education with 3D/4D Motion Dynamics
               </h2>
               <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
                 A secure unified platform featuring 3D animated cards for university registration, faculty salary control, document verification, student records, and digital elections.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <button onClick={() => setCurrentView('universities')} className="bg-zinc-100 hover:bg-white text-zinc-900 px-6 py-3 rounded-xl font-semibold text-xs shadow-sm transition-all">
+                <button onClick={() => setCurrentView('universities')} className="bg-zinc-100 hover:bg-white text-zinc-900 px-6 py-3 rounded-xl font-semibold text-xs shadow-lg transition-all card-4d-interactive">
                   Explore Universities & Portals →
                 </button>
-                <button onClick={() => setCurrentView('register-uni')} className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-xl font-semibold text-xs transition-all">
+                <button onClick={() => setCurrentView('register-uni')} className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-xl font-semibold text-xs transition-all card-4d-interactive">
                   🏛️ Register New University
                 </button>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-6 rounded-2xl transition-all group">
-                <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4">👨‍🏫</div>
+              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-purple-500/50 p-6 rounded-2xl transition-all group card-4d-interactive">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/30 to-purple-600/30 border border-purple-500/30 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4 shadow-inner">👨‍🏫</div>
                 <h3 className="text-base font-bold text-zinc-100 mb-1">Faculty & Salary Management</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">Admin controls for managing faculty rosters, payrolls, and updating monthly compensation packages.</p>
               </div>
-              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-6 rounded-2xl transition-all group">
-                <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4">🗳️</div>
+              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-purple-500/50 p-6 rounded-2xl transition-all group card-4d-interactive">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/30 to-purple-600/30 border border-purple-500/30 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4 shadow-inner">🗳️</div>
                 <h3 className="text-base font-bold text-zinc-100 mb-1">Campus Voting Booth</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">Secure, authenticated student voting booths for annual student union elections with live vote tracking.</p>
               </div>
-              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-6 rounded-2xl transition-all group">
-                <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4">📊</div>
+              <div className="bg-zinc-900/60 border border-zinc-800 hover:border-purple-500/50 p-6 rounded-2xl transition-all group card-4d-interactive">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/30 to-purple-600/30 border border-purple-500/30 text-zinc-200 flex items-center justify-center font-bold text-lg mb-4 shadow-inner">📊</div>
                 <h3 className="text-base font-bold text-zinc-100 mb-1">Student Portal & Records</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">Dedicated student dashboards to manage subject-wise marks, exam results, fee updates, and events.</p>
               </div>
@@ -548,20 +572,20 @@ export default function App() {
         {/* 2. Universities List View */}
         {currentView === 'universities' && !selectedUni && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl">
+            <div className="flex justify-between items-center bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl card-4d-interactive">
               <div>
                 <h2 className="text-xl font-bold text-zinc-100">Approved Universities & Campuses</h2>
                 <p className="text-xs text-zinc-400 mt-1">Select an institution to access its dedicated portal and voting booth.</p>
               </div>
-              <button onClick={() => setCurrentView('home')} className="text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800 px-3.5 py-1.5 rounded-lg border border-zinc-700 transition">← Back to Home</button>
+              <button onClick={() => setCurrentView('home')} className="text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800 px-3.5 py-1.5 rounded-lg border border-zinc-700 transition card-4d-interactive">← Back to Home</button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {universities.map(uni => (
-                <div key={uni.id} className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl overflow-hidden shadow-sm transition-all flex flex-col justify-between group">
+                <div key={uni.id} className="bg-zinc-900/60 border border-zinc-800 hover:border-purple-500/50 rounded-2xl overflow-hidden shadow-xl transition-all flex flex-col justify-between group card-4d-interactive">
                   <div>
                     <div className="h-44 overflow-hidden relative">
-                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                      <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-60"></div>
                       <span className="absolute top-3 right-3 bg-zinc-900/90 text-zinc-200 border border-zinc-700 text-[10px] font-semibold px-2.5 py-0.5 rounded-full">✓ {uni.status}</span>
                     </div>
@@ -572,7 +596,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="p-5 pt-0">
-                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 py-2.5 rounded-xl text-xs font-semibold transition-all">
+                    <button onClick={() => { setSelectedUni(uni); setActiveTab('portal'); }} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border border-purple-500/30 text-white py-2.5 rounded-xl text-xs font-semibold shadow-lg transition-all card-4d-interactive">
                       Open University Portal →
                     </button>
                   </div>
@@ -584,7 +608,7 @@ export default function App() {
 
         {/* 3. University Registration Form */}
         {currentView === 'register-uni' && (
-          <div className="max-w-3xl mx-auto bg-zinc-900/60 border border-zinc-800 p-8 rounded-2xl shadow-sm space-y-6">
+          <div className="max-w-3xl mx-auto bg-zinc-900/60 border border-zinc-800 p-8 rounded-2xl shadow-2xl space-y-6 card-4d-interactive">
             <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
               <div>
                 <h2 className="text-xl font-bold text-zinc-100">University Registration Portal</h2>
@@ -597,29 +621,29 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-300 mb-1">University Name</label>
-                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none transition" required />
+                  <input type="text" value={regUniName} onChange={(e) => setRegUniName(e.target.value)} placeholder="e.g. Apex International University" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none transition" required />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-300 mb-1">Location (State / City)</label>
-                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none transition" required />
+                  <input type="text" value={regLocation} onChange={(e) => setRegLocation(e.target.value)} placeholder="e.g. Ranchi, Jharkhand" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none transition" required />
                 </div>
               </div>
 
               <div className="space-y-3 pt-1">
                 <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">A. Sponsoring Body Documents</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <input type="text" value={regTrustDeed} onChange={(e) => setRegTrustDeed(e.target.value)} placeholder="Trust Deed / Society Reg. Number" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
-                  <input type="text" value={regPan} onChange={(e) => setRegPan(e.target.value)} placeholder="Trust PAN Number" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                  <input type="text" value={regTrustDeed} onChange={(e) => setRegTrustDeed(e.target.value)} placeholder="Trust Deed / Society Reg. Number" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                  <input type="text" value={regPan} onChange={(e) => setRegPan(e.target.value)} placeholder="Trust PAN Number" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                 </div>
 
                 <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider pt-1">B. Land & Infrastructure (Min 50 Acres)</h3>
-                <input type="text" value={regLandDoc} onChange={(e) => setRegLandDoc(e.target.value)} placeholder="Sale Deed / CLU Certificate Link or Ref" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                <input type="text" value={regLandDoc} onChange={(e) => setRegLandDoc(e.target.value)} placeholder="Sale Deed / CLU Certificate Link or Ref" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
 
                 <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider pt-1">C. Financial Documents</h3>
-                <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                <input type="text" value={regCorpusFund} onChange={(e) => setRegCorpusFund(e.target.value)} placeholder="Corpus Fund Proof (Rs 25 Cr FD Ref)" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
               </div>
 
-              <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition-all">
+              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3 rounded-xl font-semibold text-xs shadow-lg transition-all card-4d-interactive">
                 Submit Application for State & UGC Review →
               </button>
             </form>
@@ -628,22 +652,22 @@ export default function App() {
 
         {/* 4. Admin Login Portal */}
         {currentView === 'admin-login' && !isAdminLoggedIn && (
-          <div className="max-w-md mx-auto bg-zinc-900/60 border border-zinc-800 p-8 rounded-2xl shadow-sm space-y-6 my-12">
+          <div className="max-w-md mx-auto bg-zinc-900/60 border border-zinc-800 p-8 rounded-2xl shadow-2xl space-y-6 my-12 card-4d-interactive">
             <div className="text-center space-y-2">
-              <div className="w-12 h-12 bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-xl mx-auto flex items-center justify-center font-bold text-lg">🔐</div>
+              <div className="w-12 h-12 bg-gradient-to-tr from-indigo-600 to-purple-600 border border-purple-500/30 text-white rounded-xl mx-auto flex items-center justify-center font-bold text-lg shadow-lg">🔐</div>
               <h2 className="text-lg font-bold text-zinc-100">Global Admin Secure Login</h2>
               <p className="text-xs text-zinc-400">Enter admin credentials to manage university approvals.</p>
             </div>
             <form onSubmit={handleAdminLogin} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-300 mb-1">Admin Email ID</label>
-                <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="admin@univote.com" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="admin@univote.com" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-zinc-300 mb-1">Password</label>
-                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
               </div>
-              <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
+              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3 rounded-xl font-semibold text-xs shadow-lg transition card-4d-interactive">
                 Login as Global Admin
               </button>
               <div className="text-center pt-1">
@@ -656,7 +680,7 @@ export default function App() {
         {/* 5. Admin Dashboard */}
         {currentView === 'admin-panel' && isAdminLoggedIn && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl">
+            <div className="flex justify-between items-center bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl card-4d-interactive">
               <div>
                 <h2 className="text-xl font-bold text-zinc-100">Global Admin Control Panel</h2>
                 <p className="text-xs text-zinc-400 mt-0.5">Review sponsoring body documents and approve university applications.</p>
@@ -664,18 +688,18 @@ export default function App() {
               <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-red-500/20 transition">Logout Admin</button>
             </div>
 
-            <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
+            <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4 card-4d-interactive">
               <h3 className="text-base font-bold text-zinc-100">Pending University Applications</h3>
               <div className="space-y-3">
                 {registeredApplications.map(app => (
-                  <div key={app.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
+                  <div key={app.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center transition-all hover:border-purple-500/40">
                     <div>
                       <h4 className="font-bold text-zinc-100 text-xs">{app.name}</h4>
                       <p className="text-xs text-zinc-400 mt-0.5">📍 {app.location} | Trust: {app.trust}</p>
                       <p className="text-[11px] text-zinc-400 mt-1">Status: <span className="text-amber-400 font-semibold">{app.status}</span></p>
                     </div>
                     {app.status === 'Pending Approval' ? (
-                      <button onClick={() => handleApproveUni(app.id)} className="bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-lg text-xs font-semibold transition">
+                      <button onClick={() => handleApproveUni(app.id)} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-md transition card-4d-interactive">
                         Approve & Publish
                       </button>
                     ) : (
@@ -693,11 +717,11 @@ export default function App() {
           <div className="space-y-6">
             <button onClick={() => setSelectedUni(null)} className="text-xs font-medium text-zinc-400 hover:text-white">← Back to Universities</button>
             
-            <div className="relative h-56 rounded-2xl overflow-hidden border border-zinc-800 flex items-end p-6">
-              <div className="absolute inset-0 bg-cover bg-center filter brightness-40" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
+            <div className="relative h-56 rounded-2xl overflow-hidden border border-zinc-800 flex items-end p-6 shadow-2xl card-4d-interactive">
+              <div className="absolute inset-0 bg-cover bg-center filter brightness-50" style={{ backgroundImage: `url(${selectedUni.image})` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent"></div>
               <div className="relative z-10 space-y-1.5">
-                <span className="bg-zinc-800 border border-zinc-700 text-zinc-200 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider">Active Campus</span>
+                <span className="bg-zinc-800/90 border border-zinc-700 text-zinc-200 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider">Active Campus</span>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white">{selectedUni.name}</h2>
                 <p className="text-xs text-zinc-300">📍 {selectedUni.location} • Eligible Voters: <span className="text-white font-semibold">{selectedUni.eligible}</span></p>
               </div>
@@ -707,27 +731,27 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               
               {/* Sidebar Options */}
-              <div className="bg-zinc-900/60 border border-zinc-800 p-3 rounded-2xl space-y-1 h-fit">
+              <div className="bg-zinc-900/60 border border-zinc-800 p-3 rounded-2xl space-y-1 h-fit card-4d-interactive">
                 <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 py-2">University Menu</p>
-                <button onClick={() => setActiveTab('portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'portal' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'portal' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🏠 University Overview
                 </button>
-                <button onClick={() => setActiveTab('voting')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'voting' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('voting')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'voting' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🗳️ Voting Booth
                 </button>
-                <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'student-portal' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('student-portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'student-portal' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🎓 Student Portal & Dashboard
                 </button>
-                <button onClick={() => setActiveTab('faculty-portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'faculty-portal' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('faculty-portal')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'faculty-portal' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   👨‍🏫 Faculty Marks Management
                 </button>
-                <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'documents' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'documents' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   📄 Document Verification
                 </button>
-                <button onClick={() => setActiveTab('uni-admin')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'uni-admin' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('uni-admin')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'uni-admin' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🛡️ Uni Admin Panel
                 </button>
-                <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'manager' ? 'bg-zinc-800 text-white font-semibold border border-zinc-700' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
+                <button onClick={() => setActiveTab('manager')} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${activeTab === 'manager' ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 text-white font-semibold border border-purple-500/40 shadow-inner' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'}`}>
                   🏛️ Organisation Panel
                 </button>
               </div>
@@ -738,15 +762,15 @@ export default function App() {
                 {/* Overview Tab with Gallery */}
                 {activeTab === 'portal' && (
                   <div className="space-y-6">
-                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3 card-4d-interactive">
                       <h3 className="text-lg font-bold text-zinc-100">Welcome to {selectedUni.name} Portal</h3>
                       <p className="text-xs text-zinc-300 leading-relaxed">{selectedUni.desc}</p>
                       <div className="grid grid-cols-2 gap-4 pt-1">
-                        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 card-4d-interactive">
                           <p className="text-[10px] text-zinc-400 font-bold uppercase">Total Candidates</p>
                           <p className="text-2xl font-bold text-zinc-100 mt-0.5">{selectedUni.candidates.length}</p>
                         </div>
-                        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 card-4d-interactive">
                           <p className="text-[10px] text-zinc-400 font-bold uppercase">Verification Status</p>
                           <p className="text-2xl font-bold text-emerald-400 mt-0.5">Verified</p>
                         </div>
@@ -755,12 +779,12 @@ export default function App() {
 
                     {/* Campus Gallery Section */}
                     {selectedUni.gallery && selectedUni.gallery.length > 0 && (
-                      <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                      <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3 card-4d-interactive">
                         <h4 className="text-base font-bold text-zinc-100">📷 Campus Gallery & Events</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {selectedUni.gallery.map((imgUrl, idx) => (
-                            <div key={idx} className="h-48 rounded-xl overflow-hidden border border-zinc-800 group">
-                              <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                            <div key={idx} className="h-48 rounded-xl overflow-hidden border border-zinc-800 group card-4d-interactive">
+                              <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                             </div>
                           ))}
                         </div>
@@ -775,13 +799,13 @@ export default function App() {
                     <h3 className="text-lg font-bold text-zinc-100">Active Election Candidates</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {selectedUni.candidates.map(cand => (
-                        <div key={cand.id} className="bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 p-5 rounded-2xl flex justify-between items-center transition-all">
+                        <div key={cand.id} className="bg-zinc-900/60 border border-zinc-800 hover:border-purple-500/50 p-5 rounded-2xl flex justify-between items-center transition-all card-4d-interactive">
                           <div>
                             <h4 className="font-bold text-zinc-100 text-sm">{cand.name}</h4>
                             <p className="text-xs text-zinc-400 mt-0.5">Party: <span className="text-zinc-200 font-medium">{cand.party}</span></p>
                             <p className="text-xs text-zinc-400 mt-1">Current Votes: <span className="font-bold text-zinc-100">{cand.votes}</span></p>
                           </div>
-                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition">
+                          <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-lg transition card-4d-interactive">
                             Vote Now
                           </button>
                         </div>
@@ -794,37 +818,37 @@ export default function App() {
                 {activeTab === 'student-portal' && (
                   <div className="space-y-6">
                     
-                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3 card-4d-interactive">
                       <h3 className="text-lg font-bold text-zinc-100">🎓 Student Dashboard Overview</h3>
                       <p className="text-xs text-zinc-400">Welcome back! Here is your quick academic summary and stats.</p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-1">
-                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 card-4d-interactive">
                           <p className="text-[10px] text-zinc-400 font-bold uppercase">Current CGPA</p>
                           <p className="text-xl font-bold text-zinc-100 mt-1">8.92 / 10</p>
                         </div>
-                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 card-4d-interactive">
                           <p className="text-[10px] text-zinc-400 font-bold uppercase">Attendance</p>
                           <p className="text-xl font-bold text-emerald-400 mt-1">92.4%</p>
                         </div>
-                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 card-4d-interactive">
                           <p className="text-[10px] text-zinc-400 font-bold uppercase">Fee Status</p>
                           <p className="text-xl font-bold text-amber-400 mt-1">1 Pending</p>
                         </div>
-                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                        <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 card-4d-interactive">
                           <p className="text-[10px] text-zinc-400 font-bold uppercase">Registered Exams</p>
                           <p className="text-xl font-bold text-zinc-100 mt-1">6 Subjects</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3 card-4d-interactive">
                       <h3 className="text-lg font-bold text-zinc-100">📝 Examination Marks & Grades</h3>
                       <p className="text-xs text-zinc-400">View live marks entered by faculty members.</p>
 
                       <div className="space-y-3 pt-1">
                         {['Mid-Term Exam', 'End-Term Exam', 'Quiz 1'].map((examName) => (
-                          <div key={examName} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-2">
+                          <div key={examName} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-2 card-4d-interactive">
                             <h4 className="font-semibold text-zinc-300 text-xs uppercase tracking-wider border-b border-zinc-800/80 pb-2">{examName}</h4>
                             <div className="space-y-2 pt-1">
                               {studentMarks.filter(m => m.exam === examName).length === 0 ? (
@@ -848,13 +872,13 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3 card-4d-interactive">
                       <h3 className="text-lg font-bold text-zinc-100">💳 Student Fee Dues & Status</h3>
                       <p className="text-xs text-zinc-400">Check tuition fee status and clear pending semester payments.</p>
                       
                       <div className="space-y-3">
                         {studentFees.map(fee => (
-                          <div key={fee.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
+                          <div key={fee.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center card-4d-interactive">
                             <div>
                               <h4 className="font-bold text-zinc-100 text-xs">{fee.semester}</h4>
                               <p className="text-xs text-zinc-400 mt-0.5">Amount: <span className="text-zinc-200 font-semibold">{fee.amount}</span> | Due: {fee.dueDate}</p>
@@ -864,7 +888,7 @@ export default function App() {
                                 {fee.status}
                               </span>
                               {fee.status === 'Pending' && (
-                                <button onClick={() => handlePayFee(fee.id)} className="bg-zinc-100 hover:bg-white text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                <button onClick={() => handlePayFee(fee.id)} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow transition card-4d-interactive">
                                   Pay Now
                                 </button>
                               )}
@@ -874,13 +898,13 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                    <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-3 card-4d-interactive">
                       <h3 className="text-lg font-bold text-zinc-100">📅 Upcoming Campus Events</h3>
                       <p className="text-xs text-zinc-400">Stay updated with upcoming academic and extracurricular schedules.</p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {upcomingEvents.map(evt => (
-                          <div key={evt.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-2">
+                          <div key={evt.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-2 card-4d-interactive">
                             <span className="bg-zinc-800 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-[10px] font-medium">{evt.date}</span>
                             <h4 className="font-bold text-zinc-100 text-xs mt-1">{evt.title}</h4>
                             <p className="text-xs text-zinc-400 leading-relaxed">{evt.desc}</p>
@@ -895,12 +919,12 @@ export default function App() {
 
                 {/* Faculty Portal Tab */}
                 {activeTab === 'faculty-portal' && (
-                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-6">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-6 card-4d-interactive">
                     
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-4 gap-3">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                           <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">Faculty Assessment Dashboard</span>
                         </div>
                         <h3 className="text-xl font-bold text-zinc-100">Marks & Evaluation Portal</h3>
@@ -914,9 +938,9 @@ export default function App() {
                     </div>
 
                     {!isFacultyLoggedIn ? (
-                      <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 p-6 rounded-2xl space-y-4 my-4">
+                      <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 p-6 rounded-2xl space-y-4 my-4 card-4d-interactive">
                         <div className="text-center space-y-1.5">
-                          <div className="w-12 h-12 bg-zinc-900 border border-zinc-700 text-zinc-200 rounded-xl mx-auto flex items-center justify-center font-bold text-lg">👨‍🏫</div>
+                          <div className="w-12 h-12 bg-gradient-to-tr from-indigo-600 to-purple-600 border border-purple-500/30 text-white rounded-xl mx-auto flex items-center justify-center font-bold text-lg shadow-lg">👨‍🏫</div>
                           <h4 className="font-bold text-zinc-100 text-sm">Faculty Secure Portal</h4>
                           <p className="text-xs text-zinc-400">Authenticate with your faculty credentials.</p>
                           <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-lg text-[11px] text-zinc-300 font-mono mt-2">
@@ -926,13 +950,13 @@ export default function App() {
                         <form onSubmit={handleFacultyLogin} className="space-y-3 pt-1">
                           <div>
                             <label className="block text-xs font-semibold text-zinc-300 mb-1">Faculty Email</label>
-                            <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-zinc-900 border border-zinc-800 focus:border-zinc-700 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                            <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                           </div>
                           <div>
                             <label className="block text-xs font-semibold text-zinc-300 mb-1">Password</label>
-                            <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-900 border border-zinc-800 focus:border-zinc-700 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
+                            <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                           </div>
-                          <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
+                          <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3 rounded-xl font-semibold text-xs shadow-lg transition card-4d-interactive">
                             Authenticate Faculty →
                           </button>
                         </form>
@@ -967,7 +991,7 @@ export default function App() {
                                 <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200 outline-none" required />
                               </div>
                             </div>
-                            <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-2.5 rounded-xl font-semibold text-xs transition">
+                            <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2.5 rounded-xl font-semibold text-xs shadow-md transition card-4d-interactive">
                               ✓ Publish Marks Instantly
                             </button>
                           </form>
@@ -977,7 +1001,7 @@ export default function App() {
                           <h4 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">📋 Active Student Grade Records ({studentMarks.length})</h4>
                           <div className="space-y-2">
                             {studentMarks.map(m => (
-                              <div key={m.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
+                              <div key={m.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center card-4d-interactive">
                                 <div className="space-y-1">
                                   <span className="bg-zinc-800 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-[10px] font-medium">
                                     {m.exam}
@@ -1005,7 +1029,7 @@ export default function App() {
 
                 {/* Document Verification Tab */}
                 {activeTab === 'documents' && (
-                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4 card-4d-interactive">
                     <h3 className="text-lg font-bold text-zinc-100">Student Verification Document Portal</h3>
                     <p className="text-xs text-zinc-400">Upload your identity and academic certificates for {selectedUni.name}.</p>
                     
@@ -1030,7 +1054,7 @@ export default function App() {
                         <label className="block text-xs font-semibold text-zinc-300 mb-1">Character Certificate (PDF/Image)</label>
                         <input type="file" onChange={(e) => setCharCertFile(e.target.files[0]?.name || '')} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-zinc-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer" required />
                       </div>
-                      <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
+                      <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3 rounded-xl font-semibold text-xs shadow-lg transition card-4d-interactive">
                         Submit All Documents to University Admin
                       </button>
                       {docSubmitted && <p className="text-xs text-emerald-400 text-center font-medium">✓ Documents submitted successfully for review!</p>}
@@ -1040,7 +1064,7 @@ export default function App() {
 
                 {/* University Admin Panel */}
                 {activeTab === 'uni-admin' && (
-                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-6">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-6 card-4d-interactive">
                     <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
                       <div>
                         <h3 className="text-lg font-bold text-zinc-100">University Admin Panel ({selectedUni.name})</h3>
@@ -1052,7 +1076,7 @@ export default function App() {
                     </div>
 
                     {!isUniAdminLoggedIn ? (
-                      <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 p-5 rounded-xl space-y-3 my-2">
+                      <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 p-5 rounded-xl space-y-3 my-2 card-4d-interactive">
                         <div className="text-center">
                           <h4 className="font-bold text-zinc-100 text-xs">University Admin Login Required</h4>
                           <p className="text-[11px] text-zinc-400">Use: uniorg@univote.com / Uni@1234</p>
@@ -1060,7 +1084,7 @@ export default function App() {
                         <form onSubmit={handleUniAdminLogin} className="space-y-3">
                           <input type="email" value={uniAdminUser} onChange={(e) => setUniAdminUser(e.target.value)} placeholder="uniorg@univote.com" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200" required />
                           <input type="password" value={uniAdminPass} onChange={(e) => setUniAdminPass(e.target.value)} placeholder="••••••••" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-200" required />
-                          <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-2.5 rounded-xl font-semibold text-xs">Login as Uni Admin</button>
+                          <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2.5 rounded-xl font-semibold text-xs shadow-md">Login as Uni Admin</button>
                         </form>
                       </div>
                     ) : (
@@ -1077,7 +1101,7 @@ export default function App() {
                               <input type="text" value={newFacultyDept} onChange={(e) => setNewFacultyDept(e.target.value)} placeholder="Department" className="bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200" required />
                               <input type="text" value={newFacultySalary} onChange={(e) => setNewFacultySalary(e.target.value)} placeholder="Salary (₹90,000)" className="bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200" required />
                             </div>
-                            <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-2 rounded-lg text-xs font-semibold transition">
+                            <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow transition">
                               Add Faculty & Set Salary
                             </button>
                           </form>
@@ -1086,7 +1110,7 @@ export default function App() {
                             <h5 className="font-semibold text-zinc-300 text-xs">📋 Current Faculty Salary List</h5>
                             <div className="space-y-2">
                               {facultySalaries.map(fac => (
-                                <div key={fac.id} className="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                                <div key={fac.id} className="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-2 card-4d-interactive">
                                   <div>
                                     <h6 className="font-bold text-zinc-100 text-xs">{fac.name}</h6>
                                     <p className="text-[11px] text-zinc-400">Dept: <span className="text-zinc-200 font-medium">{fac.dept}</span></p>
@@ -1119,7 +1143,7 @@ export default function App() {
                               ) : (
                                 <input type="file" accept="image/*" onChange={(e) => setBannerFileObj(e.target.files[0])} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1 text-xs text-zinc-300" />
                               )}
-                              <button type="submit" className="bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap">Update Banner</button>
+                              <button type="submit" className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shadow">Update Banner</button>
                             </form>
                           </div>
                         </div>
@@ -1132,7 +1156,7 @@ export default function App() {
                               <p className="text-xs text-zinc-400">No student documents submitted for this university yet.</p>
                             ) : (
                               submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
-                                <div key={sub.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-3">
+                                <div key={sub.id} className="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-3 card-4d-interactive">
                                   <div className="flex justify-between items-start">
                                     <div>
                                       <h5 className="font-bold text-zinc-100 text-xs">{sub.studentName}</h5>
@@ -1164,13 +1188,13 @@ export default function App() {
 
                 {/* Organisation Panel */}
                 {activeTab === 'manager' && (
-                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4 card-4d-interactive">
                     <h3 className="text-lg font-bold text-zinc-100">Organisation & Candidate Panel</h3>
                     <p className="text-xs text-zinc-400">Register new election candidates for {selectedUni.name}.</p>
                     <form onSubmit={handleAddCandidate} className="space-y-3">
                       <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="Candidate Full Name" className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
                       <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="Party Name" className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-200 outline-none" required />
-                      <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded-xl font-semibold text-xs transition">
+                      <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3 rounded-xl font-semibold text-xs shadow-lg transition card-4d-interactive">
                         Register Candidate
                       </button>
                     </form>
