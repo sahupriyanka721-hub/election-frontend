@@ -6,7 +6,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'universities', 'register-uni', 'admin-login', 'admin-panel'
   const [selectedUni, setSelectedUni] = useState(null);
-  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents', 'uni-admin', 'faculty-portal'
+  const [activeTab, setActiveTab] = useState('portal'); // 'portal', 'voting', 'student-portal', 'manager', 'documents', 'uni-admin', 'faculty-portal', 'timetable'
 
   // Theme State ('dark' or 'light')
   const [theme, setTheme] = useState('dark');
@@ -98,6 +98,19 @@ export default function App() {
   const [newSubject, setNewSubject] = useState('');
   const [newMarks, setNewMarks] = useState('');
   const [newGrade, setNewGrade] = useState('');
+
+  // Class Timetable Management States (Reflected in student interface instantly)
+  const [timetable, setTimetable] = useState([
+    { id: 1, day: 'Monday', time: '09:00 AM - 10:00 AM', subject: 'Data Structures & Algorithms', faculty: 'Dr. Rajesh Kumar', room: 'LH-101' },
+    { id: 2, day: 'Monday', time: '10:00 AM - 11:00 AM', subject: 'Database Management Systems', faculty: 'Dr. Sneha Sharma', room: 'LH-102' },
+    { id: 3, day: 'Tuesday', time: '11:00 AM - 12:00 PM', subject: 'Computer Networks', faculty: 'Prof. Amit Verma', room: 'LH-103' },
+    { id: 4, day: 'Wednesday', time: '02:00 PM - 04:00 PM', subject: 'Software Engineering Lab', faculty: 'Dr. Rajesh Kumar', room: 'Lab-3' }
+  ]);
+  const [newTzDay, setNewTzDay] = useState('Monday');
+  const [newTzTime, setNewTzTime] = useState('');
+  const [newTzSubj, setNewTzSubj] = useState('');
+  const [newTzFaculty, setNewTzFaculty] = useState('');
+  const [newTzRoom, setNewTzRoom] = useState('');
 
   // Student Fees States
   const [studentFees, setStudentFees] = useState([
@@ -358,6 +371,30 @@ export default function App() {
     alert("Mark record deleted successfully!");
   };
 
+  const handleAddTimetableSlot = (e) => {
+    e.preventDefault();
+    if (!newTzTime || !newTzSubj || !newTzFaculty || !newTzRoom) return;
+    const item = {
+      id: Date.now(),
+      day: newTzDay,
+      time: newTzTime,
+      subject: newTzSubj,
+      faculty: newTzFaculty,
+      room: newTzRoom
+    };
+    setTimetable(prev => [...prev, item]);
+    setNewTzTime('');
+    setNewTzSubj('');
+    setNewTzFaculty('');
+    setNewTzRoom('');
+    alert("Timetable updated successfully! Changes are now live on the student interface.");
+  };
+
+  const handleDeleteTimetableSlot = (id) => {
+    setTimetable(prev => prev.filter(item => item.id !== id));
+    alert("Timetable slot removed successfully!");
+  };
+
   const handlePayFee = (feeId) => {
     setStudentFees(prev => prev.map(f => f.id === feeId ? { ...f, status: 'Paid' } : f));
     alert("Fee payment successful and updated!");
@@ -566,15 +603,15 @@ export default function App() {
                 Modernizing Higher Education Administration
               </h3>
               <p className={`text-xs md:text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
-                A clean, attractive framework featuring secure university registrations, faculty payroll controls, student academic tracking, and encrypted digital elections.
+                A clean, attractive framework featuring secure university registrations, faculty payroll controls, live timetables, and encrypted digital elections.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
               <div className={`p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1 shadow-sm border ${isDark ? 'bg-zinc-950/70 border-zinc-800/80 hover:border-indigo-500/50' : 'bg-white border-slate-200 hover:border-indigo-300 shadow-indigo-50/50'}`}>
                 <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold text-base mb-5 shadow-inner">👨‍🏫</div>
-                <h4 className={`text-sm font-bold mb-2 ${isDark ? 'text-zinc-100' : 'text-slate-900'}`}>Faculty & Salary Management</h4>
-                <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>Admin controls for managing faculty rosters, payrolls, and updating monthly compensation packages securely.</p>
+                <h4 className={`text-sm font-bold mb-2 ${isDark ? 'text-zinc-100' : 'text-slate-900'}`}>Faculty & Timetable Controls</h4>
+                <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>Admin & faculty controls for publishing class timetables, rosters, and monthly compensation packages securely.</p>
               </div>
               <div className={`p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1 shadow-sm border ${isDark ? 'bg-zinc-950/70 border-zinc-800/80 hover:border-indigo-500/50' : 'bg-white border-slate-200 hover:border-indigo-300 shadow-indigo-50/50'}`}>
                 <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold text-base mb-5 shadow-inner">🗳️</div>
@@ -584,7 +621,7 @@ export default function App() {
               <div className={`p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1 shadow-sm border ${isDark ? 'bg-zinc-950/70 border-zinc-800/80 hover:border-indigo-500/50' : 'bg-white border-slate-200 hover:border-indigo-300 shadow-indigo-50/50'}`}>
                 <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold text-base mb-5 shadow-inner">📊</div>
                 <h4 className={`text-sm font-bold mb-2 ${isDark ? 'text-zinc-100' : 'text-slate-900'}`}>Student Portal & Records</h4>
-                <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>Dedicated student dashboards to manage subject-wise marks, exam results, fee updates, and academic events.</p>
+                <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>Dedicated student dashboards to view live timetables, subject marks, exam results, fee updates, and events.</p>
               </div>
             </div>
           </div>
@@ -765,6 +802,9 @@ export default function App() {
                 </button>
                 <button onClick={() => setActiveTab('faculty-portal')} className={`w-full text-left px-3.5 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'faculty-portal' ? 'bg-indigo-600 text-white shadow-md' : isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
                   👨‍🏫 Faculty Marks Management
+                </button>
+                <button onClick={() => setActiveTab('timetable')} className={`w-full text-left px-3.5 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'timetable' ? 'bg-indigo-600 text-white shadow-md' : isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
+                  📅 Class Timetable
                 </button>
                 <button onClick={() => setActiveTab('documents')} className={`w-full text-left px-3.5 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'documents' ? 'bg-indigo-600 text-white shadow-md' : isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
                   📄 Document Verification
@@ -1045,6 +1085,104 @@ export default function App() {
 
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* Class Timetable Interface Tab (Faculty/Admin update -> Student live view) */}
+                {activeTab === 'timetable' && (
+                  <div className={`p-7 rounded-3xl border space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 border-zinc-800/40 gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                          <span className="text-[10px] font-extrabold tracking-wider text-indigo-400 uppercase">Live Academic Schedule</span>
+                        </div>
+                        <h3 className="text-lg font-extrabold">📅 University Class Timetable</h3>
+                        <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>Faculty & Admin updates made here are instantly reflected on the student schedule interface.</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {!isFacultyLoggedIn && !isUniAdminLoggedIn && (
+                          <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-xl text-[11px] font-bold">
+                            👁️ Student View Mode (Login as Faculty/Admin to add slots)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Add Slot Form (Visible only if logged in as Faculty or Uni Admin) */}
+                    {(isFacultyLoggedIn || isUniAdminLoggedIn) && (
+                      <div className={`p-5 rounded-2xl border space-y-3.5 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-slate-50 border-slate-200'}`}>
+                        <h4 className="font-extrabold text-xs uppercase tracking-wider text-indigo-400">➕ Add / Update Class Timetable Slot</h4>
+                        <form onSubmit={handleAddTimetableSlot} className="space-y-3">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>Day</label>
+                              <select value={newTzDay} onChange={(e) => setNewTzDay(e.target.value)} className={`w-full rounded-xl p-2.5 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-white border-slate-200 text-slate-900'}`}>
+                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(d => (
+                                  <option key={d} value={d}>{d}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div>
+                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>Time Slot</label>
+                              <input type="text" value={newTzTime} onChange={(e) => setNewTzTime(e.target.value)} placeholder="e.g. 09:00 AM - 10:00 AM" className={`w-full rounded-xl p-2.5 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-white border-slate-200 text-slate-900'}`} required />
+                            </div>
+                            <div>
+                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>Subject Title</label>
+                              <input type="text" value={newTzSubj} onChange={(e) => setNewTzSubj(e.target.value)} placeholder="e.g. Operating Systems" className={`w-full rounded-xl p-2.5 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-white border-slate-200 text-slate-900'}`} required />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>Faculty In-Charge</label>
+                              <input type="text" value={newTzFaculty} onChange={(e) => setNewTzFaculty(e.target.value)} placeholder="e.g. Dr. Sneha Sharma" className={`w-full rounded-xl p-2.5 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-white border-slate-200 text-slate-900'}`} required />
+                            </div>
+                            <div>
+                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>Room / Hall</label>
+                              <input type="text" value={newTzRoom} onChange={(e) => setNewTzRoom(e.target.value)} placeholder="e.g. LH-204" className={`w-full rounded-xl p-2.5 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-white border-slate-200 text-slate-900'}`} required />
+                            </div>
+                          </div>
+                          <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl font-bold text-xs shadow-md transition">
+                            ✓ Publish to Student Timetable
+                          </button>
+                        </form>
+                      </div>
+                    )}
+
+                    {/* Timetable Display Grid sorted by Day */}
+                    <div className="space-y-4">
+                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((dayName) => {
+                        const daySlots = timetable.filter(t => t.day === dayName);
+                        if (daySlots.length === 0) return null;
+                        return (
+                          <div key={dayName} className={`p-5 rounded-2xl border space-y-3 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-slate-50 border-slate-200'}`}>
+                            <div className="flex items-center justify-between border-b pb-2 border-zinc-800/40">
+                              <h4 className="font-extrabold text-xs uppercase tracking-wider text-indigo-400">{dayName}</h4>
+                              <span className="text-[10px] font-bold text-zinc-400">{daySlots.length} Classes Scheduled</span>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {daySlots.map(slot => (
+                                <div key={slot.id} className={`p-4 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950 border-zinc-800/80' : 'bg-white border-slate-200'}`}>
+                                  <div className="space-y-1">
+                                    <span className="bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
+                                      ⏰ {slot.time}
+                                    </span>
+                                    <h5 className="font-bold text-xs mt-1">{slot.subject}</h5>
+                                    <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>👨‍🏫 {slot.faculty} | 📍 <span className="font-semibold text-emerald-400">{slot.room}</span></p>
+                                  </div>
+                                  {(isFacultyLoggedIn || isUniAdminLoggedIn) && (
+                                    <button onClick={() => handleDeleteTimetableSlot(slot.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-[11px] font-bold transition">
+                                      Delete
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
                   </div>
                 )}
 
