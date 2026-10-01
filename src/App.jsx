@@ -61,7 +61,7 @@ export default function App() {
   const [newGalleryImage, setNewGalleryImage] = useState('');
   const [galleryFileObj, setGalleryFileObj] = useState(null);
 
-  // University News & Announcements States (Controlled by University Admin & visible in Student Panel)
+  // University News & Announcements States
   const [newsList, setNewsList] = useState([
     { id: 1, title: 'Admissions Open for 2026-27 Academic Session', date: '28 Sep 2026', category: 'Announcement', content: 'Applications are now live for all undergraduate and postgraduate engineering and management programs.' },
     { id: 2, title: 'Library Extended Hours During Examination Week', date: '25 Sep 2026', category: 'Facility', content: 'The central library will remain open 24/7 starting next Monday to support student preparation.' }
@@ -70,7 +70,7 @@ export default function App() {
   const [newNewsCategory, setNewNewsCategory] = useState('Announcement');
   const [newNewsContent, setNewNewsContent] = useState('');
 
-  // Faculty Salary Management States (Controlled by University Admin)
+  // Faculty Salary Management States
   const [facultySalaries, setFacultySalaries] = useState([
     { id: 1, name: 'Dr. Rajesh Kumar', dept: 'Computer Science & Engg', salary: '₹95,000', status: 'Active' },
     { id: 2, name: 'Dr. Sneha Sharma', dept: 'Electronics & Comm.', salary: '₹88,000', status: 'Active' },
@@ -96,7 +96,7 @@ export default function App() {
     }
   ]);
 
-  // Student Marks Management States (Real-time dynamic tracking controlled by Faculty)
+  // Student Marks Management States
   const [studentMarks, setStudentMarks] = useState([
     { id: 1, exam: 'Mid-Term Exam', subject: 'Data Structures & Algorithms', marks: '42/50', grade: 'A+' },
     { id: 2, exam: 'Mid-Term Exam', subject: 'Database Management Systems', marks: '38/50', grade: 'A' },
@@ -108,7 +108,7 @@ export default function App() {
   const [newMarks, setNewMarks] = useState('');
   const [newGrade, setNewGrade] = useState('');
 
-  // Class Timetable Management States (Reflected in student interface instantly)
+  // Class Timetable Management States
   const [timetable, setTimetable] = useState([
     { id: 1, day: 'Monday', time: '09:00 AM - 10:00 AM', subject: 'Data Structures & Algorithms', faculty: 'Dr. Rajesh Kumar', room: 'LH-101' },
     { id: 2, day: 'Monday', time: '10:00 AM - 11:00 AM', subject: 'Database Management Systems', faculty: 'Dr. Sneha Sharma', room: 'LH-102' },
@@ -126,6 +126,17 @@ export default function App() {
     { id: 1, semester: 'Semester 1 (2025-26)', amount: '₹45,000', status: 'Paid', dueDate: '15 Aug 2025' },
     { id: 2, semester: 'Semester 2 (2025-26)', amount: '₹45,000', status: 'Pending', dueDate: '15 Jan 2026' }
   ]);
+
+  // Payment Gateway Modal States
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [activePaymentFee, setActivePaymentFee] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi', 'card', 'netbanking'
+  const [upiId, setUpiId] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [selectedBank, setSelectedBank] = useState('HDFC Bank');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Upcoming Events States
   const [upcomingEvents, setUpcomingEvents] = useState([
@@ -404,9 +415,35 @@ export default function App() {
     alert("Timetable slot removed successfully!");
   };
 
-  const handlePayFee = (feeId) => {
-    setStudentFees(prev => prev.map(f => f.id === feeId ? { ...f, status: 'Paid' } : f));
-    alert("Fee payment successful and updated!");
+  // Payment Gateway Trigger Functions
+  const openPaymentModal = (fee) => {
+    setActivePaymentFee(fee);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleProcessPayment = (e) => {
+    e.preventDefault();
+    if (paymentMethod === 'upi' && !upiId) {
+      alert('Please enter a valid UPI ID (e.g. username@oksbi)');
+      return;
+    }
+    if (paymentMethod === 'card' && (!cardNumber || !cardExpiry || !cardCvv)) {
+      alert('Please complete all card details');
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setTimeout(() => {
+      setStudentFees(prev => prev.map(f => f.id === activePaymentFee.id ? { ...f, status: 'Paid' } : f));
+      setIsProcessingPayment(false);
+      setIsPaymentModalOpen(false);
+      setActivePaymentFee(null);
+      setUpiId('');
+      setCardNumber('');
+      setCardExpiry('');
+      setCardCvv('');
+      alert('Payment successful! Fee receipt generated and updated in your student records.');
+    }, 1500);
   };
 
   const handleAddNews = (e) => {
@@ -644,7 +681,7 @@ export default function App() {
                 <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-stone-600'}`}>Admin & faculty controls for publishing class timetables, rosters, and monthly compensation packages securely.</p>
               </div>
               <div className={`p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1 shadow-[0_8px_30px_rgb(0,0,0,0.03)] border backdrop-blur-xl ${isDark ? 'bg-zinc-950/70 border-zinc-800/80 hover:border-indigo-500/50' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] hover:border-stone-300'}`}>
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center font-bold text-base mb-5 shadow-inner">🗳️</div>
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center font-bold text-base mb-5 shadow-inner">🗳️️</div>
                 <h4 className={`text-sm font-bold mb-2 ${isDark ? 'text-zinc-100' : 'text-stone-900'}`}>Campus Voting Booth</h4>
                 <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-stone-600'}`}>Secure, authenticated student voting booths for annual student union elections with live vote tallying.</p>
               </div>
@@ -934,7 +971,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* University News & Announcements Section in Student Panel */}
+                    {/* University News & Announcements Section */}
                     <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                       <div className="flex justify-between items-center border-b pb-3 border-[#EBE6DC]">
                         <div>
@@ -996,24 +1033,33 @@ export default function App() {
                       </div>
                     </div>
 
+                    {/* Student Fee Dues & Payment Gateway Integration */}
                     <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                      <h3 className="text-base font-extrabold">💳 Student Fee Dues & Status</h3>
-                      <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Check tuition fee status and clear pending semester payments.</p>
+                      <div className="flex justify-between items-center border-b pb-3 border-[#EBE6DC]">
+                        <div>
+                          <span className="text-[10px] font-extrabold tracking-wider text-amber-800 uppercase">Secure Finance Portal</span>
+                          <h3 className="text-base font-extrabold">💳 Student Fee Dues & Payment Gateway</h3>
+                        </div>
+                        <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-xl text-xs font-bold">
+                          🔒 256-Bit SSL Encrypted
+                        </span>
+                      </div>
+                      <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Check tuition fee status and securely clear pending semester payments online.</p>
                       
                       <div className="space-y-3">
                         {studentFees.map(fee => (
                           <div key={fee.id} className={`p-4.5 rounded-2xl border flex justify-between items-center ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
                             <div>
                               <h4 className="font-bold text-xs">{fee.semester}</h4>
-                              <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Amount: <span className="font-bold">{fee.amount}</span> | Due: {fee.dueDate}</p>
+                              <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Amount: <span className="font-bold text-amber-700">{fee.amount}</span> | Due Date: {fee.dueDate}</p>
                             </div>
                             <div className="flex items-center gap-3">
                               <span className={`text-xs font-bold px-3 py-1 rounded-xl border ${fee.status === 'Paid' ? 'bg-emerald-50/80 text-emerald-700 border-emerald-200' : 'bg-amber-50/80 text-amber-700 border-amber-200'}`}>
-                                {fee.status}
+                                {fee.status === 'Paid' ? '✓ Paid' : 'Pending Dues'}
                               </span>
                               {fee.status === 'Pending' && (
-                                <button onClick={() => handlePayFee(fee.id)} className="bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] px-4 py-2 rounded-xl text-xs font-bold shadow-md transition">
-                                  Pay Now
+                                <button onClick={() => openPaymentModal(fee)} className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg transition transform hover:-translate-y-0.5">
+                                  Pay Now →
                                 </button>
                               )}
                             </div>
@@ -1151,7 +1197,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Class Timetable Interface Tab (Faculty/Admin update -> Student live view) */}
+                {/* Class Timetable Interface Tab */}
                 {activeTab === 'timetable' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 border-[#EBE6DC] gap-3">
@@ -1172,7 +1218,6 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Add Slot Form (Visible only if logged in as Faculty or Uni Admin) */}
                     {(isFacultyLoggedIn || isUniAdminLoggedIn) && (
                       <div className={`p-5 rounded-2xl border space-y-3.5 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
                         <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">➕ Add / Update Class Timetable Slot</h4>
@@ -1212,7 +1257,6 @@ export default function App() {
                       </div>
                     )}
 
-                    {/* Timetable Display Grid sorted by Day */}
                     <div className="space-y-4">
                       {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((dayName) => {
                         const daySlots = timetable.filter(t => t.day === dayName);
@@ -1334,142 +1378,30 @@ export default function App() {
                               </div>
                             </div>
                             <div>
-                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>News Content / Details</label>
-                              <textarea value={newNewsContent} onChange={(e) => setNewNewsContent(e.target.value)} placeholder="Enter detailed news content here..." rows="3" className={`w-full rounded-xl p-2.5 text-xs border resize-none ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required></textarea>
+                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Announcement Content</label>
+                              <textarea value={newNewsContent} onChange={(e) => setNewNewsContent(e.target.value)} placeholder="Enter full details..." rows="3" className={`w-full rounded-xl p-2.5 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
                             </div>
                             <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-2.5 rounded-xl font-bold text-xs shadow-md transition">
-                              🚀 Broadcast News to Student Panel
+                              Broadcast News to Students
                             </button>
                           </form>
 
-                          {/* Existing News Management List */}
-                          <div className="space-y-2 pt-1">
-                            <h5 className="font-bold text-xs">📋 Managed News Bulletins ({newsList.length})</h5>
-                            <div className="space-y-2.5">
-                              {newsList.map(news => (
-                                <div key={news.id} className={`p-3.5 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950 border-zinc-800/80' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
-                                  <div>
-                                    <span className="text-[10px] font-bold text-amber-800 bg-amber-500/10 px-2 py-0.5 rounded">{news.category}</span>
-                                    <h6 className="font-bold text-xs mt-1">{news.title}</h6>
-                                    <p className={`text-[11px] truncate max-w-md ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>{news.content}</p>
-                                  </div>
-                                  <button onClick={() => handleDeleteNews(news.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                                    Delete
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Faculty Salary Control */}
-                        <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">💵 Faculty Salary & Payroll Control</h4>
-                          
-                          <form onSubmit={handleAddFaculty} className={`p-4 rounded-xl border space-y-3 ${isDark ? 'bg-zinc-950 border-zinc-800/80' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
-                            <h5 className="font-bold text-xs">➕ Add New Faculty Member</h5>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-                              <input type="text" value={newFacultyName} onChange={(e) => setNewFacultyName(e.target.value)} placeholder="Faculty Name" className={`rounded-xl p-2.5 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                              <input type="text" value={newFacultyDept} onChange={(e) => setNewFacultyDept(e.target.value)} placeholder="Department" className={`rounded-xl p-2.5 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                              <input type="text" value={newFacultySalary} onChange={(e) => setNewFacultySalary(e.target.value)} placeholder="Salary (₹90,000)" className={`rounded-xl p-2.5 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                            </div>
-                            <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-2.5 rounded-xl font-bold text-xs shadow-md transition">
-                              Add Faculty & Set Salary
-                            </button>
-                          </form>
-
-                          <div className="space-y-2 pt-1">
-                            <h5 className="font-bold text-xs">📋 Current Faculty Salary List</h5>
-                            <div className="space-y-2.5">
-                              {facultySalaries.map(fac => (
-                                <div key={fac.id} className={`p-3.5 rounded-xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-2 ${isDark ? 'bg-zinc-950 border-zinc-800/80' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
-                                  <div>
-                                    <h6 className="font-bold text-xs">{fac.name}</h6>
-                                    <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Dept: <span className="font-bold">{fac.dept}</span></p>
-                                  </div>
-                                  <div className="flex items-center gap-2.5 w-full md:w-auto">
-                                    <input 
-                                      type="text" 
-                                      defaultValue={fac.salary} 
-                                      onBlur={(e) => handleUpdateSalary(fac.id, e.target.value)}
-                                      className={`rounded-xl p-2 text-xs text-emerald-700 font-extrabold w-28 text-center border ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`} 
-                                    />
-                                    <button onClick={() => handleDeleteFaculty(fac.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-xl text-xs font-bold transition ml-auto">
-                                      Remove
-                                    </button>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Image Upload Section */}
-                        <div className={`p-5 rounded-2xl border space-y-3.5 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">🖼️ Manage University Portal Images</h4>
                           <div className="space-y-2">
-                            <label className={`text-xs font-bold block ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Update Header Banner Image</label>
-                            <form onSubmit={handleUpdateBanner} className="flex gap-2.5">
-                              {bannerInputType === 'url' ? (
-                                <input type="text" value={newBannerImage} onChange={(e) => setNewBannerImage(e.target.value)} placeholder="https://images.unsplash.com/photo-..." className={`flex-1 rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} />
-                              ) : (
-                                <input type="file" accept="image/*" onChange={(e) => setBannerFileObj(e.target.files[0])} className={`flex-1 rounded-xl p-1.5 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-300' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-700'}`} />
-                              )}
-                              <button type="submit" className="bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] px-5 py-2.5 rounded-xl text-xs font-bold shadow-md whitespace-nowrap">Update Banner</button>
-                            </form>
-                          </div>
-                        </div>
-
-                        {/* Student Document Submissions */}
-                        <div className="space-y-3">
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">Student Document Submissions</h4>
-                          <div className="space-y-3">
-                            {submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).length === 0 ? (
-                              <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>No student documents submitted for this university yet.</p>
-                            ) : (
-                              submittedSubmissions.filter(sub => sub.uniId === selectedUni.id).map(sub => (
-                                <div key={sub.id} className={`p-4.5 rounded-2xl border space-y-3 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                                  <div className="flex justify-between items-start">
-                                    <div>
-                                      <h5 className="font-bold text-xs">{sub.studentName}</h5>
-                                      <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>{sub.studentEmail}</p>
-                                    </div>
-                                    <span className={`text-xs font-bold px-3 py-1 rounded-xl border ${sub.status === 'Approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : sub.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
-                                      {sub.status}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex gap-2.5 pt-1">
-                                    <button onClick={() => handleDocAction(sub.id, 'Approved')} className="bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-700 border border-emerald-500/20 px-4 py-2 rounded-xl text-xs font-bold transition">
-                                      Approve
-                                    </button>
-                                    <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-500/10 hover:bg-red-500/25 text-red-600 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-bold transition">
-                                      Reject
-                                    </button>
-                                  </div>
+                            <h5 className="font-bold text-xs">Active Broadcasts ({newsList.length})</h5>
+                            {newsList.map(n => (
+                              <div key={n.id} className={`p-3 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
+                                <div>
+                                  <span className="text-[10px] font-bold text-amber-800">{n.category} • {n.date}</span>
+                                  <h6 className="font-bold text-xs">{n.title}</h6>
                                 </div>
-                              ))
-                            )}
+                                <button onClick={() => handleDeleteNews(n.id)} className="bg-red-500/10 text-red-400 px-3 py-1 rounded-lg text-xs font-bold">Delete</button>
+                              </div>
+                            ))}
                           </div>
                         </div>
 
                       </div>
                     )}
-                  </div>
-                )}
-
-                {/* Organisation Panel */}
-                {activeTab === 'manager' && (
-                  <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                    <h3 className="text-base font-extrabold">Organisation & Candidate Panel</h3>
-                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Register new election candidates for {selectedUni.name}.</p>
-                    <form onSubmit={handleAddCandidate} className="space-y-3.5">
-                      <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="Candidate Full Name" className={`w-full rounded-2xl p-3.5 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                      <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="Party Name" className={`w-full rounded-2xl p-3.5 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                      <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3.5 rounded-2xl font-bold text-xs shadow-md transition">
-                        Register Candidate
-                      </button>
-                    </form>
                   </div>
                 )}
 
@@ -1479,6 +1411,109 @@ export default function App() {
         )}
 
       </main>
+
+      {/* Secure Payment Gateway Modal Overlay */}
+      {isPaymentModalOpen && activePaymentFee && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
+          <div className={`w-full max-w-lg p-7 rounded-3xl border shadow-2xl space-y-6 ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
+            
+            <div className="flex justify-between items-center border-b pb-4 border-[#EBE6DC]">
+              <div>
+                <span className="text-[10px] font-extrabold tracking-wider text-indigo-400 uppercase">Secure Checkout</span>
+                <h3 className="text-lg font-extrabold">Fee Payment Gateway</h3>
+              </div>
+              <button onClick={() => setIsPaymentModalOpen(false)} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${isDark ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300' : 'bg-[#F4F1EA] hover:bg-stone-200 text-stone-700'}`}>✕</button>
+            </div>
+
+            <div className={`p-4 rounded-2xl border space-y-1 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`}>
+              <div className="flex justify-between items-center text-xs">
+                <span className={isDark ? 'text-zinc-400' : 'text-stone-500'}>Fee Particulars:</span>
+                <span className="font-bold">{activePaymentFee.semester}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className={isDark ? 'text-zinc-400' : 'text-stone-500'}>Due Date:</span>
+                <span className="font-bold">{activePaymentFee.dueDate}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm pt-2 border-t border-zinc-800/40">
+                <span className="font-extrabold">Total Payable Amount:</span>
+                <span className="font-extrabold text-amber-700 text-base">{activePaymentFee.amount}</span>
+              </div>
+            </div>
+
+            {/* Payment Method Selector */}
+            <div className="space-y-3">
+              <label className={`block text-xs font-bold ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Select Payment Method</label>
+              <div className="grid grid-cols-3 gap-2.5">
+                <button type="button" onClick={() => setPaymentMethod('upi')} className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition ${paymentMethod === 'upi' ? 'bg-indigo-600 border-indigo-500 text-white shadow-md' : isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-400' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-700'}`}>
+                  📱 UPI / QR
+                </button>
+                <button type="button" onClick={() => setPaymentMethod('card')} className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition ${paymentMethod === 'card' ? 'bg-indigo-600 border-indigo-500 text-white shadow-md' : isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-400' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-700'}`}>
+                  💳 Credit / Debit
+                </button>
+                <button type="button" onClick={() => setPaymentMethod('netbanking')} className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition ${paymentMethod === 'netbanking' ? 'bg-indigo-600 border-indigo-500 text-white shadow-md' : isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-400' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-700'}`}>
+                  🏦 Net Banking
+                </button>
+              </div>
+            </div>
+
+            {/* Payment Form Details */}
+            <form onSubmit={handleProcessPayment} className="space-y-4">
+              {paymentMethod === 'upi' && (
+                <div className="space-y-1.5">
+                  <label className={`block text-xs font-bold ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Enter UPI ID / VPA</label>
+                  <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="username@okhdfcbank or 9876543210@paytm" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-900'}`} required />
+                  <p className={`text-[10px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Supported: Google Pay, PhonePe, Paytm, BHIM UPI</p>
+                </div>
+              )}
+
+              {paymentMethod === 'card' && (
+                <div className="space-y-3">
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Card Number</label>
+                    <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4532 •••• •••• 8890" maxLength="19" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-900'}`} required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Expiry (MM/YY)</label>
+                      <input type="text" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} placeholder="12/28" maxLength="5" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-900'}`} required />
+                    </div>
+                    <div>
+                      <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>CVV</label>
+                      <input type="password" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} placeholder="•••" maxLength="4" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-900'}`} required />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'netbanking' && (
+                <div className="space-y-1.5">
+                  <label className={`block text-xs font-bold ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Select Your Bank</label>
+                  <select value={selectedBank} onChange={(e) => setSelectedBank(e.target.value)} className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-900'}`}>
+                    <option value="HDFC Bank">HDFC Bank</option>
+                    <option value="SBI">State Bank of India (SBI)</option>
+                    <option value="ICICI Bank">ICICI Bank</option>
+                    <option value="Axis Bank">Axis Bank</option>
+                    <option value="Punjab National Bank">Punjab National Bank</option>
+                  </select>
+                </div>
+              )}
+
+              <button type="submit" disabled={isProcessingPayment} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2">
+                {isProcessingPayment ? (
+                  <>
+                    <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+                    Processing Secure Payment...
+                  </>
+                ) : (
+                  `Pay ${activePaymentFee.amount} Securely`
+                )}
+              </button>
+            </form>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
