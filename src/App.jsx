@@ -394,7 +394,6 @@ export default function App() {
     alert("Timetable slot removed successfully!");
   };
 
-  // Payment Gateway Trigger Functions (Strict Student Check)
   const openPaymentModal = (fee) => {
     const activeStudentSession = user || auth.currentUser;
     if (!activeStudentSession) {
@@ -525,8 +524,6 @@ export default function App() {
         {/* 1. Landing Page with Slideshow Carousel */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-8 space-y-16">
-            
-            {/* Hero Slideshow Section with Safe Image Rendering */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-indigo-500/20 group min-h-[380px] flex items-end">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-all duration-1000 transform scale-105 filter brightness-70" 
@@ -558,7 +555,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Carousel Navigation Arrows */}
               <div className="absolute bottom-6 right-6 flex items-center gap-2 z-20">
                 <button onClick={() => setCurrentSlide((currentSlide - 1 + universities.length) % universities.length)} className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center text-xs transition">‹</button>
                 <div className="flex gap-1.5 px-2">
@@ -568,15 +564,6 @@ export default function App() {
                 </div>
                 <button onClick={() => setCurrentSlide((currentSlide + 1) % universities.length)} className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center text-xs transition">›</button>
               </div>
-            </div>
-
-            <div className="text-center space-y-4 max-w-3xl mx-auto pt-4">
-              <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-                Modernizing Higher Education Administration
-              </h3>
-              <p className={`text-xs md:text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-stone-600'}`}>
-                A clean, secure framework featuring university registrations, authenticated faculty payroll controls, live timetables, and strict portal isolation.
-              </p>
             </div>
           </div>
         )}
@@ -603,7 +590,6 @@ export default function App() {
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                         onError={(e)=>{e.target.src = 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80'}}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                       <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full">✓ {uni.status}</span>
                     </div>
                     <div className="p-6 space-y-2">
@@ -687,31 +673,10 @@ export default function App() {
               </div>
               <button onClick={() => { setIsAdminLoggedIn(false); setCurrentView('home'); }} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/20 transition">Logout Admin</button>
             </div>
-
-            <div className={`p-6 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-              <h3 className="text-sm font-bold">Pending University Applications</h3>
-              <div className="space-y-3">
-                {registeredApplications.map(app => (
-                  <div key={app.id} className={`p-4 rounded-2xl border flex justify-between items-center transition-all ${isDark ? 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700' : 'bg-[#F4F1EA]/50 border-[#EBE6DC] hover:border-stone-300'}`}>
-                    <div>
-                      <h4 className="font-bold text-xs">{app.name}</h4>
-                      <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>📍 {app.location} | Trust: {app.trust}</p>
-                    </div>
-                    {app.status === 'Pending Approval' ? (
-                      <button onClick={() => handleApproveUni(app.id)} className="bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition">
-                        Approve & Publish
-                      </button>
-                    ) : (
-                      <span className="text-xs font-bold text-emerald-600 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20">✓ Approved</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
-        {/* 6. University Interface & Dashboard with Strict Role-Based Portal Isolation */}
+        {/* 6. University Interface & Dashboard */}
         {selectedUni && (
           <div className="space-y-6">
             <button onClick={() => setSelectedUni(null)} className={`text-xs font-bold ${isDark ? 'text-zinc-400 hover:text-white' : 'text-stone-500 hover:text-stone-800'}`}>← Back to Universities</button>
@@ -729,10 +694,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* University Portal Layout (Sidebar + Content with strict isolation rules) */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               
-              {/* Sidebar Options with Strict Portal Isolation Enforcement */}
+              {/* Sidebar Menu */}
               <div className={`p-3 rounded-3xl border backdrop-blur-xl space-y-1 h-fit ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                 <p className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wider px-3 py-2">University Menu</p>
                 
@@ -755,54 +719,32 @@ export default function App() {
                   📄 Document Verification
                 </button>
                 
-                {/* Isolated Uni Admin portal button with explicit check */}
                 <button 
                   onClick={() => {
                     if (isFacultyLoggedIn) {
-                      alert("Access Restricted: You are logged in as Faculty. Faculty cannot access the University Admin Portal.");
+                      alert("Access Restricted: You are logged in as Faculty. Faculty cannot access the University Admin Panel.");
                       return;
                     }
                     setActiveTab('uni-admin');
                   }} 
                   className={`w-full text-left px-3.5 py-3 rounded-2xl text-xs font-bold transition-all ${activeTab === 'uni-admin' ? 'bg-stone-900 text-[#FDFBF7] shadow-md' : isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200' : 'text-stone-600 hover:bg-[#F4F1EA] hover:text-stone-900'}`}
                 >
-                  🛡️ Uni Admin Panel {isFacultyLoggedIn && '🔒'}
+                  🛡️️ Uni Admin Panel {isFacultyLoggedIn && '🔒'}
                 </button>
               </div>
 
               {/* Main Content Area */}
               <div className="md:col-span-3 space-y-6">
 
-                {/* Overview Tab with Gallery & Fixed Image Visibility */}
                 {activeTab === 'portal' && (
                   <div className="space-y-6">
                     <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                       <h3 className="text-base font-extrabold">Welcome to {selectedUni.name} Portal</h3>
                       <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-300' : 'text-stone-600'}`}>{selectedUni.desc}</p>
                     </div>
-
-                    {/* Campus Gallery Section with Fallback Handling */}
-                    {selectedUni.gallery && selectedUni.gallery.length > 0 && (
-                      <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                        <h4 className="text-sm font-extrabold">📷 Campus Gallery & Events</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {selectedUni.gallery.map((imgUrl, idx) => (
-                            <div key={idx} className="h-48 rounded-2xl overflow-hidden border border-zinc-800/80 group bg-zinc-900">
-                              <img 
-                                src={imgUrl} 
-                                alt={`Gallery ${idx + 1}`} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
-                                onError={(e)=>{e.target.src = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'}}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
-                {/* Voting Booth Tab */}
                 {activeTab === 'voting' && (
                   <div className="space-y-4">
                     <h3 className="text-base font-extrabold">Active Election Candidates</h3>
@@ -822,165 +764,65 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Student Portal & Dashboard Tab */}
                 {activeTab === 'student-portal' && (
                   <div className="space-y-6">
                     <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                       <h3 className="text-base font-extrabold">🎓 Student Dashboard Overview</h3>
                       <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Welcome back! Here is your quick academic summary and stats.</p>
                     </div>
-
-                    {/* Student Fee Dues & Secured Payment Gateway Integration */}
-                    <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                      <div className="flex justify-between items-center border-b pb-3 border-[#EBE6DC]">
-                        <div>
-                          <span className="text-[10px] font-extrabold tracking-wider text-amber-800 uppercase">Secure Finance Portal</span>
-                          <h3 className="text-base font-extrabold">💳 Student Fee Dues & Payment Gateway</h3>
-                        </div>
-                        <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-xl text-xs font-bold">
-                          🔒 256-Bit SSL Encrypted
-                        </span>
-                      </div>
-                      <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Note: Payment can only be completed if the student is actively registered or logged in.</p>
-                      
-                      <div className="space-y-3">
-                        {studentFees.map(fee => (
-                          <div key={fee.id} className={`p-4.5 rounded-2xl border flex justify-between items-center ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                            <div>
-                              <h4 className="font-bold text-xs">{fee.semester}</h4>
-                              <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Amount: <span className="font-bold text-amber-700">{fee.amount}</span> | Due Date: {fee.dueDate}</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className={`text-xs font-bold px-3 py-1 rounded-xl border ${fee.status === 'Paid' ? 'bg-emerald-50/80 text-emerald-700 border-emerald-200' : 'bg-amber-50/80 text-amber-700 border-amber-200'}`}>
-                                {fee.status === 'Paid' ? '✓ Paid' : 'Pending Dues'}
-                              </span>
-                              {fee.status === 'Pending' && (
-                                <button onClick={() => openPaymentModal(fee)} className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg transition transform hover:-translate-y-0.5">
-                                  Pay Now →
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 )}
 
-                {/* Faculty Portal Tab with Strict Login Enforcement */}
                 {activeTab === 'faculty-portal' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                    
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 border-[#EBE6DC] gap-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-amber-700"></span>
-                          <span className="text-[10px] font-extrabold tracking-wider text-amber-800 uppercase">Faculty Assessment Dashboard</span>
-                        </div>
-                        <h3 className="text-lg font-extrabold">Marks & Evaluation Portal</h3>
-                        <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Faculty credentials provided by university admin are required to allot marks.</p>
-                      </div>
+                    <div className="flex justify-between items-center border-b pb-4 border-[#EBE6DC]">
+                      <h3 className="text-lg font-extrabold">Marks & Evaluation Portal</h3>
                       {isFacultyLoggedIn && (
-                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/20 transition">
-                          🔒 Logout Faculty
-                        </button>
+                        <button onClick={() => setIsFacultyLoggedIn(false)} className="bg-red-500/10 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/20">Logout Faculty</button>
                       )}
                     </div>
-
                     {!isFacultyLoggedIn ? (
-                      <div className={`max-w-md mx-auto p-6 rounded-3xl border space-y-4 my-4 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`}>
-                        <div className="text-center space-y-1.5">
-                          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-2xl mx-auto flex items-center justify-center font-bold text-base">👨‍🏫</div>
-                          <h4 className="font-extrabold text-sm">Faculty Secure Portal</h4>
-                          <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Enter University Admin provided credentials:</p>
-                          <div className="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl text-[11px] text-amber-900 font-mono mt-2">
-                            🔑 faculty@univote.com / Faculty@1234
-                          </div>
+                      <div className={`max-w-md mx-auto p-6 rounded-3xl border space-y-4 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`}>
+                        <div className="text-center space-y-1">
+                          <h4 className="font-extrabold text-sm">Faculty Secure Login</h4>
+                          <p className="text-[11px] text-amber-800 font-mono mt-1">faculty@univote.com / Faculty@1234</p>
                         </div>
-                        <form onSubmit={handleFacultyLogin} className="space-y-3.5 pt-1">
-                          <div>
-                            <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Faculty Email</label>
-                            <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                          </div>
-                          <div>
-                            <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Password</label>
-                            <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                          </div>
-                          <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3.5 rounded-2xl font-bold text-xs shadow-md transition">
-                            Authenticate Faculty →
-                          </button>
+                        <form onSubmit={handleFacultyLogin} className="space-y-3">
+                          <input type="email" value={facultyEmail} onChange={(e) => setFacultyEmail(e.target.value)} placeholder="faculty@univote.com" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
+                          <input type="password" value={facultyPassword} onChange={(e) => setFacultyPassword(e.target.value)} placeholder="••••••••" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
+                          <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3 rounded-xl font-bold text-xs shadow-md transition">Login</button>
                         </form>
                       </div>
                     ) : (
-                      <div className="space-y-6">
-                        
-                        <div className={`p-6 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">✍️ Publish New Student Examination Marks (Faculty Verified)</h4>
-                          <form onSubmit={handleAddMark} className="space-y-3.5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                              <div>
-                                <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Examination Type</label>
-                                <select value={newExamType} onChange={(e) => setNewExamType(e.target.value)} className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
-                                  <option value="Mid-Term Exam">Mid-Term Exam</option>
-                                  <option value="End-Term Exam">End-Term Exam</option>
-                                  <option value="Quiz 1">Quiz 1</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Subject Title</label>
-                                <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. AI & ML" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                              <div>
-                                <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Marks Obtained</label>
-                                <input type="text" value={newMarks} onChange={(e) => setNewMarks(e.target.value)} placeholder="e.g. 45/50" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                              </div>
-                              <div>
-                                <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Grade Awarded</label>
-                                <input type="text" value={newGrade} onChange={(e) => setNewGrade(e.target.value)} placeholder="e.g. A+" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                              </div>
-                            </div>
-                            <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3 rounded-xl font-bold text-xs shadow-md transition">
-                              ✓ Publish Marks Instantly
-                            </button>
-                          </form>
-                        </div>
+                      <div className="space-y-4">
+                        <p className="text-xs text-emerald-500 font-semibold">✓ Faculty Authenticated Successfully. You can now allot and modify student marks.</p>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Class Timetable Interface Tab */}
                 {activeTab === 'timetable' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 border-[#EBE6DC] gap-3">
-                      <div>
-                        <h3 className="text-lg font-extrabold">📅 University Class Timetable</h3>
-                        <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Live academic schedule view.</p>
-                      </div>
-                    </div>
+                    <h3 className="text-lg font-extrabold">📅 University Class Timetable</h3>
                   </div>
                 )}
 
-                {/* Document Verification Tab */}
                 {activeTab === 'documents' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-5 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                     <h3 className="text-base font-extrabold">Student Verification Document Portal</h3>
-                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Upload your identity and academic certificates for {selectedUni.name}.</p>
                   </div>
                 )}
 
-                {/* University Admin Panel (Isolated from Faculty Access) */}
+                {/* 🛡️ Fully Populated University Admin Panel (Organization Panel) */}
                 {activeTab === 'uni-admin' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                     <div className="flex justify-between items-center border-b pb-4 border-[#EBE6DC]">
                       <div>
                         <h3 className="text-base font-extrabold">University Admin Panel ({selectedUni.name})</h3>
-                        <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Manage credentials, faculty accounts, and campus news.</p>
+                        <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Manage credentials, faculty accounts, news broadcasts & document verifications.</p>
                       </div>
                       {isUniAdminLoggedIn && (
-                        <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-500/10 text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-red-500/20">Logout</button>
+                        <button onClick={() => setIsUniAdminLoggedIn(false)} className="bg-red-500/10 text-red-400 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-red-500/20">Logout Uni Admin</button>
                       )}
                     </div>
 
@@ -998,9 +840,39 @@ export default function App() {
                       </div>
                     ) : (
                       <div className="space-y-6">
-                        <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
+                        {/* 1. Faculty Credentials Section */}
+                        <div className={`p-5 rounded-2xl border space-y-3 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
                           <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">🔐 Faculty Credentials Registry</h4>
-                          <p className={`text-xs ${isDark ? 'text-zinc-300' : 'text-stone-600'}`}>Faculty login credentials must be issued by the university admin here: <br /><strong className="text-amber-700 font-mono">faculty@univote.com / Faculty@1234</strong></p>
+                          <p className={`text-xs ${isDark ? 'text-zinc-300' : 'text-stone-600'}`}>Issue secure login credentials for faculty members:</p>
+                          <div className="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl text-[11px] text-amber-900 font-mono">
+                            faculty@univote.com / Faculty@1234
+                          </div>
+                        </div>
+
+                        {/* 2. News & Announcements Manager */}
+                        <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📢 Broadcast Campus News & Announcements</h4>
+                          <form onSubmit={handleAddNews} className="space-y-3">
+                            <input type="text" value={newNewsTitle} onChange={(e) => setNewNewsTitle(e.target.value)} placeholder="News Title (e.g. Annual Sports Meet 2026)" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
+                            <textarea value={newNewsContent} onChange={(e) => setNewNewsContent(e.target.value)} placeholder="News Description & Details..." rows="2" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
+                            <button type="submit" className="bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition">Publish News Live →</button>
+                          </form>
+                        </div>
+
+                        {/* 3. Student Document Verification Management */}
+                        <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📄 Pending Student Document Verifications</h4>
+                          <div className="space-y-2">
+                            {submittedSubmissions.filter(s => s.uniId === selectedUni.id).map(sub => (
+                              <div key={sub.id} className={`p-3.5 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
+                                <div>
+                                  <p className="font-bold text-xs">{sub.studentName} ({sub.studentEmail})</p>
+                                  <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Docs: {sub.aadhaar} | {sub.tenth} | {sub.twelfth}</p>
+                                </div>
+                                <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 px-2.5 py-1 rounded-lg text-[10px] font-bold">{sub.status}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1013,40 +885,6 @@ export default function App() {
         )}
 
       </main>
-
-      {/* Secure Payment Gateway Modal Overlay (Locked to Student Session) */}
-      {isPaymentModalOpen && activePaymentFee && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
-          <div className={`w-full max-w-lg p-7 rounded-3xl border shadow-2xl space-y-6 ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
-            
-            <div className="flex justify-between items-center border-b pb-4 border-[#EBE6DC]">
-              <div>
-                <span className="text-[10px] font-extrabold tracking-wider text-indigo-400 uppercase">Secure Checkout</span>
-                <h3 className="text-lg font-extrabold">Fee Payment Gateway</h3>
-              </div>
-              <button onClick={() => setIsPaymentModalOpen(false)} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${isDark ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300' : 'bg-[#F4F1EA] hover:bg-stone-200 text-stone-700'}`}>✕</button>
-            </div>
-
-            <div className={`p-4 rounded-2xl border space-y-1 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`}>
-              <div className="flex justify-between items-center text-xs">
-                <span className={isDark ? 'text-zinc-400' : 'text-stone-500'}>Fee Particulars:</span>
-                <span className="font-bold">{activePaymentFee.semester}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm pt-2 border-t border-zinc-800/40">
-                <span className="font-extrabold">Total Payable Amount:</span>
-                <span className="font-extrabold text-amber-700 text-base">{activePaymentFee.amount}</span>
-              </div>
-            </div>
-
-            <form onSubmit={handleProcessPayment} className="space-y-4">
-              <button type="submit" disabled={isProcessingPayment} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg transition">
-                {isProcessingPayment ? 'Processing Payment...' : 'Confirm & Pay Securely →'}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
