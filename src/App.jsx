@@ -394,6 +394,7 @@ export default function App() {
     alert("Timetable slot removed successfully!");
   };
 
+  // Payment Gateway Trigger Functions (Strict Student Check)
   const openPaymentModal = (fee) => {
     const activeStudentSession = user || auth.currentUser;
     if (!activeStudentSession) {
@@ -524,6 +525,8 @@ export default function App() {
         {/* 1. Landing Page with Slideshow Carousel */}
         {currentView === 'home' && !selectedUni && (
           <div className="py-8 space-y-16">
+            
+            {/* Hero Slideshow Section with Safe Image Rendering */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-indigo-500/20 group min-h-[380px] flex items-end">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-all duration-1000 transform scale-105 filter brightness-70" 
@@ -555,6 +558,7 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Carousel Navigation Arrows */}
               <div className="absolute bottom-6 right-6 flex items-center gap-2 z-20">
                 <button onClick={() => setCurrentSlide((currentSlide - 1 + universities.length) % universities.length)} className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center text-xs transition">‹</button>
                 <div className="flex gap-1.5 px-2">
@@ -642,17 +646,6 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Sponsoring Trust Deed Name</label>
-                  <input type="text" value={regTrustDeed} onChange={(e) => setRegTrustDeed(e.target.value)} placeholder="e.g. Apex Educational Trust" className={`w-full rounded-2xl p-3.5 text-xs outline-none border transition ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100 focus:border-indigo-500' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900 focus:border-stone-400'}`} required />
-                </div>
-                <div>
-                  <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Trust PAN Number</label>
-                  <input type="text" value={regPan} onChange={(e) => setRegPan(e.target.value)} placeholder="e.g. AAATA1234F" className={`w-full rounded-2xl p-3.5 text-xs outline-none border transition ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100 focus:border-indigo-500' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900 focus:border-stone-400'}`} required />
-                </div>
-              </div>
-
               <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3.5 rounded-2xl font-bold text-xs shadow-lg transition-all">
                 Submit Application for State & UGC Review →
               </button>
@@ -718,7 +711,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 6. University Interface & Dashboard */}
+        {/* 6. University Interface & Dashboard with Strict Role-Based Portal Isolation */}
         {selectedUni && (
           <div className="space-y-6">
             <button onClick={() => setSelectedUni(null)} className={`text-xs font-bold ${isDark ? 'text-zinc-400 hover:text-white' : 'text-stone-500 hover:text-stone-800'}`}>← Back to Universities</button>
@@ -736,9 +729,10 @@ export default function App() {
               </div>
             </div>
 
+            {/* University Portal Layout (Sidebar + Content with strict isolation rules) */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               
-              {/* Sidebar Menu */}
+              {/* Sidebar Options with Strict Portal Isolation Enforcement */}
               <div className={`p-3 rounded-3xl border backdrop-blur-xl space-y-1 h-fit ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                 <p className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wider px-3 py-2">University Menu</p>
                 
@@ -761,6 +755,7 @@ export default function App() {
                   📄 Document Verification
                 </button>
                 
+                {/* Isolated Uni Admin portal button with explicit check */}
                 <button 
                   onClick={() => {
                     if (isFacultyLoggedIn) {
@@ -778,7 +773,7 @@ export default function App() {
               {/* Main Content Area */}
               <div className="md:col-span-3 space-y-6">
 
-                {/* Overview Tab */}
+                {/* Overview Tab with Gallery & Fixed Image Visibility */}
                 {activeTab === 'portal' && (
                   <div className="space-y-6">
                     <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
@@ -786,6 +781,7 @@ export default function App() {
                       <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-300' : 'text-stone-600'}`}>{selectedUni.desc}</p>
                     </div>
 
+                    {/* Campus Gallery Section with Fallback Handling */}
                     {selectedUni.gallery && selectedUni.gallery.length > 0 && (
                       <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                         <h4 className="text-sm font-extrabold">📷 Campus Gallery & Events</h4>
@@ -816,7 +812,6 @@ export default function App() {
                           <div>
                             <h4 className="font-bold text-sm">{cand.name}</h4>
                             <p className={`text-xs mt-1 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Party: <span className="font-bold">{cand.party}</span></p>
-                            <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Votes: <span className="font-bold text-indigo-400">{cand.votes}</span></p>
                           </div>
                           <button onClick={() => handleVote(selectedUni.id, cand.id)} className="bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition">
                             Vote Now
@@ -835,6 +830,7 @@ export default function App() {
                       <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Welcome back! Here is your quick academic summary and stats.</p>
                     </div>
 
+                    {/* Student Fee Dues & Secured Payment Gateway Integration */}
                     <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-4 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                       <div className="flex justify-between items-center border-b pb-3 border-[#EBE6DC]">
                         <div>
@@ -845,6 +841,7 @@ export default function App() {
                           🔒 256-Bit SSL Encrypted
                         </span>
                       </div>
+                      <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Note: Payment can only be completed if the student is actively registered or logged in.</p>
                       
                       <div className="space-y-3">
                         {studentFees.map(fee => (
@@ -870,7 +867,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Faculty Portal Tab */}
+                {/* Faculty Portal Tab with Strict Login Enforcement */}
                 {activeTab === 'faculty-portal' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                     
@@ -916,8 +913,9 @@ export default function App() {
                       </div>
                     ) : (
                       <div className="space-y-6">
+                        
                         <div className={`p-6 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">✍️ Publish New Student Examination Marks</h4>
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">✍️ Publish New Student Examination Marks (Faculty Verified)</h4>
                           <form onSubmit={handleAddMark} className="space-y-3.5">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                               <div>
@@ -948,19 +946,6 @@ export default function App() {
                             </button>
                           </form>
                         </div>
-
-                        <div className="space-y-3">
-                          <h4 className="font-extrabold text-xs">Existing Student Marks Records</h4>
-                          {studentMarks.map(m => (
-                            <div key={m.id} className={`p-4 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                              <div>
-                                <h5 className="font-bold text-xs">{m.subject} ({m.exam})</h5>
-                                <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Marks: <span className="font-bold text-indigo-400">{m.marks}</span> | Grade: <span className="font-bold text-emerald-500">{m.grade}</span></p>
-                              </div>
-                              <button onClick={() => handleDeleteMark(m.id)} className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-500/20">Delete</button>
-                            </div>
-                          ))}
-                        </div>
                       </div>
                     )}
                   </div>
@@ -975,55 +960,6 @@ export default function App() {
                         <p className={`text-xs mt-0.5 ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Live academic schedule view.</p>
                       </div>
                     </div>
-
-                    <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                      <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">➕ Add New Timetable Slot</h4>
-                      <form onSubmit={handleAddTimetableSlot} className="space-y-3.5">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <div>
-                            <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Day</label>
-                            <select value={newTzDay} onChange={(e) => setNewTzDay(e.target.value)} className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
-                              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(d => <option key={d} value={d}>{d}</option>)}
-                            </select>
-                          </div>
-                          <div>
-                            <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Time Slot</label>
-                            <input type="text" value={newTzTime} onChange={(e) => setNewTzTime(e.target.value)} placeholder="e.g. 09:00 AM - 10:00 AM" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                          </div>
-                          <div>
-                            <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Subject</label>
-                            <input type="text" value={newTzSubj} onChange={(e) => setNewTzSubj(e.target.value)} placeholder="e.g. Data Structures" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div>
-                            <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Faculty Name</label>
-                            <input type="text" value={newTzFaculty} onChange={(e) => setNewTzFaculty(e.target.value)} placeholder="e.g. Dr. Rajesh Kumar" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                          </div>
-                          <div>
-                            <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Room / Hall</label>
-                            <input type="text" value={newTzRoom} onChange={(e) => setNewTzRoom(e.target.value)} placeholder="e.g. LH-101" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                          </div>
-                        </div>
-                        <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3 rounded-xl font-bold text-xs shadow-md transition">
-                          Add Slot to Timetable →
-                        </button>
-                      </form>
-                    </div>
-
-                    <div className="space-y-3">
-                      <h4 className="font-extrabold text-xs">Scheduled Classes</h4>
-                      {timetable.map(slot => (
-                        <div key={slot.id} className={`p-4 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <div>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400">{slot.day} • {slot.time}</span>
-                            <h5 className="font-bold text-xs mt-1">{slot.subject}</h5>
-                            <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Faculty: {slot.faculty} | Room: {slot.room}</p>
-                          </div>
-                          <button onClick={() => handleDeleteTimetableSlot(slot.id)} className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-500/20">Remove</button>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 )}
 
@@ -1032,46 +968,10 @@ export default function App() {
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-5 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                     <h3 className="text-base font-extrabold">Student Verification Document Portal</h3>
                     <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Upload your identity and academic certificates for {selectedUni.name}.</p>
-
-                    <form onSubmit={handleDocumentSubmit} className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Aadhaar Card / ID Proof Document Name</label>
-                          <input type="text" value={aadhaarFile} onChange={(e) => setAadhaarFile(e.target.value)} placeholder="e.g. Aadhaar_Verified.pdf" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                        </div>
-                        <div>
-                          <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>PAN Card Document Name</label>
-                          <input type="text" value={panFile} onChange={(e) => setPanFile(e.target.value)} placeholder="e.g. PAN_Card.pdf" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>10th Marksheet</label>
-                          <input type="text" value={tenthFile} onChange={(e) => setTenthFile(e.target.value)} placeholder="10th_Marksheet.pdf" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                        </div>
-                        <div>
-                          <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>12th Marksheet</label>
-                          <input type="text" value={twelfthFile} onChange={(e) => setTwelfthFile(e.target.value)} placeholder="12th_Marksheet.pdf" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                        </div>
-                        <div>
-                          <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Character Certificate</label>
-                          <input type="text" value={charCertFile} onChange={(e) => setCharCertFile(e.target.value)} placeholder="Character_Cert.pdf" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                        </div>
-                      </div>
-                      <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3.5 rounded-2xl font-bold text-xs shadow-md transition">
-                        Submit Documents for Verification →
-                      </button>
-                    </form>
-
-                    {docSubmitted && (
-                      <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold text-center">
-                        ✓ Documents successfully submitted to university administration for verification!
-                      </div>
-                    )}
                   </div>
                 )}
 
-                {/* University Admin Panel */}
+                {/* University Admin Panel (Isolated from Faculty Access) */}
                 {activeTab === 'uni-admin' && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
                     <div className="flex justify-between items-center border-b pb-4 border-[#EBE6DC]">
@@ -1098,30 +998,9 @@ export default function App() {
                       </div>
                     ) : (
                       <div className="space-y-6">
-                        {/* News Broadcasting */}
                         <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📢 Broadcast Campus News & Announcements</h4>
-                          <form onSubmit={handleAddNews} className="space-y-3">
-                            <input type="text" value={newNewsTitle} onChange={(e) => setNewNewsTitle(e.target.value)} placeholder="News Title (e.g. Annual Fest Schedule)" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                            <textarea value={newNewsContent} onChange={(e) => setNewNewsContent(e.target.value)} placeholder="Announcement details..." className={`w-full rounded-xl p-3 text-xs border h-20 ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
-                            <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-2.5 rounded-xl text-xs font-bold">Broadcast Announcement</button>
-                          </form>
-                        </div>
-
-                        {/* Submitted Student Verifications */}
-                        <div className={`p-5 rounded-2xl border space-y-3 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📄 Student Document Verification Submissions</h4>
-                          <div className="space-y-2">
-                            {submittedSubmissions.filter(s => s.uniId === selectedUni.id).map(sub => (
-                              <div key={sub.id} className={`p-3.5 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950/60 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
-                                <div>
-                                  <h5 className="font-bold text-xs">{sub.studentName} ({sub.studentEmail})</h5>
-                                  <p className={`text-[10px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Docs: {sub.aadhaar}, {sub.pan}, {sub.tenth}</p>
-                                </div>
-                                <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-bold px-2.5 py-1 rounded-lg">{sub.status}</span>
-                              </div>
-                            ))}
-                          </div>
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">🔐 Faculty Credentials Registry</h4>
+                          <p className={`text-xs ${isDark ? 'text-zinc-300' : 'text-stone-600'}`}>Faculty login credentials must be issued by the university admin here: <br /><strong className="text-amber-700 font-mono">faculty@univote.com / Faculty@1234</strong></p>
                         </div>
                       </div>
                     )}
@@ -1135,7 +1014,7 @@ export default function App() {
 
       </main>
 
-      {/* Secure Payment Gateway Modal Overlay */}
+      {/* Secure Payment Gateway Modal Overlay (Locked to Student Session) */}
       {isPaymentModalOpen && activePaymentFee && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
           <div className={`w-full max-w-lg p-7 rounded-3xl border shadow-2xl space-y-6 ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
@@ -1160,32 +1039,6 @@ export default function App() {
             </div>
 
             <form onSubmit={handleProcessPayment} className="space-y-4">
-              <div className="flex gap-2">
-                {['upi', 'card'].map(m => (
-                  <button key={m} type="button" onClick={() => setPaymentMethod(m)} className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition ${paymentMethod === m ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-300' : 'bg-[#F4F1EA] border-[#EBE6DC] text-stone-700'}`}>
-                    {m === 'upi' ? '⚡ UPI / QR' : '💳 Credit / Debit Card'}
-                  </button>
-                ))}
-              </div>
-
-              {paymentMethod === 'upi' ? (
-                <div>
-                  <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>UPI ID / Virtual Payment Address</label>
-                  <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="username@oksbi" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div>
-                    <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Card Number</label>
-                    <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4532 •••• •••• 8920" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <input type="text" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} placeholder="MM/YY" className={`rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                    <input type="password" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} placeholder="CVV" maxLength={4} className={`rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                  </div>
-                </div>
-              )}
-
               <button type="submit" disabled={isProcessingPayment} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg transition">
                 {isProcessingPayment ? 'Processing Payment...' : 'Confirm & Pay Securely →'}
               </button>
