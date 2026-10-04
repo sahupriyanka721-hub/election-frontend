@@ -1110,7 +1110,7 @@ export default function App() {
                     {!isFacultyLoggedIn ? (
                       <div className={`max-w-md mx-auto p-6 rounded-3xl border space-y-4 my-4 ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`}>
                         <div className="text-center space-y-1.5">
-                          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-2xl mx-auto flex items-center justify-center font-bold text-base">👨‍‍🏫</div>
+                          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-2xl mx-auto flex items-center justify-center font-bold text-base">👨‍🏫</div>
                           <h4 className="font-extrabold text-sm">Faculty Secure Portal</h4>
                           <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Enter Faculty ID and Password provided by University Admin.</p>
                           <div className="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl text-[11px] text-amber-900 font-mono mt-2 text-left space-y-1">
@@ -1139,7 +1139,7 @@ export default function App() {
                       <div className="space-y-6">
                         
                         <div className={`p-6 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">✍️️ Publish New Student Examination Marks (Faculty Logged In)</h4>
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">✍ Publish New Student Examination Marks (Faculty Logged In)</h4>
                           <form onSubmit={handleAddMark} className="space-y-3.5">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                               <div>
@@ -1401,92 +1401,67 @@ export default function App() {
                                   <h6 className="font-bold text-xs">{f.name} ({f.salary})</h6>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="bg-emerald-500/10 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-emerald-500/20">Password: Faculty@1234</span>
-                                  <button onClick={() => handleDeleteFaculty(f.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold transition">Remove</button>
+                                  <span className="text-xs font-bold text-emerald-600">Active</span>
+                                  <button onClick={() => handleDeleteFaculty(f.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1 rounded-xl text-[11px] font-bold transition">
+                                    Remove
+                                  </button>
                                 </div>
                               </div>
                             ))}
                           </div>
                         </div>
 
-                        {/* Broadcast News Section */}
+                        {/* Broadcast News Section by Uni Admin */}
                         <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
                           <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📢 Broadcast Campus News & Announcements</h4>
-                          <form onSubmit={handleAddNews} className={`p-4 rounded-xl border space-y-3 ${isDark ? 'bg-zinc-950 border-zinc-800/80' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <div>
-                                <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Bulletin Title</label>
-                                <input type="text" value={newNewsTitle} onChange={(e) => setNewNewsTitle(e.target.value)} placeholder="e.g. End Semester Exam Schedule Announced" className={`w-full rounded-xl p-2.5 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                              </div>
-                              <div>
-                                <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Category</label>
-                                <select value={newNewsCategory} onChange={(e) => setNewNewsCategory(e.target.value)} className={`w-full rounded-xl p-2.5 text-xs border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`}>
-                                  <option value="Announcement">Announcement</option>
-                                  <option value="Facility">Facility</option>
-                                  <option value="Exam Notice">Exam Notice</option>
-                                  <option value="Placement">Placement</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div>
-                              <label className={`block text-xs font-bold mb-1 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Detailed Content / Notice Description</label>
-                              <textarea value={newNewsContent} onChange={(e) => setNewNewsContent(e.target.value)} rows="3" placeholder="Enter full announcement details here..." className={`w-full rounded-xl p-2.5 text-xs border outline-none ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-200' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required></textarea>
-                            </div>
+                          <form onSubmit={handleAddNews} className="space-y-3">
+                            <input type="text" value={newNewsTitle} onChange={(e) => setNewNewsTitle(e.target.value)} placeholder="News Headline (e.g. Annual Sports Meet 2026)" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required />
+                            <select value={newNewsCategory} onChange={(e) => setNewNewsCategory(e.target.value)} className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
+                              <option value="Announcement">Announcement</option>
+                              <option value="Facility">Facility</option>
+                              <option value="Examination">Examination</option>
+                              <option value="Placement">Placement</option>
+                            </select>
+                            <textarea value={newNewsContent} onChange={(e) => setNewNewsContent(e.target.value)} placeholder="Detailed news content..." rows="3" className={`w-full rounded-xl p-3 text-xs border ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-200' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`} required></textarea>
                             <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-2.5 rounded-xl font-bold text-xs shadow-md transition">
-                              Broadcast News to Student Panel →
+                              Broadcast News Live
                             </button>
                           </form>
 
                           <div className="space-y-2 pt-2">
-                            <h5 className="font-bold text-xs">Active News Bulletins ({newsList.length})</h5>
-                            {newsList.map(news => (
-                              <div key={news.id} className={`p-3.5 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
+                            <h5 className="font-bold text-xs">Manage Published News ({newsList.length})</h5>
+                            {newsList.map(n => (
+                              <div key={n.id} className={`p-3 rounded-xl border flex justify-between items-center ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
                                 <div>
-                                  <span className="text-[10px] font-bold text-amber-800">{news.category} • {news.date}</span>
-                                  <h6 className="font-bold text-xs mt-0.5">{news.title}</h6>
+                                  <span className="text-[10px] font-bold text-amber-800">{n.category} • {n.date}</span>
+                                  <h6 className="font-bold text-xs">{n.title}</h6>
                                 </div>
-                                <button onClick={() => handleDeleteNews(news.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-bold transition">Delete</button>
+                                <button onClick={() => handleDeleteNews(n.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1 rounded-xl text-[11px] font-bold transition">
+                                  Delete
+                                </button>
                               </div>
                             ))}
                           </div>
                         </div>
 
-                        {/* Document Submissions Verification Queue */}
+                        {/* Student Document Verifications Review */}
                         <div className={`p-5 rounded-2xl border space-y-4 ${isDark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📄 Student Verification Document Submissions ({submittedSubmissions.filter(s => s.uniId === selectedUni.id).length})</h4>
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-amber-800">📄 Review Student Document Submissions ({submittedSubmissions.length})</h4>
                           <div className="space-y-3">
-                            {submittedSubmissions.filter(s => s.uniId === selectedUni.id).length === 0 ? (
-                              <p className="text-xs text-stone-500">No student documents submitted for this university yet.</p>
-                            ) : (
-                              submittedSubmissions.filter(s => s.uniId === selectedUni.id).map(sub => (
-                                <div key={sub.id} className={`p-4 rounded-xl border space-y-2.5 ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
-                                  <div className="flex justify-between items-center">
-                                    <div>
-                                      <h5 className="font-bold text-xs">{sub.studentName}</h5>
-                                      <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Email: {sub.studentEmail}</p>
-                                    </div>
-                                    <span className={`text-xs font-bold px-3 py-1 rounded-xl border ${sub.status === 'Verified' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20'}`}>
-                                      {sub.status}
-                                    </span>
+                            {submittedSubmissions.map(sub => (
+                              <div key={sub.id} className={`p-4 rounded-xl border space-y-2 ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-[#FDFBF7] border-[#EBE6DC]'}`}>
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <h5 className="font-bold text-xs">{sub.studentName} ({sub.studentEmail})</h5>
+                                    <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Status: <span className="font-bold text-amber-600">{sub.status}</span></p>
                                   </div>
-                                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-[11px] pt-1">
-                                    <span className="bg-zinc-900/50 p-1.5 rounded border border-zinc-800">🆔 {sub.aadhaar}</span>
-                                    <span className="bg-zinc-900/50 p-1.5 rounded border border-zinc-800">💳 {sub.pan}</span>
-                                    <span className="bg-zinc-900/50 p-1.5 rounded border border-zinc-800">📄 {sub.tenth}</span>
-                                    <span className="bg-zinc-900/50 p-1.5 rounded border border-zinc-800">📄 {sub.twelfth}</span>
-                                    <span className="bg-zinc-900/50 p-1.5 rounded border border-zinc-800">📜 {sub.charCert}</span>
-                                  </div>
-                                  <div className="flex justify-end gap-2 pt-2">
-                                    <button onClick={() => handleDocAction(sub.id, 'Verified')} className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 border border-emerald-500/20 px-3 py-1.5 rounded-lg text-xs font-bold transition">
-                                      ✓ Approve & Verify
-                                    </button>
-                                    <button onClick={() => handleDocAction(sub.id, 'Rejected / Re-upload Required')} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-lg text-xs font-bold transition">
-                                      ✕ Reject
-                                    </button>
+                                  <div className="flex gap-2">
+                                    <button onClick={() => handleDocAction(sub.id, 'Verified')} className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-lg text-[11px] font-bold transition">Approve</button>
+                                    <button onClick={() => handleDocAction(sub.id, 'Rejected')} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-[11px] font-bold transition">Reject</button>
                                   </div>
                                 </div>
-                              ))
-                            )}
+                              </div>
+                            ))}
                           </div>
                         </div>
 
@@ -1495,23 +1470,23 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Organisation / Candidate Manager Tab */}
+                {/* Organisation Panel Tab */}
                 {activeTab === 'manager' && (!isFacultyLoggedIn) && (
                   <div className={`p-7 rounded-3xl border backdrop-blur-xl space-y-6 ${isDark ? 'bg-zinc-950/70 border-zinc-800' : 'bg-[#FDFBF7]/75 border-[#EBE6DC] shadow-[0_8px_30px_rgb(0,0,0,0.03)]'}`}>
-                    <h3 className="text-base font-extrabold">Campus Election Candidate Manager</h3>
-                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Register and manage election candidates for {selectedUni.name}.</p>
+                    <h3 className="text-base font-extrabold">🏛️ Organisation & Candidate Manager ({selectedUni.name})</h3>
+                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'}`}>Register and manage election candidates for union elections.</p>
                     
-                    <form onSubmit={handleAddCandidate} className="space-y-4">
+                    <form onSubmit={handleAddCandidate} className="space-y-3.5">
                       <div>
                         <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Candidate Full Name</label>
-                        <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="e.g. Priya Singh" className={`w-full rounded-2xl p-3.5 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
+                        <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} placeholder="e.g. Priya Singh" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
                       </div>
                       <div>
-                        <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Party / Group Name</label>
-                        <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="e.g. Youth Front" className={`w-full rounded-2xl p-3.5 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
+                        <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Student Party / Alliance Name</label>
+                        <input type="text" value={candidateParty} onChange={(e) => setCandidateParty(e.target.value)} placeholder="e.g. Youth Alliance" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
                       </div>
                       <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-[#FDFBF7] py-3.5 rounded-2xl font-bold text-xs shadow-md transition">
-                        Register Candidate for Voting Booth
+                        Register Candidate for Election
                       </button>
                     </form>
                   </div>
@@ -1526,64 +1501,51 @@ export default function App() {
 
       </main>
 
-      {/* Payment Modal */}
+      {/* Payment Gateway Modal */}
       {isPaymentModalOpen && activePaymentFee && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-          <div className={`w-full max-w-md p-7 rounded-3xl border shadow-2xl space-y-6 ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className={`max-w-md w-full p-7 rounded-3xl border shadow-2xl space-y-5 ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-[#FDFBF7] border-[#EBE6DC] text-stone-900'}`}>
             <div className="flex justify-between items-center border-b pb-3 border-[#EBE6DC]">
               <div>
-                <span className="text-[10px] font-extrabold tracking-wider text-indigo-500 uppercase">Secure Payment Gateway</span>
-                <h3 className="text-base font-extrabold">{activePaymentFee.semester}</h3>
+                <span className="text-[10px] font-extrabold text-amber-800 uppercase">Secure Payment Checkout</span>
+                <h3 className="text-base font-extrabold">Pay Semester Fees</h3>
               </div>
-              <button onClick={() => setIsPaymentModalOpen(false)} className="text-xs font-bold text-stone-500 hover:text-stone-800">✕ Close</button>
+              <button onClick={() => setIsPaymentModalOpen(false)} className={`text-xs font-bold ${isDark ? 'text-zinc-400 hover:text-white' : 'text-stone-500 hover:text-stone-800'}`}>✕ Close</button>
             </div>
 
-            <div className={`p-4 rounded-2xl border flex justify-between items-center ${isDark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-[#F4F1EA]/50 border-[#EBE6DC]'}`}>
-              <div>
-                <p className="text-xs font-medium">Total Amount Payable</p>
-                <p className="text-xl font-extrabold text-amber-700 mt-0.5">{activePaymentFee.amount}</p>
-              </div>
-              <span className="bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-3 py-1 rounded-xl text-xs font-bold">
-                🔒 Secured
-              </span>
+            <div className={`p-4 rounded-2xl border ${isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-[#F4F1EA]/60 border-[#EBE6DC]'}`}>
+              <p className="text-xs font-bold">{activePaymentFee.semester}</p>
+              <p className="text-2xl font-extrabold text-amber-700 mt-1">{activePaymentFee.amount}</p>
             </div>
 
-            <div className="flex gap-2 border-b pb-3 border-[#EBE6DC]">
-              <button type="button" onClick={() => setPaymentMethod('upi')} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${paymentMethod === 'upi' ? 'bg-stone-900 text-[#FDFBF7] border-stone-900 shadow-sm' : 'border-[#EBE6DC] text-stone-600'}`}>
-                📱 UPI / QR
-              </button>
-              <button type="button" onClick={() => setPaymentMethod('card')} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${paymentMethod === 'card' ? 'bg-stone-900 text-[#FDFBF7] border-stone-900 shadow-sm' : 'border-[#EBE6DC] text-stone-600'}`}>
-                💳 Credit / Debit Card
-              </button>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setPaymentMethod('upi')} className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition ${paymentMethod === 'upi' ? 'bg-stone-900 text-[#FDFBF7] border-stone-900' : isDark ? 'border-zinc-800 text-zinc-400' : 'border-[#EBE6DC] text-stone-600'}`}>UPI / QR</button>
+              <button type="button" onClick={() => setPaymentMethod('card')} className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition ${paymentMethod === 'card' ? 'bg-stone-900 text-[#FDFBF7] border-stone-900' : isDark ? 'border-zinc-800 text-zinc-400' : 'border-[#EBE6DC] text-stone-600'}`}>Credit / Debit</button>
             </div>
 
             <form onSubmit={handleProcessPayment} className="space-y-4">
-              {paymentMethod === 'upi' ? (
+              {paymentMethod === 'upi' && (
                 <div>
-                  <label className="block text-xs font-bold mb-1.5">Enter UPI ID</label>
-                  <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="username@oksbi" className={`w-full rounded-2xl p-3.5 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
+                  <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Enter UPI ID</label>
+                  <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="username@oksbi" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
                 </div>
-              ) : (
+              )}
+
+              {paymentMethod === 'card' && (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold mb-1">Card Number</label>
-                    <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4532 •••• •••• 8932" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
+                    <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-zinc-300' : 'text-stone-700'}`}>Card Number</label>
+                    <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4000 1234 5678 9010" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold mb-1">Expiry Date</label>
-                      <input type="text" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} placeholder="MM/YY" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold mb-1">CVV / PIN</label>
-                      <input type="password" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} placeholder="•••" className={`w-full rounded-xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
-                    </div>
+                    <input type="text" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} placeholder="MM/YY" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
+                    <input type="password" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} placeholder="CVV" maxLength="4" className={`w-full rounded-2xl p-3 text-xs outline-none border ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-[#F4F1EA]/60 border-[#EBE6DC] text-stone-900'}`} required />
                   </div>
                 </div>
               )}
 
-              <button type="submit" disabled={isProcessingPayment} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg transition disabled:opacity-50">
-                {isProcessingPayment ? 'Processing Secure Payment...' : `Pay ${activePaymentFee.amount} Now →`}
+              <button type="submit" disabled={isProcessingPayment} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg transition">
+                {isProcessingPayment ? 'Processing Secure Payment...' : `Pay ${activePaymentFee.amount} Securely`}
               </button>
             </form>
           </div>
